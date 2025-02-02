@@ -1,0 +1,28 @@
+server:
+#  servlet:
+#    context-path: /identity
+
+  port: 8100
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5435/postgres
+    username: admin
+    password: admin
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 30000
+      idle-timeout: 30000
+      maximum-pool-size: 10
+      minimum-idle: 5
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  application:
+    name: identity-service
+
+jwt:
+  signerKey: "cS6BxiaKDa2unnbvzjzObquWcvFQjtXgnNByk3qRoQ+dtnTykVToROhj4y86bpK6"
+  valid-duration: 3600 #sec
+  refreshable-duration: 36000 #sec
