@@ -21,7 +21,7 @@ public class WorldScene {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 256)
     String name;
 
 
@@ -32,6 +32,10 @@ public class WorldScene {
     @UpdateTimestamp
     LocalDateTime updatedAt;
 
+    @Builder.Default
     Boolean isDeleted = false;
+
+    @Builder.Default
+    Boolean isActive = true;
 }
 

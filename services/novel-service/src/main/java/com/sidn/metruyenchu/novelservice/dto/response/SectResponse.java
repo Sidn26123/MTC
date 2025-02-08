@@ -16,5 +16,6 @@ public class SectResponse {
 
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
-    Boolean isDeleted = false;
+    Boolean isDeleted;
+    Boolean isActive;
 }

@@ -13,11 +13,8 @@ import java.text.ParseException;
 
 @Component
 public class CustomJWTDecoder implements JwtDecoder {
-
     @Override
     public Jwt decode(String token) throws JwtException {
-
-//
         try {
             SignedJWT signedJWT = SignedJWT.parse(token);
 
@@ -31,6 +28,5 @@ public class CustomJWTDecoder implements JwtDecoder {
         } catch (ParseException e) {
             throw new JwtException("Invalid token");
         }
-
     }
 }

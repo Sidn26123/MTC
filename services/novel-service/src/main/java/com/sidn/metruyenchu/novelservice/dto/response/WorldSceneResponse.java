@@ -16,5 +16,6 @@ public class WorldSceneResponse {
 
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
-    Boolean isDeleted = false;
+    Boolean isDeleted;
+    Boolean isActive;
 }

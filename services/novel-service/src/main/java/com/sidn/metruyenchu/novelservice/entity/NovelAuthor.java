@@ -19,7 +19,11 @@ public class NovelAuthor {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
+
+    @Column(nullable = false, length = 256)
     String name;
+
+    @Column(nullable = true)
     String profile;
 
 
@@ -30,5 +34,9 @@ public class NovelAuthor {
     @UpdateTimestamp
     LocalDateTime updatedAt;
 
+    @Builder.Default
     Boolean isDeleted = false;
+
+    @Builder.Default
+    Boolean isActive = true;
 }

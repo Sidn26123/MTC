@@ -3,6 +3,8 @@ package com.sidn.metruyenchu.novelservice.dto.response;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -11,4 +13,7 @@ import lombok.experimental.FieldDefaults;
 public class ChapterStatusResponse {
     String id;
     String name;
+    LocalDateTime createdAt;
+    LocalDateTime updatedAt;
+    Boolean isDeleted;
 }

@@ -25,7 +25,7 @@ public class Genre {
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 256, unique = true)
     String name;
 
 
@@ -36,5 +36,9 @@ public class Genre {
     @UpdateTimestamp
     LocalDateTime updatedAt;
 
+    @Builder.Default
     Boolean isDeleted = false;
+
+    @Builder.Default
+    Boolean isActive = true;
 }

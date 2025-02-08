@@ -1,4 +1,4 @@
-package com.sidn.metruyenchu.novelservice.dto.request;
+package com.sidn.metruyenchu.novelservice.dto.request.worldScene;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,6 +8,6 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ChapterStatusCreationRequest {
+public class WorldSceneCreationRequest {
     String name;
 }

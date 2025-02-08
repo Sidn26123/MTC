@@ -1,9 +1,8 @@
 package com.sidn.metruyenchu.novelservice.controller;
 
 import com.sidn.metruyenchu.novelservice.dto.ApiResponse;
-import com.sidn.metruyenchu.novelservice.dto.request.ChapterStatusCreationRequest;
+import com.sidn.metruyenchu.novelservice.dto.request.chapter.ChapterStatusCreationRequest;
 import com.sidn.metruyenchu.novelservice.dto.response.ChapterStatusResponse;
-import com.sidn.metruyenchu.novelservice.entity.ChapterStatus;
 import com.sidn.metruyenchu.novelservice.service.ChapterStatusService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -22,7 +21,7 @@ import java.util.List;
 public class ChapterStatusController {
     ChapterStatusService chapterStatusService;
 
-    @PostMapping
+    @PostMapping("/create")
     ApiResponse<ChapterStatusResponse> createChapterStatus(@Valid @RequestBody ChapterStatusCreationRequest request){
 //        ApiResponse<ChapterStatusResponse> createChapterStatusResponse = new ApiResponse<>();
 //        createChapterStatusResponse.setResult(
@@ -43,4 +42,20 @@ public class ChapterStatusController {
                 .result(chapterStatusService.getAllChapterStatus())
                 .build();
     }
+
+    @DeleteMapping("/{chapterStatusId}")
+    ApiResponse<String> deleteChapterStatus(@PathVariable String chapterStatusId){
+        chapterStatusService.deleteChapterStatus(chapterStatusId);
+        return ApiResponse.<String>builder()
+                .result(String.format("Chapter status %s đã xoá thành công", chapterStatusId))
+                .build();
+    }
+
+    @PutMapping("/{chapterStatusId}")
+    ApiResponse<ChapterStatusResponse> updateChapterStatus(@PathVariable String chapterStatusId, @Valid @RequestBody ChapterStatusCreationRequest request){
+        return ApiResponse.<ChapterStatusResponse>builder()
+                .result(chapterStatusService.updateChapterStatus(chapterStatusId, request))
+                .build();
+    }
+
 }

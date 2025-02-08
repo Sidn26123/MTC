@@ -20,7 +20,7 @@ public class Sect {
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 256)
     String name;
 
 
@@ -31,5 +31,9 @@ public class Sect {
     @UpdateTimestamp
     LocalDateTime updatedAt;
 
+    @Builder.Default
     Boolean isDeleted = false;
+
+    @Builder.Default
+    Boolean isActive = true;
 }

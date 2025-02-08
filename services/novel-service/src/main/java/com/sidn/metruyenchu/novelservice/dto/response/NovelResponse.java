@@ -1,15 +1,14 @@
 package com.sidn.metruyenchu.novelservice.dto.response;
 
-import com.sidn.metruyenchu.novelservice.entity.NovelStatusModerationStatus;
+import com.sidn.metruyenchu.novelservice.entity.NovelStatus;
 import com.sidn.metruyenchu.novelservice.enums.NovelType;
 import com.sidn.metruyenchu.novelservice.enums.NovelVisibility;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.List;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -20,19 +19,21 @@ public class NovelResponse {
     String id;
     String name;
     String displayName;
+    String slug;
     String description;
     String novelCoverImage;
     String originalName;
     String originalLink;
     String currentPublisher;
     String authorId;
-    NovelStatusModerationStatus moderationStatus;
+    List<NovelStatusResponse> status;
     NovelType novelType;
     NovelVisibility novelVisibility;
 
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
     Boolean isDeleted = false;
+    Boolean isActive = true;
 
 
 }

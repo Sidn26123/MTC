@@ -1,5 +1,4 @@
-package com.sidn.metruyenchu.novelservice.dto.request;
-
+package com.sidn.metruyenchu.novelservice.dto.request.sect;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -9,8 +8,6 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class NovelAuthorCreationRequest {
+public class SectCreationRequest {
     String name;
-    String profileCoverImage;
-    boolean gender;
 }

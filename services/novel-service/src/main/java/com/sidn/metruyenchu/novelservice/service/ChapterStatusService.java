@@ -1,9 +1,8 @@
 package com.sidn.metruyenchu.novelservice.service;
 
 
-import com.sidn.metruyenchu.novelservice.dto.request.ChapterStatusCreationRequest;
+import com.sidn.metruyenchu.novelservice.dto.request.chapter.ChapterStatusCreationRequest;
 import com.sidn.metruyenchu.novelservice.dto.response.ChapterStatusResponse;
-import com.sidn.metruyenchu.novelservice.entity.ChapterStatus;
 import com.sidn.metruyenchu.novelservice.exception.AppException;
 import com.sidn.metruyenchu.novelservice.exception.ErrorCode;
 import com.sidn.metruyenchu.novelservice.mapper.ChapterStatusMapper;
@@ -13,10 +12,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -49,6 +48,7 @@ public class ChapterStatusService {
         );
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     public List<ChapterStatusResponse> getAllChapterStatus() {
         return chapterStatusRepository.findAll()
                 .stream()
@@ -56,6 +56,21 @@ public class ChapterStatusService {
                 .toList();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    public void deleteChapterStatus(String chapterId) {
+        if (!chapterStatusRepository.existsById(chapterId)) {
+            throw new AppException(ErrorCode.CHAPTER_STATUS_NAME_NOT_EXISTED);
+        }
+        chapterStatusRepository.deleteById(chapterId);
+    }
+
+    public ChapterStatusResponse updateChapterStatus(String chapterId, ChapterStatusCreationRequest request) {
+        var chapterStatus = chapterStatusRepository.findById(chapterId)
+                .orElseThrow(() -> new AppException(ErrorCode.CHAPTER_STATUS_NAME_NOT_EXISTED));
+        chapterStatus.setName(request.getName());
+        chapterStatusRepository.save(chapterStatus);
+        return chapterStatusMapper.toChapterStatusResponse(chapterStatus);
+    }
 
 
 }

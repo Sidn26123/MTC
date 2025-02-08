@@ -16,5 +16,5 @@ public class NovelAuthorResponse {
 
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
-    Boolean isDeleted = false;
+    Boolean isDeleted;
 }

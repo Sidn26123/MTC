@@ -46,4 +46,7 @@ public class Chapter {
     @UpdateTimestamp
     LocalDateTime updatedAt;
     Boolean isDeleted = false;
+
+    @Builder.Default
+    Boolean isActive = true;
 }

@@ -29,5 +29,9 @@ public class ChapterStatus {
     @UpdateTimestamp
     LocalDateTime updatedAt;
 
+    @Builder.Default
     Boolean isDeleted = false;
+
+    @Builder.Default
+    Boolean isActive = true;
 }

@@ -1,4 +1,5 @@
-package com.sidn.metruyenchu.novelservice.dto.request;
+package com.sidn.metruyenchu.novelservice.dto.request.novel;
+
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -8,6 +9,8 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class WorldSceneCreationRequest {
+public class NovelAuthorCreationRequest {
     String name;
+//    String profileCoverImage;
+    boolean gender;
 }

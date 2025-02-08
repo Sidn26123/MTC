@@ -15,5 +15,6 @@ public class GenreResponse {
     String name;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
-    Boolean isDeleted = false;
+    Boolean isDeleted;
+    Boolean isActive;
 }

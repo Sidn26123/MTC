@@ -1,14 +1,14 @@
 package com.sidn.metruyenchu.novelservice.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -17,9 +17,12 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-public class NovelStatusModerationStatus {
+public class NovelStatus {
     @Id
-    Integer code;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    String id;
+
+    @Column(nullable = false, length = 256)
     String name;
 
 
@@ -30,5 +33,12 @@ public class NovelStatusModerationStatus {
     @UpdateTimestamp
     LocalDateTime updatedAt;
 
+    @Builder.Default
     Boolean isDeleted = false;
+
+    @Builder.Default
+    Boolean isActive = true;
+
+    @ManyToMany(mappedBy = "status", fetch = FetchType.LAZY)
+    Set<Novel> novels = new HashSet<>();
 }

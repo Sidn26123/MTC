@@ -5,4 +5,5 @@ import com.sidn.metruyenchu.novelservice.entity.ChapterStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ChapterStatusRepository extends JpaRepository<ChapterStatus, String> {
+    boolean existsByName(String name);
 }

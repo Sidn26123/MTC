@@ -20,7 +20,7 @@ public class MainCharacterTrait {
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 
-    @Column(nullable = false, length = 20)
+    @Column(nullable = false, length = 256, unique = true)
     String name;
 
     @CreationTimestamp
@@ -30,5 +30,9 @@ public class MainCharacterTrait {
     @UpdateTimestamp
     LocalDateTime updatedAt;
 
+    @Builder.Default
     Boolean isDeleted = false;
+
+    @Builder.Default
+    Boolean isActive = true;
 }

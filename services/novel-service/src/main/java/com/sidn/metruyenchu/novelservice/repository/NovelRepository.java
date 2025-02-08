@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface NovelRepository extends JpaRepository<Novel, String> {
     Novel findByName(String name);
 
+    Novel findBySlug(String slug);
+
 }

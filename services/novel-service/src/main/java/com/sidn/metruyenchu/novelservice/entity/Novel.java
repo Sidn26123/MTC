@@ -1,6 +1,5 @@
 package com.sidn.metruyenchu.novelservice.entity;
 
-import com.sidn.metruyenchu.novelservice.enums.NovelStatus;
 import com.sidn.metruyenchu.novelservice.enums.NovelType;
 import com.sidn.metruyenchu.novelservice.enums.NovelVisibility;
 import jakarta.persistence.*;
@@ -10,6 +9,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -25,6 +26,10 @@ public class Novel {
     @Column(nullable = false, unique = true, length = 256)
     String name;
 
+    @Column(nullable = false, unique = true, length = 256)
+    String slug;
+
+    @Column(nullable = false, length = 256)
     String displayName;
 
     @Column(length = 256)
@@ -39,16 +44,22 @@ public class Novel {
     @JoinColumn(name = "author_id")
     NovelAuthor author;
 
+    @Column(nullable = false)
     String currentPublisher;
 
     @Column(nullable = false, length = 256)
-    String novelImage;
+    String novelCoverImage;
 
     @Column(columnDefinition = "TEXT")
     String description;
 
-    @ManyToOne
-    NovelStatusModerationStatus moderationStatus;
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "novel_novelstatus",
+            joinColumns = @JoinColumn(name = "novel_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "novel_status_id", referencedColumnName = "id")
+    )
+    Set<NovelStatus> status = new HashSet<>();
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
@@ -56,11 +67,17 @@ public class Novel {
 
     @Enumerated(EnumType.STRING)
     NovelVisibility novelVisibility = NovelVisibility.PRIVATE;
-
-    Float avgRate;
+    @Builder.Default
+    Float avgRate = 0.0f;
+    @Builder.Default
     Integer totalRates = 0;
+    @Builder.Default
     Integer totalComments = 0;
+    @Builder.Default
     Boolean isDeleted = false;
+
+    @Builder.Default
+    Boolean isActive = true;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
