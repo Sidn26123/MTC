@@ -25,9 +25,9 @@ public class Review {
     @Column(nullable = false)
     String reviewer;
 
-    String reviewInNovel;
+    String reviewInNovelId;
 
-    Integer lastReadChapter;
+    Integer lastReadChapterId;
 
     @Column(nullable = false)
     Float rating;
@@ -38,14 +38,17 @@ public class Review {
     @Builder.Default
     Integer dislikeCount = 0;
 
-    @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    LocalDateTime createdAt;
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
+    @Column(nullable = false)
     @UpdateTimestamp
-    LocalDateTime updatedAt;
+    private LocalDateTime updatedAt;
+
+    @Builder.Default
     Boolean isDeleted = false;
 
     @Builder.Default
-    Boolean isActive = true;
+    Boolean isHidden = true;
 }

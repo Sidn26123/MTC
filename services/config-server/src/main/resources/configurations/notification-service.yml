@@ -1,0 +1,29 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/notification-service?authSource=admin
+  kafka:
+    bootstrap-servers: localhost:9094
+    consumer:
+      group-id: notification-group1
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+  mail:
+    host: localhost
+    port: 1025
+    username: sidaconchocha@gmail.com
+    password: zqtx npuh lqxw bpax
+    properties:
+      mail:
+        smtp:
+          trust: "*"
+        auth: true
+        starttls:
+          enabled: true
+        connectiontimeout: 5000
+        timeout: 3000
+        writetimeout: 5000
+server:
+  port: 8095
+

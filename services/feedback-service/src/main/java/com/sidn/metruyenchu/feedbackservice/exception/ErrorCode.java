@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatusCode;
 public enum ErrorCode {
     USER_EXISTED(1001, "Người dùng đã tồn tại!", HttpStatus.INTERNAL_SERVER_ERROR),
     UNKNOWN_ERROR(9999, "Lỗi không xác định", HttpStatus.BAD_REQUEST),
+    OBJECT_NOT_FOUND(1002, "Không tìm thấy đối tượng", HttpStatus.NOT_FOUND),
+    OBJECT_ALREADY_EXISTED(1003, "Đối tượng đã tồn tại", HttpStatus.BAD_REQUEST),
     INVALID_KEY(0001, "Message key không hợp lệ", HttpStatus.BAD_REQUEST),
     INVALID_USERNAME(1003, "Username không hợp lệ. Username phải có từ {min} ký tự trở lên", HttpStatus.BAD_REQUEST),
     INVALID_PASSWORD(1004, "Password không hợp lệ. Password phải có từ {min} ký tự trở lên", HttpStatus.BAD_REQUEST),

@@ -1,5 +1,6 @@
 package com.sidn.metruyenchu.feedbackservice.entity;
 
+import com.sidn.metruyenchu.feedbackservice.enums.FeedbackType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -25,6 +26,9 @@ public class Comment {
     @Column(nullable = false)
     String commentParentId;
 
+    @Enumerated(EnumType.STRING)
+    FeedbackType parentType;
+
     @Column(nullable = false)
     String commenter;
 
@@ -38,17 +42,17 @@ public class Comment {
     @Builder.Default
     Integer dislikeCount = 0;
 
-    @CreationTimestamp
     @Column(nullable = false, updatable = false)
-    LocalDateTime createdAt;
+    @CreationTimestamp
+    private LocalDateTime createdAt;
 
+    @Column(nullable = false)
     @UpdateTimestamp
-    LocalDateTime updatedAt;
+    private LocalDateTime updatedAt;
 
+    @Builder.Default
     Boolean isDeleted = false;
 
     @Builder.Default
-    Boolean isActive = true;
-
-
+    Boolean isHidden = true;
 }
