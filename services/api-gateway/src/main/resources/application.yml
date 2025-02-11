@@ -1,46 +1,7 @@
-app:
-  api-prefix: /api/v1
-  prefix-count: 1
-
 spring:
   application:
     name: api-gateway
-  cloud:
-    gateway:
-      routes:
-        - id: identity_service
-          uri: http://localhost:8100
-          predicates:
-            - Path=${app.api-prefix}/identity/**
-          filters:
-            - StripPrefix=2
-        - id: novel_service
-          uri:
-            http://localhost:8092
-          predicates:
-            - Path=${app.api-prefix}/novel/**
-          filters:
-            - StripPrefix=2
-        - id: feedback_service
-          uri:
-              http://localhost:8093
-          predicates:
-              - Path=${app.api-prefix}/feedback/**
-          filters:
-              - StripPrefix=2
-        - id: notification_service
-          uri:
-              http://localhost:8095
-          predicates:
-              - Path=${app.api-prefix}/notification/**
-          filters:
-              - StripPrefix=2
-        - id: payment_service
-          uri:
-            http://localhost:8096
-          predicates:
-            - Path=${app.api-prefix}/payment/**
-          filters:
-            - StripPrefix=2
-server:
-  port: 8889
+  config:
+    import: optional:configserver:http://localhost:8888
+
+
