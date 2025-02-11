@@ -3,6 +3,7 @@ package com.sidn.metruyenchu.novelservice.dto.request.novel;
 import com.sidn.metruyenchu.novelservice.entity.NovelStatus;
 import com.sidn.metruyenchu.novelservice.enums.NovelType;
 import com.sidn.metruyenchu.novelservice.enums.NovelVisibility;
+import com.sidn.metruyenchu.novelservice.enums.ProgressStatus;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.*;
@@ -47,6 +48,13 @@ public class NovelCreationRequest {
     @Enumerated(EnumType.STRING)
     NovelVisibility novelVisibility = NovelVisibility.PRIVATE;
 
+    @Enumerated(EnumType.STRING)
+    ProgressStatus progressStatus = ProgressStatus.IN_PROGRESS;
 
+    Integer chapterReadToComment;
+
+    Integer chapterReadToRate;
+
+    Integer fullSetPurchaseDiscount;
 
 }

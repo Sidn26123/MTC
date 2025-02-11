@@ -1,5 +1,5 @@
 package com.sidn.metruyenchu.novelservice.entity;
-import com.sidn.metruyenchu.novelservice.enums.ChapterStatus;
+import com.sidn.metruyenchu.novelservice.enums.ChapterStatusEnum;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -7,7 +7,8 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.List;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -24,7 +25,7 @@ public class Chapter {
     @Column(nullable = false, length = 256)
     String name;
 
-    @Lob
+//    @Lob
     String content;
 
     @NonNull
@@ -33,11 +34,32 @@ public class Chapter {
     @Column(nullable = false)
     Integer chapterIdx;
 
+    Integer amountToUnlock = 0;
+
+
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    ChapterStatus status = ChapterStatus.CREATED;
+    ChapterStatusEnum status = ChapterStatusEnum.CREATED;
 
-    Integer amountToUnlock = 0;
+    @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL)
+    Set<ChapterStatusDetail> chapterStatus;
+
+    @ManyToOne
+    @JoinColumn(name = "novel_id")
+    Novel novel;
+
+    @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL)
+    Set<NovelSect> novelSects;
+
+    @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL)
+    Set<NovelWorldScene> novelWorldScenes;
+
+    @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL)
+    Set<NovelMainCharTrait> novelMainCharTraits;
+
+    @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL)
+    Set<NovelGenre> novelGenres;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -45,6 +67,7 @@ public class Chapter {
 
     @UpdateTimestamp
     LocalDateTime updatedAt;
+
     Boolean isDeleted = false;
 
     @Builder.Default

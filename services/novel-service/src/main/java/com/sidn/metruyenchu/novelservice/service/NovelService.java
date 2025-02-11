@@ -105,17 +105,23 @@ public class NovelService {
         }
     }
 
+    public List<NovelResponse> searchNovel(String keyword) {
+        return novelRepository.findByNameContaining(keyword).stream()
+                .map(this::fetchDataMissOfNovel)
+                .toList();
+    }
 
 
+    public List<NovelResponse> getNovelByAuthorId(String authorId) {
+        return novelRepository.findByAuthorId(authorId).stream()
+                .map(this::fetchDataMissOfNovel)
+                .toList();
+    }
 
 
 
     public NovelResponse fetchDataMissOfNovel(Novel novel){
         NovelResponse novelResponse = novelMapper.toNovelResponse(novel);
-//        List<NovelStatusResponse> novelStatusesResponse = novel.getStatus().stream()
-//                .map(novelStatusMapper::toNovelStatusResponse)
-//                .toList();
-//        novelResponse.setStatus(novelStatusesResponse);
 
         return fetchDataMissOfNovel(novelResponse);
     }

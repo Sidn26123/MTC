@@ -15,13 +15,18 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-public class Sect {
+public class ChapterStatusDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 
-    @Column(nullable = false, length = 256)
-    String name;
+    @ManyToOne
+    @JoinColumn(name = "chapter_id")
+    Chapter chapter;
+
+    @ManyToOne
+    @JoinColumn(name = "chapter_status_id")
+    ChapterStatus chapterStatus;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -29,10 +34,4 @@ public class Sect {
 
     @UpdateTimestamp
     LocalDateTime updatedAt;
-
-    @Builder.Default
-    Boolean isDeleted = false;
-
-    @Builder.Default
-    Boolean isActive = true;
 }

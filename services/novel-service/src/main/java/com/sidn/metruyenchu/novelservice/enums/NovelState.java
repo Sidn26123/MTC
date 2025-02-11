@@ -1,5 +1,5 @@
 package com.sidn.metruyenchu.novelservice.enums;
 
-public enum NovelStatus {
+public enum NovelState {
     CREATED, PENDING, SUSPENDED, REVIEWING
 }

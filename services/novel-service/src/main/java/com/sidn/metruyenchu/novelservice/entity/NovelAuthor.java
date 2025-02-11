@@ -16,6 +16,9 @@ import java.time.LocalDateTime;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 public class NovelAuthor {
+    /**
+     * Tác giả truyện
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;

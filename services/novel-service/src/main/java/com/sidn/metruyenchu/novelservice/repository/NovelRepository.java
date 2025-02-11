@@ -12,4 +12,7 @@ public interface NovelRepository extends JpaRepository<Novel, String> {
 
     Novel findBySlug(String slug);
 
+    Optional<Novel> findByNameContaining(String keyword);
+
+    Optional<Novel> findByAuthorId(String authorId);
 }

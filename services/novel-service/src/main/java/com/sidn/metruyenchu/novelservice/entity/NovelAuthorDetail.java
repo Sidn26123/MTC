@@ -15,13 +15,18 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-public class Sect {
+public class NovelAuthorDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 
-    @Column(nullable = false, length = 256)
-    String name;
+    @ManyToOne
+    @JoinColumn(name = "novel_id")
+    Novel novel;
+
+    @ManyToOne
+    @JoinColumn(name = "novel_author_id")
+    NovelAuthor novelAuthor;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

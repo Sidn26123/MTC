@@ -3,6 +3,7 @@ package com.sidn.metruyenchu.novelservice.dto.response;
 import com.sidn.metruyenchu.novelservice.entity.NovelStatus;
 import com.sidn.metruyenchu.novelservice.enums.NovelType;
 import com.sidn.metruyenchu.novelservice.enums.NovelVisibility;
+import com.sidn.metruyenchu.novelservice.enums.ProgressStatus;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -29,7 +30,11 @@ public class NovelResponse {
     List<NovelStatusResponse> status;
     NovelType novelType;
     NovelVisibility novelVisibility;
-
+    ProgressStatus progressStatus = ProgressStatus.IN_PROGRESS;
+    Integer chapterReadToComment;
+    Integer chapterReadToRate;
+    Integer fullSetPurchaseDiscount;
+    Integer wordCount;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
     Boolean isDeleted = false;

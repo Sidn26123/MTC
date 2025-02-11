@@ -7,6 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -25,6 +26,9 @@ public class ChapterStatus {
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     LocalDateTime createdAt;
+
+    @OneToMany(mappedBy = "chapterStatus", cascade = CascadeType.ALL)
+    List<ChapterStatusDetail> chapterStatusDetails;
 
     @UpdateTimestamp
     LocalDateTime updatedAt;

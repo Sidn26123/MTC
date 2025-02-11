@@ -24,7 +24,6 @@ public class WorldScene {
     @Column(nullable = false, length = 256)
     String name;
 
-
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     LocalDateTime createdAt;

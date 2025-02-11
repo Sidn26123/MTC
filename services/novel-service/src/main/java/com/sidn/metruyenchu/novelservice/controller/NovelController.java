@@ -58,5 +58,21 @@ public class NovelController {
                 .build();
     }
 
+//    @GetMapping("/search")
+//    ApiResponse<List<NovelResponse>> searchNovel(@RequestParam String keyword){
+//
+//    }
 
+    @GetMapping("/{novelId}/chapters")
+    void getChapters(@PathVariable String novelId){
+    }
+
+//    @GetMapping("/{novelId}/chapters/{chapterId}")
+
+    @GetMapping("/get-novel-by-author/{authorId}")
+    ApiResponse<List<NovelResponse>> getNovelByAuthor(@PathVariable String authorId) {
+        return ApiResponse.<List<NovelResponse>>builder()
+                .result(novelService.getNovelByAuthorId(authorId))
+                .build();
+    }
 }

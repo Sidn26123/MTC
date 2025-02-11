@@ -17,7 +17,12 @@ import java.util.Set;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
+
 public class NovelStatus {
+    /**
+     * Trạng thái truyện
+     * CREATED, PENDING, SUSPENDED, REVIEWING
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
@@ -39,6 +44,6 @@ public class NovelStatus {
     @Builder.Default
     Boolean isActive = true;
 
-    @ManyToMany(mappedBy = "status", fetch = FetchType.LAZY)
-    Set<Novel> novels = new HashSet<>();
+    @OneToMany(mappedBy = "novelStatus", cascade = CascadeType.ALL)
+    Set<NovelStatusDetail> novels = new HashSet<>();
 }

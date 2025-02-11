@@ -2,6 +2,7 @@ package com.sidn.metruyenchu.novelservice.entity;
 
 import com.sidn.metruyenchu.novelservice.enums.NovelType;
 import com.sidn.metruyenchu.novelservice.enums.NovelVisibility;
+import com.sidn.metruyenchu.novelservice.enums.ProgressStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -9,7 +10,9 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -40,10 +43,6 @@ public class Novel {
 
     Integer totalChapters;
 
-    @ManyToOne
-    @JoinColumn(name = "author_id")
-    NovelAuthor author;
-
     @Column(nullable = false)
     String currentPublisher;
 
@@ -53,26 +52,61 @@ public class Novel {
     @Column(columnDefinition = "TEXT")
     String description;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "novel_novelstatus",
-            joinColumns = @JoinColumn(name = "novel_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "novel_status_id", referencedColumnName = "id")
-    )
-    Set<NovelStatus> status = new HashSet<>();
+    @Builder.Default
+    Integer chapterReadToComment = 0;
+
+    @Builder.Default
+    Integer chapterReadToRate = 10;
+
+    Integer fullSetPurchaseDiscount;
+
+    Integer wordCount;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    NovelType novelType;
+    NovelType novelType; //loại truyện: dịch, sáng tác
 
     @Enumerated(EnumType.STRING)
-    NovelVisibility novelVisibility = NovelVisibility.PRIVATE;
+    @Column(nullable = false)
+    @Builder.Default
+    NovelVisibility novelVisibility = NovelVisibility.PRIVATE; //khả năng truy cập
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    ProgressStatus progressStatus = ProgressStatus.IN_PROGRESS;
+
     @Builder.Default
     Float avgRate = 0.0f;
+
     @Builder.Default
     Integer totalRates = 0;
+
     @Builder.Default
     Integer totalComments = 0;
+
+    @ManyToOne
+    @JoinColumn(name = "author_id")
+    NovelAuthor author;
+
+//    @JoinTable(
+//            name = "novel_novelstatus",
+//            joinColumns = @JoinColumn(name = "novel_id", referencedColumnName = "id"),
+//            inverseJoinColumns = @JoinColumn(name = "novel_status_id", referencedColumnName = "id")
+//    )
+
+
+    @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    Set<NovelStatusDetail> status = new HashSet<>();
+
+    @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    Set<Chapter> chapters = new HashSet<>();
+
+
+
+
+
+
     @Builder.Default
     Boolean isDeleted = false;
 
