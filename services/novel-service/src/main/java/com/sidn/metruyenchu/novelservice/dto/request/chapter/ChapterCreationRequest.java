@@ -19,6 +19,6 @@ public class ChapterCreationRequest {
     String name;
     String publisher;
     Integer chapterIdx;
-    Set<ChapterStatusEnum> status;
-    NovelVisibility visibility;
+    ChapterStatusEnum status;
+    String novelId;
 }

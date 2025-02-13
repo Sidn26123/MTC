@@ -1,4 +1,25 @@
 package com.sidn.metruyenchu.novelservice.dto.request.chapter;
 
+import com.sidn.metruyenchu.novelservice.enums.ChapterStatusEnum;
+import com.sidn.metruyenchu.novelservice.enums.NovelVisibility;
+import jakarta.validation.constraints.Size;
+import lombok.*;
+import lombok.experimental.FieldDefaults;
+
+import java.util.Set;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class ChapterUpdateRequest {
+    @Size(min = 4, message = "CHAPTER_NAME_TOO_SHORT")
+    @Size(max = 255, message = "CHAPTER_NAME_TOO_LONG")
+    String name;
+    String publisher;
+    Integer chapterIdx;
+    Set<ChapterStatusEnum> status;
+    String novelId;
+
 }

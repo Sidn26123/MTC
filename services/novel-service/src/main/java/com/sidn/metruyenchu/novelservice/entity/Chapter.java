@@ -49,18 +49,6 @@ public class Chapter {
     @JoinColumn(name = "novel_id")
     Novel novel;
 
-    @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL)
-    Set<NovelSect> novelSects;
-
-    @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL)
-    Set<NovelWorldScene> novelWorldScenes;
-
-    @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL)
-    Set<NovelMainCharTrait> novelMainCharTraits;
-
-    @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL)
-    Set<NovelGenre> novelGenres;
-
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
     LocalDateTime createdAt;

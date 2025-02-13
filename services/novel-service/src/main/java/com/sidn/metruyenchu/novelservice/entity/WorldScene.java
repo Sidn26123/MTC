@@ -18,8 +18,8 @@ import java.time.LocalDateTime;
 @Entity
 public class WorldScene {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    String id;
 
     @Column(nullable = false, length = 256)
     String name;

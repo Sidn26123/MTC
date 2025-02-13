@@ -12,5 +12,5 @@ public interface NovelStatusRepository extends JpaRepository<NovelStatus, String
     Optional<NovelStatus> findByName(String name);
     List<NovelStatus> findAllByIsActiveAndIsDeleted(Boolean isActive, Boolean isDeleted);
 
-    Optional<NovelStatus> findByIdIn(Set<String> ids);
+    Optional<NovelStatus> findByIdIn(List<String> ids);
 }

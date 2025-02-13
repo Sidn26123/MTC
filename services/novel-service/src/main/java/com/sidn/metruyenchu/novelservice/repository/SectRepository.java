@@ -11,4 +11,6 @@ public interface SectRepository extends JpaRepository<Sect, String> {
     boolean existsByName(String name);
     Optional<Sect> findByName(String name);
     List<Sect> findAllByIsActiveAndIsDeleted(Boolean isActive, Boolean isDeleted);
+
+    Optional<Sect> findByIdIn(List<String> sectIds);
 }

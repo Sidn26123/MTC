@@ -40,21 +40,39 @@ public class NovelCreationRequest {
 
     String authorId;
 
-    Set<String> status;
 
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     NovelType novelType = NovelType.COMPOSE;
 
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     NovelVisibility novelVisibility = NovelVisibility.PRIVATE;
 
     @Enumerated(EnumType.STRING)
+    @Builder.Default
     ProgressStatus progressStatus = ProgressStatus.IN_PROGRESS;
 
-    Integer chapterReadToComment;
+    @Builder.Default
+    Integer chapterReadToComment = 0;
 
-    Integer chapterReadToRate;
+    @Builder.Default
+    Integer chapterReadToRate = 10;
 
-    Integer fullSetPurchaseDiscount;
+    @Builder.Default
+    Integer fullSetPurchaseDiscount = 0;
+
+    List<String> status;
+
+    List<String> genreIds;
+
+    List<String> mainCharTraitIds;
+
+    List<String> sectIds;
+
+    List<String> worldSceneIds;
+
+//    List<String> statusIds;
+
 
 }

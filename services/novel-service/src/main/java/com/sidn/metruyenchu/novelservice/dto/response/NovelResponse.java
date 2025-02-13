@@ -28,6 +28,10 @@ public class NovelResponse {
     String currentPublisher;
     String authorId;
     List<NovelStatusResponse> status;
+    List<GenreResponse> genres;
+    List<WorldSceneResponse> worldScenes;
+    List<MainCharacterTraitResponse> mainCharacterTraits;
+    List<SectResponse> sects;
     NovelType novelType;
     NovelVisibility novelVisibility;
     ProgressStatus progressStatus = ProgressStatus.IN_PROGRESS;

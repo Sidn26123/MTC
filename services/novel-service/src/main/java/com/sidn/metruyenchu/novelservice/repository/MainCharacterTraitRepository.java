@@ -11,4 +11,6 @@ public interface MainCharacterTraitRepository extends JpaRepository<MainCharacte
     boolean existsByName(String name);
     Optional<MainCharacterTrait> findByName(String name);
     List<MainCharacterTrait> findAllByIsActiveAndIsDeleted(Boolean isActive, Boolean isDeleted);
+
+    Optional<MainCharacterTrait> findByIdIn(List<String> mainCharTraitIds);
 }

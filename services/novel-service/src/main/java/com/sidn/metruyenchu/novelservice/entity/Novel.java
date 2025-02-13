@@ -97,14 +97,22 @@ public class Novel {
 
 
     @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    Set<NovelStatusDetail> status = new HashSet<>();
+    List<NovelStatusDetail> status = new ArrayList<>();
 
     @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    Set<Chapter> chapters = new HashSet<>();
+    List<Chapter> chapters = new ArrayList<>();
 
+    @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL)
+    List<NovelSect> novelSects;
 
+    @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL)
+    List<NovelWorldScene> novelWorldScenes;
 
+    @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL)
+    List<NovelMainCharTrait> novelMainCharTraits;
 
+    @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL)
+    List<NovelGenre> novelGenres;
 
 
     @Builder.Default

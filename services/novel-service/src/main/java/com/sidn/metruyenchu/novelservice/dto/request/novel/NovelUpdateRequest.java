@@ -5,6 +5,7 @@ import com.sidn.metruyenchu.novelservice.enums.NovelVisibility;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -31,9 +32,26 @@ public class NovelUpdateRequest {
 
     String authorId;
 
-    Set<String> status;
+    List<String> status;
 
     NovelType novelType;
 
     NovelVisibility novelVisibility;
+
+    List<String> genreIds;
+
+    List<String> mainCharTraitIds;
+
+    List<String> sectIds;
+
+    List<String> worldSceneIds;
+
+    List<String> statusIds;
+
+    Integer chapterReadToComment;
+
+    Integer chapterReadToRate;
+
+    Integer fullSetPurchaseDiscount;
+
 }
