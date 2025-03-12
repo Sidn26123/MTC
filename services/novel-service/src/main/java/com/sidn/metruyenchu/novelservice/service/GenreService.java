@@ -27,7 +27,7 @@ public class GenreService {
 
     //CRUD genre
     //get all genre
-    @PreAuthorize("hasRole('ADMIN')")
+//    @PreAuthorize("hasRole('ADMIN')")
     public List<GenreResponse> getAllGenre() {
         return genreRepository.findAll().stream()
                 .map(genreMapper::toGenreResponse)

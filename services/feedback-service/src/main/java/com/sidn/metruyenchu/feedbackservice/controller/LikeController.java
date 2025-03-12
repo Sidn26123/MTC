@@ -1,8 +1,8 @@
 package com.sidn.metruyenchu.feedbackservice.controller;
 
 import com.sidn.metruyenchu.feedbackservice.dto.ApiResponse;
-import com.sidn.metruyenchu.feedbackservice.dto.request.LikeCreationRequest;
-import com.sidn.metruyenchu.feedbackservice.dto.request.LikeUpdateRequest;
+import com.sidn.metruyenchu.feedbackservice.dto.request.like.LikeCreationRequest;
+import com.sidn.metruyenchu.feedbackservice.dto.request.like.LikeUpdateRequest;
 import com.sidn.metruyenchu.feedbackservice.dto.response.LikeResponse;
 import com.sidn.metruyenchu.feedbackservice.service.LikeService;
 import jakarta.validation.Valid;
@@ -35,6 +35,26 @@ public class LikeController {
                 .result(likeService.getAllLikes())
                 .build();
     }
+
+    @PostMapping("/comment/{commentId}")
+    ApiResponse<LikeResponse> createLikeForComment(@PathVariable("commentId") String commentId, @Valid @RequestBody LikeCreationRequest request) {
+        request.setParentId(commentId);
+
+        return ApiResponse.<LikeResponse>builder()
+                .result(likeService.likeComment(request))
+                .build();
+    }
+
+    @PostMapping("/rating/{ratingId}")
+    ApiResponse<LikeResponse> createLikeForRating(@PathVariable("ratingId") String ratingId, @Valid @RequestBody LikeCreationRequest request) {
+        request.setParentId(ratingId);
+
+        return ApiResponse.<LikeResponse>builder()
+                .result(likeService.likeRating(request))
+                .build();
+    }
+
+
 
     @GetMapping("/{likeId}")
     ApiResponse<LikeResponse> getLike(@PathVariable("likeId") String likeId){

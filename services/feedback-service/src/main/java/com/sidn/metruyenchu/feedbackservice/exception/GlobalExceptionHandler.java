@@ -1,5 +1,6 @@
 package com.sidn.metruyenchu.feedbackservice.exception;
 
+import com.sidn.metruyenchu.feedbackservice.dto.ApiFeignResponse;
 import com.sidn.metruyenchu.feedbackservice.dto.ApiResponse;
 import com.sidn.metruyenchu.feedbackservice.exception.AppException;
 import com.sidn.metruyenchu.feedbackservice.exception.ErrorCode;
@@ -82,6 +83,23 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = AccessDeniedException.class)
     ResponseEntity<ApiResponse> handleAccessDeniedException(AccessDeniedException exception){
         ErrorCode errorCode = ErrorCode.UNAUTHORIZED;
+
+        return ResponseEntity.status(errorCode.getStatusCode()).body(
+                ApiResponse.builder()
+                        .code(errorCode.getCode())
+                        .message(errorCode.getMessage())
+                        .build()
+        );
+    }
+
+    @ExceptionHandler(value = feign.FeignException.class)
+    ResponseEntity<ApiResponse> handleFeignException(feign.FeignException exception){
+        log.info("log {}", exception.getMessage());
+        ApiFeignResponse apiFeignResponse = new ApiFeignResponse();
+        apiFeignResponse = apiFeignResponse.extractDataErrorOfFeignCall(exception.getMessage());
+
+
+        ErrorCode errorCode = ErrorCode.FEIGN_ERROR;
 
         return ResponseEntity.status(errorCode.getStatusCode()).body(
                 ApiResponse.builder()

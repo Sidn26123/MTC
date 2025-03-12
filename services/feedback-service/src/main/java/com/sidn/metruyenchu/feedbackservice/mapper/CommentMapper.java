@@ -1,16 +1,17 @@
 package com.sidn.metruyenchu.feedbackservice.mapper;
 
-import com.sidn.metruyenchu.feedbackservice.dto.request.CommentCreationRequest;
-import com.sidn.metruyenchu.feedbackservice.dto.request.CommentUpdateRequest;
+import com.sidn.metruyenchu.feedbackservice.dto.request.comment.CommentCreationRequest;
+import com.sidn.metruyenchu.feedbackservice.dto.request.comment.CommentUpdateRequest;
 import com.sidn.metruyenchu.feedbackservice.dto.response.CommentResponse;
 import com.sidn.metruyenchu.feedbackservice.entity.Comment;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 @EnableJpaAuditing
 public interface CommentMapper {
     Comment toComment(CommentCreationRequest request);

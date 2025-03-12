@@ -1,5 +1,6 @@
 package com.sidn.metruyenchu.feedbackservice.configuration;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -14,8 +15,9 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
+@Slf4j
 public class SecurityConfig {
-    private final String[] PUBLIC_ENDPOINTS = {};
+    private final String[] PUBLIC_ENDPOINTS = {"/feedbacks/**"};
     private CustomJWTDecoder customJWTDecoder;
     public SecurityConfig(CustomJWTDecoder customJwtDecoder) {
         this.customJWTDecoder = customJwtDecoder;

@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-public class Review {
+public class Rating {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
@@ -23,20 +23,38 @@ public class Review {
     String content;
 
     @Column(nullable = false)
-    String reviewer;
+    String ratedBy;
 
-    String reviewInNovelId;
+    String ratingInNovelId;
 
-    Integer lastReadChapterId;
+    String lastReadChapterId;
+
 
     @Column(nullable = false)
     Float rating;
 
-    @Builder.Default
-    Integer likeCount = 0;
+    //Đánh giá về thế giới trong truyện
+    @Column
+    Float worldBuildingRating;
+
+    String worldBuildingContent;
+
+    //Xây dựng nhân vật
+    @Column
+    Float characterDevelopmentRating;
+
+    String characterDevelopmentContent;
+    //Chiều sâu nội dung
+    @Column
+    Float narrativeDepthRating;
+
+    String narrativeDepthContent;
 
     @Builder.Default
-    Integer dislikeCount = 0;
+    Integer totalLikes = 0;
+
+    @Builder.Default
+    Integer totalDislikes = 0;
 
     @Column(nullable = false, updatable = false)
     @CreationTimestamp

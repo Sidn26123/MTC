@@ -40,7 +40,7 @@ public class NovelUpdateRequest {
 
     List<String> genreIds;
 
-    List<String> mainCharTraitIds;
+    List<String> mainCharacterTraitIds;
 
     List<String> sectIds;
 
@@ -53,5 +53,13 @@ public class NovelUpdateRequest {
     Integer chapterReadToRate;
 
     Integer fullSetPurchaseDiscount;
+
+    Float avgRate;
+
+    Integer totalComments;
+
+    Integer totalRates;
+
+    Integer totalChapters;
 
 }

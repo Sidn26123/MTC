@@ -1,5 +1,5 @@
 package com.sidn.metruyenchu.novelservice.entity;
-import com.sidn.metruyenchu.novelservice.enums.ChapterStatusEnum;
+import com.sidn.metruyenchu.novelservice.enums.ChapterState;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -25,25 +25,28 @@ public class Chapter {
     @Column(nullable = false, length = 256)
     String name;
 
-//    @Lob
-    String content;
+    @Column(nullable = false)
+    @Builder.Default
+    Long viewCount = 0L;
 
-    @NonNull
+    @Column(nullable = false)
     String publisher;
 
     @Column(nullable = false)
     Integer chapterIdx;
 
+    @Builder.Default
     Integer amountToUnlock = 0;
 
 
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    ChapterStatusEnum status = ChapterStatusEnum.CREATED;
+    @Builder.Default
+    ChapterState state = ChapterState.CREATED;
 
     @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL)
-    Set<ChapterStatusDetail> chapterStatus;
+    List<ChapterStatusDetail> chapterStatus;
 
     @ManyToOne
     @JoinColumn(name = "novel_id")
@@ -56,6 +59,7 @@ public class Chapter {
     @UpdateTimestamp
     LocalDateTime updatedAt;
 
+    @Builder.Default
     Boolean isDeleted = false;
 
     @Builder.Default

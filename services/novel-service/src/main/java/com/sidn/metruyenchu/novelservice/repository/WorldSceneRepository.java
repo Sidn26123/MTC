@@ -12,4 +12,5 @@ public interface WorldSceneRepository extends JpaRepository<WorldScene, String> 
     Optional<WorldScene> findByName(String name);
     List<WorldScene> findAllByIsActiveAndIsDeleted(Boolean isActive, Boolean isDeleted);
 
+    Optional<WorldScene> findByIdIn(List<String> worldSceneIds);
 }

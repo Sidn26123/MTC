@@ -62,11 +62,16 @@ public class NovelCreationRequest {
     @Builder.Default
     Integer fullSetPurchaseDiscount = 0;
 
+    @Builder.Default
+    Integer wordCount = 0;
+
+
+
     List<String> status;
 
     List<String> genreIds;
 
-    List<String> mainCharTraitIds;
+    List<String> mainCharacterTraitIds;
 
     List<String> sectIds;
 

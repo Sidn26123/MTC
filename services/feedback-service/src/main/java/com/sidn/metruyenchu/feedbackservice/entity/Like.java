@@ -17,22 +17,27 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-@Table(name = "likes", uniqueConstraints = {
-        @UniqueConstraint(columnNames = {"liker", "targetId", "targetType"})
-})
+@Table(name = "likes")
 public class Like {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 
     @Column(nullable = false)
-    String liker;
+    String likedBy;
 
-    @Column(nullable = false)
-    String targetId;
+//    @ManyToOne
+//    @JoinColumn(name = "comment_id")
+//    Comment comment;
+//
+//    @ManyToOne
+//    @JoinColumn(name = "rating_id")
+//    Rating rating;
+
+    String parentId;
 
     @Enumerated(EnumType.STRING)
-    FeedbackType targetType;
+    FeedbackType feedbackType;
 
     @Builder.Default
     @Column(nullable = false)

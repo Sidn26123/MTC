@@ -1,23 +1,24 @@
 package com.sidn.metruyenchu.feedbackservice.mapper;
 
-import com.sidn.metruyenchu.feedbackservice.dto.request.ReviewCreationRequest;
-import com.sidn.metruyenchu.feedbackservice.dto.request.ReviewUpdateRequest;
-import com.sidn.metruyenchu.feedbackservice.dto.response.ReviewResponse;
+import com.sidn.metruyenchu.feedbackservice.dto.request.rating.RatingCreationRequest;
+import com.sidn.metruyenchu.feedbackservice.dto.request.rating.RatingUpdateRequest;
+import com.sidn.metruyenchu.feedbackservice.dto.response.RatingResponse;
 import com.sidn.metruyenchu.feedbackservice.entity.Rating;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 @EnableJpaAuditing
-public interface ReviewMapper {
-    Rating toReview(ReviewCreationRequest request);
+public interface RatingMapper {
+    Rating toRating(RatingCreationRequest request);
 
-    ReviewResponse toReviewResponse(Rating rating);
+    RatingResponse toRatingResponse(Rating rating);
 
-    List<ReviewResponse> toReviewResponses(List<Rating> ratings);
+    List<RatingResponse> toRatingResponses(List<Rating> ratings);
 
-    void updateReview(@MappingTarget Rating rating, ReviewUpdateRequest request);
+    void updateRating(@MappingTarget Rating rating, RatingUpdateRequest request);
 }

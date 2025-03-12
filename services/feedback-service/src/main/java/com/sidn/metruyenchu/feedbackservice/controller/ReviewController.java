@@ -1,10 +1,10 @@
 package com.sidn.metruyenchu.feedbackservice.controller;
 
 import com.sidn.metruyenchu.feedbackservice.dto.ApiResponse;
-import com.sidn.metruyenchu.feedbackservice.dto.request.ReviewCreationRequest;
-import com.sidn.metruyenchu.feedbackservice.dto.request.ReviewUpdateRequest;
-import com.sidn.metruyenchu.feedbackservice.dto.response.ReviewResponse;
-import com.sidn.metruyenchu.feedbackservice.service.ReviewService;
+import com.sidn.metruyenchu.feedbackservice.dto.request.rating.RatingCreationRequest;
+import com.sidn.metruyenchu.feedbackservice.dto.request.rating.RatingUpdateRequest;
+import com.sidn.metruyenchu.feedbackservice.dto.response.RatingResponse;
+import com.sidn.metruyenchu.feedbackservice.service.RatingService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -20,25 +20,25 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class ReviewController {
-    ReviewService reviewService;
+    RatingService reviewService;
 
     @PostMapping()
-    ApiResponse<ReviewResponse> createReview(@Valid @RequestBody ReviewCreationRequest request) {
-        ApiResponse<ReviewResponse> apiResponse = new ApiResponse<>();
+    ApiResponse<RatingResponse> createReview(@Valid @RequestBody RatingCreationRequest request) {
+        ApiResponse<RatingResponse> apiResponse = new ApiResponse<>();
         apiResponse.setResult(reviewService.createReview(request));
         return apiResponse;
     }
 
     @GetMapping()
-    ApiResponse<List<ReviewResponse>> getAllReviews() {
-        return ApiResponse.<List<ReviewResponse>>builder()
+    ApiResponse<List<RatingResponse>> getAllReviews() {
+        return ApiResponse.<List<RatingResponse>>builder()
                 .result(reviewService.getAllReviews())
                 .build();
     }
 
     @GetMapping("/{reviewId}")
-    ApiResponse<ReviewResponse> getReview(@PathVariable("reviewId") String reviewId){
-        return ApiResponse.<ReviewResponse>builder()
+    ApiResponse<RatingResponse> getReview(@PathVariable("reviewId") String reviewId){
+        return ApiResponse.<RatingResponse>builder()
                 .result(reviewService.getReview(reviewId))
                 .build();
     }
@@ -49,7 +49,7 @@ public class ReviewController {
     }
 
     @PutMapping("/{reviewId}")
-    ReviewResponse updateReview(@PathVariable("reviewId") String reviewId, @RequestBody ReviewUpdateRequest request) {
+    RatingResponse updateReview(@PathVariable("reviewId") String reviewId, @RequestBody RatingUpdateRequest request) {
         return reviewService.updateReview(reviewId, request);
     }
 

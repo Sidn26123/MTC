@@ -1,8 +1,10 @@
 package com.sidn.metruyenchu.feedbackservice.controller;
 
 import com.sidn.metruyenchu.feedbackservice.dto.ApiResponse;
-import com.sidn.metruyenchu.feedbackservice.dto.request.CommentCreationRequest;
-import com.sidn.metruyenchu.feedbackservice.dto.request.CommentUpdateRequest;
+import com.sidn.metruyenchu.feedbackservice.dto.PageResponse;
+import com.sidn.metruyenchu.feedbackservice.dto.request.comment.CommentCreationRequest;
+import com.sidn.metruyenchu.feedbackservice.dto.request.comment.CommentInChapterGetRequest;
+import com.sidn.metruyenchu.feedbackservice.dto.request.comment.CommentUpdateRequest;
 import com.sidn.metruyenchu.feedbackservice.dto.response.CommentResponse;
 import com.sidn.metruyenchu.feedbackservice.service.CommentService;
 import jakarta.validation.Valid;
@@ -53,6 +55,14 @@ public class CommentController {
         return commentService.updateComment(commentId, request);
     }
 
+    @PostMapping("/chapter")
+    ApiResponse<PageResponse<CommentResponse>> getCommentsInChapter(
+            @ModelAttribute CommentInChapterGetRequest request
+    ) {
+        return ApiResponse.<PageResponse<CommentResponse>>builder()
+                .result(commentService.getCommentInChapter(request))
+                .build();
+    }
 
 
 }

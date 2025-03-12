@@ -1,12 +1,11 @@
 package com.sidn.metruyenchu.novelservice.dto.request.chapter;
 
-import com.sidn.metruyenchu.novelservice.enums.ChapterStatusEnum;
-import com.sidn.metruyenchu.novelservice.enums.NovelVisibility;
+import com.sidn.metruyenchu.novelservice.enums.ChapterState;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.util.Set;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -19,6 +18,7 @@ public class ChapterCreationRequest {
     String name;
     String publisher;
     Integer chapterIdx;
-    ChapterStatusEnum status;
+    ChapterState status;
+    List<String> chapterStatus;
     String novelId;
 }

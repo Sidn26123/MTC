@@ -1,4 +1,4 @@
-package com.sidn.metruyenchu.feedbackservice.dto.request;
+package com.sidn.metruyenchu.feedbackservice.dto.request.like;
 
 import com.sidn.metruyenchu.feedbackservice.enums.FeedbackType;
 import lombok.*;

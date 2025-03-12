@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 public class NovelAuthorResponse {
     String id;
     String name;
+    String profile;
 
     LocalDateTime createdAt;
     LocalDateTime updatedAt;

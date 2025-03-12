@@ -17,6 +17,7 @@ public enum ErrorCode {
     UNAUTHENTICATED(1006, "Unauthenticated", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(1007, "Không có quyền để làm điều này", HttpStatus.FORBIDDEN),
     INVALID_BIRTHDAY(1008, "Tuổi của bạn phải lớn hơn {min}", HttpStatus.BAD_REQUEST),
+    FEIGN_ERROR(1009, "Lỗi gọi API", HttpStatus.INTERNAL_SERVER_ERROR),
 
     CHAPTER_STATUS_NAME_EXISTED(1009, "Trạng thái chương này da ton tai", HttpStatus.INTERNAL_SERVER_ERROR),
     CHAPTER_STATUS_NAME_NOT_EXISTED(1010, "Chapter status khong ton tai", HttpStatus.BAD_REQUEST),
@@ -117,7 +118,21 @@ public enum ErrorCode {
     ACCOUNT_LOCKED(8003, "Tài khoản của bạn đã bị khóa", HttpStatus.FORBIDDEN),
     ACCOUNT_SUSPENDED(8004, "Tài khoản của bạn đã bị tạm ngưng", HttpStatus.FORBIDDEN),
 
+    FEEDBACK_NOT_FOUND(9001, "Feedback không tồn tại", HttpStatus.NOT_FOUND),
+    FEEDBACK_ALREADY_EXISTS(9002, "Feedback đã tồn tại", HttpStatus.BAD_REQUEST),
+    INVALID_FEEDBACK_STATUS(9003, "Trạng thái feedback không hợp lệ", HttpStatus.BAD_REQUEST),
+    FEEDBACK_STATUS_NOT_FOUND(9004, "Trạng thái feedback không tồn tại", HttpStatus.NOT_FOUND),
+    FEEDBACK_STATUS_ALREADY_EXISTED(9005, "Trạng thái feedback đã tồn tại", HttpStatus.BAD_REQUEST),
+    FEEDBACK_STATUS_NAME_TOO_SHORT(9006, "Tên trạng thái feedback quá ngắn. Phải có ít nhất {min} ký tự", HttpStatus.BAD_REQUEST),
+    FEEDBACK_STATUS_NAME_TOO_LONG(9007, "Tên trạng thái feedback quá dài. Tối đa {max} ký tự", HttpStatus.BAD_REQUEST),
+    FEEDBACK_TYPE_NOT_FOUND(9008, "Loại feedback không tồn tại", HttpStatus.NOT_FOUND),
+    FEEDBACK_TYPE_ALREADY_EXISTED(9009, "Loại feedback đã tồn tại", HttpStatus.BAD_REQUEST),
 
+    COMMENT_TOO_SHORT(3009, "Bình luận quá ngắn. Phải có ít nhất {min} ký tự", HttpStatus.BAD_REQUEST),
+    COMMENT_TOO_LONG(3010, "Bình luận quá dài. Tối đa {max} ký tự", HttpStatus.BAD_REQUEST),
+    INVALID_COMMENT_STATUS(3011, "Trạng thái bình luận không hợp lệ", HttpStatus.BAD_REQUEST),
+    COMMENT_STATUS_NOT_FOUND(3012, "Trạng thái bình luận không tồn tại", HttpStatus.NOT_FOUND),
+    INVALID_FEEDBACK_TYPE(3013, "Loại feedback không hợp lệ", HttpStatus.BAD_REQUEST),
 
 //    // 1. General Errors
 //    UNKNOWN_ERROR(9999, "Lỗi không xác định", HttpStatus.BAD_REQUEST),

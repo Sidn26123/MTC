@@ -187,7 +187,7 @@ public enum ErrorCode {
 //    OPERATION_NOT_ALLOWED(8002, "Hành động này không được phép", HttpStatus.FORBIDDEN),
 //    RATE_LIMIT_EXCEEDED(1201, "Bạn đã gửi quá nhiều yêu cầu. Vui lòng thử lại sau", HttpStatus.TOO_MANY_REQUESTS);
 
-    ;
+    INVALID_ARGUMENT_TYPE(0003, "Kiểu dữ liệu không hợp lệ", HttpStatus.BAD_REQUEST),;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
         this.code = code;

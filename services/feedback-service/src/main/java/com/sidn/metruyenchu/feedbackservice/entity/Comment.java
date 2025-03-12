@@ -23,24 +23,23 @@ public class Comment {
 
     String content;
 
-    @Column(nullable = false)
-    String commentParentId;
+    String parentId;
 
     @Enumerated(EnumType.STRING)
-    FeedbackType parentType;
+    FeedbackType feedbackType;
 
     @Column(nullable = false)
-    String commenter;
+    String commentedBy;
 
-    String commentInNovelId;
+    String commentedInNovelId;
 
-    String commentInChapterId;
-
-    @Builder.Default
-    Integer likeCount = 0;
+    String commentedInChapterId;
 
     @Builder.Default
-    Integer dislikeCount = 0;
+    Integer totalLikes = 0;
+
+    @Builder.Default
+    Integer totalDisLikes = 0;
 
     @Column(nullable = false, updatable = false)
     @CreationTimestamp
@@ -54,5 +53,5 @@ public class Comment {
     Boolean isDeleted = false;
 
     @Builder.Default
-    Boolean isHidden = true;
+    Boolean isHidden = false;
 }

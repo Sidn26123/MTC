@@ -1,4 +1,4 @@
-package com.sidn.metruyenchu.feedbackservice.dto.request;
+package com.sidn.metruyenchu.feedbackservice.dto.request.like;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;

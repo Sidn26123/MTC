@@ -26,7 +26,7 @@ public class NovelResponse {
     String originalName;
     String originalLink;
     String currentPublisher;
-    String authorId;
+    NovelAuthorResponse author;
     List<NovelStatusResponse> status;
     List<GenreResponse> genres;
     List<WorldSceneResponse> worldScenes;
@@ -39,6 +39,9 @@ public class NovelResponse {
     Integer chapterReadToRate;
     Integer fullSetPurchaseDiscount;
     Integer wordCount;
+    Float avgRate;
+    Integer totalRates;
+    Integer totalComments;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
     Boolean isDeleted = false;

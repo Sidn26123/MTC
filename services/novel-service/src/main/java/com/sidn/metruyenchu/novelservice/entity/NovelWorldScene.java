@@ -25,7 +25,7 @@ public class NovelWorldScene {
     Novel novel;
 
     @ManyToOne
-    @JoinColumn(name = "sect_id")
+    @JoinColumn(name = "world_scene_id")
     WorldScene worldScene;
 
     @CreationTimestamp

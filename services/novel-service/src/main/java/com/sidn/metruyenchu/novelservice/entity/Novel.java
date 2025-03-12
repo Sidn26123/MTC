@@ -11,9 +11,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -77,6 +75,7 @@ public class Novel {
     ProgressStatus progressStatus = ProgressStatus.IN_PROGRESS;
 
     @Builder.Default
+    @Column(columnDefinition = "FLOAT DEFAULT 0.0")
     Float avgRate = 0.0f;
 
     @Builder.Default
@@ -109,7 +108,7 @@ public class Novel {
     List<NovelWorldScene> novelWorldScenes;
 
     @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL)
-    List<NovelMainCharTrait> novelMainCharTraits;
+    List<NovelMainCharacterTrait> novelMainCharacterTraits;
 
     @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL)
     List<NovelGenre> novelGenres;

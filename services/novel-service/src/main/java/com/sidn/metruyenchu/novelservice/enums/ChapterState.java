@@ -1,5 +1,9 @@
 package com.sidn.metruyenchu.novelservice.enums;
 
-public enum ChapterStatusEnum {
-    CREATED, PENDING, PUBLIC, UNLOCK_REQUIRED
+public enum ChapterState {
+    CREATED, PENDING, SUSPENDED, REVIEWING
 }
+
+
+
+

@@ -11,16 +11,24 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
+@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
+    uses = {NovelAuthorMapper.class})
 public interface NovelMapper {
 
-    @Mapping(source = "name", target = "name")
-    @Mapping(source = "novelCoverImage", target = "novelCoverImage")
+//    @Mapping(source = "name", target = "name")
+//    @Mapping(source = "novelCoverImage", target = "novelCoverImage")
     @Mapping(ignore = true, target = "status")
+//    @Mapping(source = "authorId", target = "author")
     Novel toNovel(NovelCreationRequest request);
 
     @Mapping(ignore = true, target = "status")
+    Novel toNovel(Object request);
+
+    @Mapping(ignore = true, target = "status")
     NovelResponse toNovelResponse(Novel novel);
+
+    @Mapping(ignore = true, target = "status")
+    NovelResponse toNovelResponse(Object novel);
 
     List<NovelResponse> toNovelResponses(List<Novel> novels);
 

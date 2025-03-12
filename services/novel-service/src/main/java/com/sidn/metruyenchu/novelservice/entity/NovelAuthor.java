@@ -7,6 +7,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -26,9 +27,11 @@ public class NovelAuthor {
     @Column(nullable = false, length = 256)
     String name;
 
-    @Column(nullable = true)
+    @Column
     String profile;
 
+    @OneToMany(mappedBy = "author")
+    List<Novel> novels;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

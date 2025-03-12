@@ -4,6 +4,25 @@ spring:
   application:
     name: novel-service
 
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: false
 server:
   servlet:
     context-path: /novel
+
+#logging:
+#  level:
+#    org:
+#      hibernate:
+#        SQL: debug
+#        type:
+#          descriptor:
+#            sql:
+#                BasicBinder: trace
+#    net:
+#        ttddyy:
+#          dsproxy:
+#            listener: DEBUG

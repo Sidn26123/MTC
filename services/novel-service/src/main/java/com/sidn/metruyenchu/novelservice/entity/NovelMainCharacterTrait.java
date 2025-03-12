@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-public class NovelMainCharTrait {
+public class NovelMainCharacterTrait {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;

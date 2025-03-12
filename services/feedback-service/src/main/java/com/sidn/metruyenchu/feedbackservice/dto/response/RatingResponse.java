@@ -9,15 +9,15 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ReviewResponse {
+public class RatingResponse {
     String id;
     String content;
-    String reviewer;
+    String ratedBy;
     String reviewInNovelId;
     Integer lastReadChapterId;
     Float rating;
-    Integer likeCount;
-    Integer dislikeCount;
+    Integer totalLikes;
+    Integer totalDislikes;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
     Boolean isDeleted;

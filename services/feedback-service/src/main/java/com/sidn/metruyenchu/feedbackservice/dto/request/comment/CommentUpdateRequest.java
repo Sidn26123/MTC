@@ -1,10 +1,8 @@
-package com.sidn.metruyenchu.feedbackservice.dto.request;
+package com.sidn.metruyenchu.feedbackservice.dto.request.comment;
 
 import com.sidn.metruyenchu.feedbackservice.enums.FeedbackType;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-
-import java.time.LocalDateTime;
 
 @Data
 @NoArgsConstructor
