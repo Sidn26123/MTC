@@ -3,23 +3,18 @@ package com.sidn.metruyenchu.feedbackservice.dto.request;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDateTime;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class CommentUpdateRequest {
+public class RatingUpdateRequest {
     String content;
-
-    String commentInNovelId;
-    String commentInChapterId;
-    String commentParentId;
-
-    Integer likeCount;
-    Integer replyCount;
-
+    String reviewInNovelId;
+    Integer lastReadChapterId;
+    Float rating;
+    Integer totalLikes;
+    Integer totalDislikes;
     Boolean isDeleted;
     Boolean isHidden;
 }

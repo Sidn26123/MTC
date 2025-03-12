@@ -1,5 +1,6 @@
 package com.sidn.metruyenchu.feedbackservice.dto.request;
 
+import com.sidn.metruyenchu.feedbackservice.enums.FeedbackType;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -8,17 +9,14 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ReviewCreationRequest {
-    String content;
+public class LikeCreationRequest {
+    String likedBy;
 
-    String reviewer;
+    String parentId;
 
-    String targetId;
+    FeedbackType feedbackType;
 
-    String reviewInNovelId;
+    Boolean isLiked;
 
-    String lastReadChapterId;
-
-    Float rating;
 
 }

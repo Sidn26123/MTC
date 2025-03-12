@@ -8,13 +8,17 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ReviewUpdateRequest {
+public class RatingCreationRequest {
     String content;
+
+    String ratedBy;
+
+    String targetId;
+
     String reviewInNovelId;
-    Integer lastReadChapterId;
+
+    String lastReadChapterId;
+
     Float rating;
-    Integer likeCount;
-    Integer dislikeCount;
-    Boolean isDeleted;
-    Boolean isHidden;
+
 }
