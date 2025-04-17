@@ -38,7 +38,9 @@ public class Chapter {
     @Builder.Default
     Integer amountToUnlock = 0;
 
+    String content;
 
+    Integer totalComments;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

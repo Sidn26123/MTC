@@ -4,6 +4,7 @@ import com.sidn.metruyenchu.feedbackservice.dto.ApiResponse;
 import com.sidn.metruyenchu.feedbackservice.dto.PageResponse;
 import com.sidn.metruyenchu.feedbackservice.dto.request.comment.CommentCreationRequest;
 import com.sidn.metruyenchu.feedbackservice.dto.request.comment.CommentInChapterGetRequest;
+import com.sidn.metruyenchu.feedbackservice.dto.request.comment.CommentOfNovelGetRequest;
 import com.sidn.metruyenchu.feedbackservice.dto.request.comment.CommentUpdateRequest;
 import com.sidn.metruyenchu.feedbackservice.dto.response.CommentResponse;
 import com.sidn.metruyenchu.feedbackservice.service.CommentService;
@@ -55,12 +56,25 @@ public class CommentController {
         return commentService.updateComment(commentId, request);
     }
 
-    @PostMapping("/chapter")
+    @GetMapping("/chapter")
     ApiResponse<PageResponse<CommentResponse>> getCommentsInChapter(
             @ModelAttribute CommentInChapterGetRequest request
     ) {
         return ApiResponse.<PageResponse<CommentResponse>>builder()
                 .result(commentService.getCommentInChapter(request))
+                .build();
+    }
+
+    @GetMapping("/novel/{novelSlug}")
+    ApiResponse<PageResponse<CommentResponse>> getCommentsInNovel(
+            @PathVariable String novelSlug,
+            @ModelAttribute CommentOfNovelGetRequest request
+
+    ) {
+//        CommentOfNovelGetRequest request = CommentOfNovelGetRequest.builder().build();
+        request.setNovelSlug(novelSlug);
+        return ApiResponse.<PageResponse<CommentResponse>>builder()
+                .result(commentService.getCommentInNovel(request))
                 .build();
     }
 

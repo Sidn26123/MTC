@@ -2,8 +2,11 @@ package com.sidn.metruyenchu.novelservice.controller;
 
 import com.sidn.metruyenchu.novelservice.dto.ApiResponse;
 import com.sidn.metruyenchu.novelservice.dto.PageResponse;
+import com.sidn.metruyenchu.novelservice.dto.request.chapter.ChapterContentGetRequest;
 import com.sidn.metruyenchu.novelservice.dto.request.chapter.ChapterCreationRequest;
+import com.sidn.metruyenchu.novelservice.dto.request.chapter.ChapterUpdateAmountFieldRequest;
 import com.sidn.metruyenchu.novelservice.dto.response.ChapterResponse;
+import com.sidn.metruyenchu.novelservice.dto.response.chapter.ChapterContentResponse;
 import com.sidn.metruyenchu.novelservice.service.ChapterService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -82,6 +85,29 @@ public class ChapterController {
                 .result(chapterService.getChaptersByNovelId(novelId, page, size))
                 .build();
     }
+
+
+    @GetMapping("/novel/{novelId}/chapter/{chapterId}/content")
+    ApiResponse<String> getChapterContent(@PathVariable String novelId, @PathVariable String chapterId, @RequestBody ChapterContentGetRequest request){
+        request.setChapterId(chapterId);
+
+        return ApiResponse.<String>builder()
+                .result(chapterService.getRawChapterContent(request))
+                .build();
+    }
+
+    @GetMapping("/truyen/{novelSlug}/chuong-{chapterIdx}")
+    ApiResponse<ChapterContentResponse> getChapterContent(@PathVariable String novelSlug, @PathVariable Integer chapterIdx){
+        ChapterContentGetRequest request = ChapterContentGetRequest.builder().build();
+        request.setNovelSlug(novelSlug);
+        request.setChapterIdx(chapterIdx);
+
+        return ApiResponse.<ChapterContentResponse>builder()
+                .result(chapterService.getChapterContent(request))
+                .build();
+    }
+
+
 
     @GetMapping("/novel")
     ApiResponse<PageResponse<ChapterResponse>> getNovels(

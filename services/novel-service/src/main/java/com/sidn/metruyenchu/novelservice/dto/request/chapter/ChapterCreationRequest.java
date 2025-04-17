@@ -18,6 +18,7 @@ public class ChapterCreationRequest {
     String name;
     String publisher;
     Integer chapterIdx;
+    String content;
     ChapterState status;
     List<String> chapterStatus;
     String novelId;

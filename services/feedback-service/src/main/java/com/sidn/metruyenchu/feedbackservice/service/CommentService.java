@@ -1,9 +1,8 @@
 package com.sidn.metruyenchu.feedbackservice.service;
 
 import com.sidn.metruyenchu.feedbackservice.dto.PageResponse;
-import com.sidn.metruyenchu.feedbackservice.dto.request.comment.CommentCreationRequest;
-import com.sidn.metruyenchu.feedbackservice.dto.request.comment.CommentInChapterGetRequest;
-import com.sidn.metruyenchu.feedbackservice.dto.request.comment.CommentUpdateRequest;
+import com.sidn.metruyenchu.feedbackservice.dto.request.comment.*;
+import com.sidn.metruyenchu.feedbackservice.dto.request.feign.ChapterUpdateAmountFieldRequest;
 import com.sidn.metruyenchu.feedbackservice.dto.response.CommentResponse;
 import com.sidn.metruyenchu.feedbackservice.dto.response.feign.ChapterResponse;
 import com.sidn.metruyenchu.feedbackservice.dto.response.feign.NovelResponse;
@@ -44,6 +43,7 @@ public class CommentService {
 
     NovelClient novelClient;
 
+
     public CommentResponse getComment(String commentId) {
         return commentMapper.toCommentResponse(
                 commentRepository.findById(commentId).orElseThrow(() -> new RuntimeException("User not found"))
@@ -71,7 +71,12 @@ public class CommentService {
         ChapterResponse chapterResponse = callFeignGetChapterInfo(novelClient, request.getCommentedInChapterId()).getResult();
 
         comment = commentRepository.save(comment);
-
+        novelClient.updateChapterInfo(
+                ChapterUpdateAmountFieldRequest.builder()
+                        .totalComments(1)
+                        .build(),
+                request.getCommentedInChapterId()
+        );
 //        try{
 //            comment = commentRepository.save(comment);
 //        } catch (DataIntegrityViolationException exception){
@@ -105,10 +110,40 @@ public class CommentService {
     }
 
     public PageResponse<CommentResponse> getCommentInChapter(CommentInChapterGetRequest request){
-        Sort sort = Sort.by(Sort.Direction.DESC, "created_at");
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
         Pageable pageable = PageRequest.of(request.getPage() - 1, request.getSize(), sort);
 
         Page<Comment> comments = commentRepository.findAllByCommentedInChapterId(request.getChapterId(), pageable);
+        List<CommentResponse> commentResponses = comments.map(commentMapper::toCommentResponse).toList();
+        return PageResponse.<CommentResponse>builder()
+                .currentPage(request.getPage())
+                .pageSize(request.getSize())
+                .totalPages(comments.getTotalPages())
+                .totalElements(comments.getTotalElements())
+                .data(commentResponses)
+                .build();
+    }
+
+    public PageResponse<CommentResponse> getCommentInNovel(CommentOfNovelGetRequest request){
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
+        Pageable pageable = PageRequest.of(request.getPage() - 1, request.getSize(), sort);
+
+        Page<Comment> comments = commentRepository.findAllByCommentedInNovelId(request.getNovelId(), pageable);
+        List<CommentResponse> commentResponses = comments.map(commentMapper::toCommentResponse).toList();
+        return PageResponse.<CommentResponse>builder()
+                .currentPage(request.getPage())
+                .pageSize(request.getSize())
+                .totalPages(comments.getTotalPages())
+                .totalElements(comments.getTotalElements())
+                .data(commentResponses)
+                .build();
+    }
+
+    public PageResponse<CommentResponse> getCommentOfUser(CommentOfUserGetRequest request){
+        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
+        Pageable pageable = PageRequest.of(request.getPage() - 1, request.getSize(), sort);
+
+        Page<Comment> comments = commentRepository.findAllByCommentedBy(request.getUserId(), pageable);
         List<CommentResponse> commentResponses = comments.map(commentMapper::toCommentResponse).toList();
         return PageResponse.<CommentResponse>builder()
                 .currentPage(request.getPage())

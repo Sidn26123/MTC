@@ -6,6 +6,7 @@ import org.springframework.http.HttpStatusCode;
 
 @Getter
 public enum ErrorCode {
+    RUNTIME_EXCEPTION(9998, "Lỗi không xác định", HttpStatus.BAD_REQUEST),
     USER_EXISTED(1001, "Người dùng đã tồn tại!", HttpStatus.INTERNAL_SERVER_ERROR),
     UNKNOWN_ERROR(9999, "Lỗi không xác định", HttpStatus.BAD_REQUEST),
     OBJECT_NOT_FOUND(1002, "Không tìm thấy đối tượng", HttpStatus.NOT_FOUND),
@@ -83,6 +84,7 @@ public enum ErrorCode {
     DUPLICATE_TRANSACTION(6006, "Giao dịch trùng lặp", HttpStatus.BAD_REQUEST),
     PAYMENT_VERIFICATION_FAILED(6007, "Xác minh thanh toán thất bại", HttpStatus.FORBIDDEN),
     FILE_NOT_FOUND(7001, "Tệp tin không tồn tại", HttpStatus.NOT_FOUND),
+    FILE_ALREADY_EXISTS(7006, "Tệp tin đã tồn tại", HttpStatus.BAD_REQUEST),
     INVALID_FILE_TYPE(7002, "Loại tệp không hợp lệ", HttpStatus.BAD_REQUEST),
     FILE_UPLOAD_FAILED(7003, "Tải tệp lên thất bại", HttpStatus.INTERNAL_SERVER_ERROR),
     FILE_SIZE_EXCEEDED(7004, "Dung lượng tệp vượt quá giới hạn {max} MB", HttpStatus.BAD_REQUEST),
@@ -110,6 +112,7 @@ public enum ErrorCode {
 
     NOVEL_TITLE_TOO_SHORT(2018, "Tên truyện quá ngắn. Phải có ít nhất {min} ký tự", HttpStatus.BAD_REQUEST),
     NOVEL_TITLE_TOO_LONG(2019, "Tên truyện quá dài. Tối đa {max} ký tự", HttpStatus.BAD_REQUEST),
+    FILE_UPDATE_FAILED(7007, "Cập nhật tệp tin thất bại", HttpStatus.INTERNAL_SERVER_ERROR),
     INVALID_CHAPTER_ORDER(2020, "Số thứ tự chương không hợp lệ", HttpStatus.BAD_REQUEST),
     CHATBOT_SERVICE_UNAVAILABLE(4006, "Chatbot đang bảo trì. Vui lòng thử lại sau", HttpStatus.SERVICE_UNAVAILABLE),
     CHATBOT_INVALID_INPUT(4007, "Dữ liệu nhập vào không hợp lệ", HttpStatus.BAD_REQUEST),
@@ -140,6 +143,9 @@ public enum ErrorCode {
     INVALID_FOLDER_TYPE(7010, "Loại thư mục không hợp lệ", HttpStatus.BAD_REQUEST),
     CHAPTER_ID_FOLDER_NOT_FOUND(7011, "Thư mục chứa chương không tồn tại", HttpStatus.NOT_FOUND),
     CHAPTER_ID_FOLDER_ALREADY_EXISTS(7012, "Thư mục chứa chương đã tồn tại", HttpStatus.BAD_REQUEST),
+    ILLEGAL_STATE(7013, "Trạng thái bất hợp lệ", HttpStatus.BAD_REQUEST),
+
+
 //    // 1. General Errors
 //    UNKNOWN_ERROR(9999, "Lỗi không xác định", HttpStatus.BAD_REQUEST),
 //    INVALID_KEY(1, "Message key không hợp lệ", HttpStatus.BAD_REQUEST),

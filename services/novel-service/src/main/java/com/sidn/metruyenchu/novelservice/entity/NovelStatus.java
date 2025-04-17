@@ -17,7 +17,6 @@ import java.util.Set;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-
 public class NovelStatus {
     /**
      * Trạng thái truyện

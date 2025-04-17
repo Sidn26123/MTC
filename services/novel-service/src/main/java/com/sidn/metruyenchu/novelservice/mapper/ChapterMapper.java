@@ -2,6 +2,7 @@ package com.sidn.metruyenchu.novelservice.mapper;
 
 import com.sidn.metruyenchu.novelservice.dto.request.chapter.ChapterCreationRequest;
 import com.sidn.metruyenchu.novelservice.dto.response.ChapterResponse;
+import com.sidn.metruyenchu.novelservice.dto.response.chapter.ChapterContentResponse;
 import com.sidn.metruyenchu.novelservice.entity.Chapter;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -17,4 +18,6 @@ public interface ChapterMapper {
     ChapterResponse toChapterResponse(Chapter chapter);
 
     List<ChapterResponse> toChapterResponses(List<Chapter> chapters);
+
+    ChapterContentResponse toChapterContentResponse(Chapter chapter);
 }

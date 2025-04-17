@@ -1,6 +1,6 @@
 package com.sidn.metruyenchu.fileservice.dto.request;
 
-import com.sidn.metruyenchu.fileservice.enums.FilePurposeEnum;
+import com.sidn.metruyenchu.fileservice.enums.FileCategoryEnum;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -15,6 +15,6 @@ public class FilePathGetRequest {
     String chapterId;
     String fileName;
 
-    FilePurposeEnum type;
+    FileCategoryEnum type;
 
 }

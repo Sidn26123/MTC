@@ -7,6 +7,7 @@ import com.sidn.metruyenchu.fileservice.exception.AppException;
 import com.sidn.metruyenchu.fileservice.exception.ErrorCode;
 import jakarta.validation.ConstraintViolation;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 //import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -123,6 +124,31 @@ public class GlobalExceptionHandler {
                         .build()
         );
     }
+
+
+    @ExceptionHandler(value = IllegalStateException.class)
+    ResponseEntity<ApiResponse> handleIllegalStateException(IOException exception){
+        ErrorCode errorCode = ErrorCode.ILLEGAL_STATE;
+
+        return ResponseEntity.status(errorCode.getStatusCode()).body(
+                ApiResponse.builder()
+                        .code(errorCode.getCode())
+                        .message(errorCode.getMessage())
+                        .build()
+        );
+    }
+
+//    @ExceptionHandler(RuntimeException.class)
+//    public ResponseEntity<ApiResponse> handlingRuntimeException(RuntimeException ex) {
+//        ErrorCode errorCode = ErrorCode.RUNTIME_EXCEPTION;
+//        ApiResponse apiResponse = new ApiResponse();
+//
+//        apiResponse.setCode(errorCode.getCode());
+//        apiResponse.setMessage(errorCode.getMessage());
+//
+//
+//        return ResponseEntity.badRequest().body(apiResponse);
+//    }
 
     private String mapAttribute(String message, Map<String, Object> attributes){
         String minValue = String.valueOf(attributes.get(MIN_ATTRIBUTE));

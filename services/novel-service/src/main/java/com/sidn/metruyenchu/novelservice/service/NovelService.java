@@ -5,12 +5,16 @@ import com.sidn.metruyenchu.novelservice.dto.request.novel.NovelFilterRequest;
 import com.sidn.metruyenchu.novelservice.dto.request.novel.NovelCreationRequest;
 import com.sidn.metruyenchu.novelservice.dto.request.novel.NovelUpdateRequest;
 import com.sidn.metruyenchu.novelservice.dto.response.*;
+import com.sidn.metruyenchu.novelservice.dto.response.chapter.ChapterPublishCheckResponse;
+import com.sidn.metruyenchu.novelservice.dto.response.novel.NovelCanPublishResponse;
 import com.sidn.metruyenchu.novelservice.entity.*;
+import com.sidn.metruyenchu.novelservice.enums.NovelState;
 import com.sidn.metruyenchu.novelservice.exception.AppException;
 import com.sidn.metruyenchu.novelservice.exception.ErrorCode;
 import com.sidn.metruyenchu.novelservice.mapper.*;
 import com.sidn.metruyenchu.novelservice.repository.*;
 import com.sidn.metruyenchu.novelservice.spectification.NovelSpecification;
+import com.sidn.metruyenchu.novelservice.utils.PageUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -20,6 +24,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.function.BiFunction;
@@ -44,6 +49,7 @@ public class NovelService {
     SectRepository sectRepository;
     WorldSceneRepository worldSceneRepository;
     NovelAuthorRepository novelAuthorRepository;
+    ChapterService chapterService;
 
     SectMapper sectMapper;
     WorldSceneMapper worldSceneMapper;
@@ -60,8 +66,7 @@ public class NovelService {
     public PageResponse<NovelResponse> getNovels(
             NovelFilterRequest request
     ) {
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
-        Pageable pageable = PageRequest.of(request.getPage() - 1, request.getSize(), sort);
+        Pageable pageable = PageUtils.from(request);
 
         Page<Novel> novels = novelRepository.findAll(NovelSpecification.filter(request), pageable);
 
@@ -88,6 +93,7 @@ public class NovelService {
     }
 
 
+    @Transactional
     public NovelResponse createNovel(NovelCreationRequest request){
         Novel novel = novelMapper.toNovel(request);
 
@@ -95,7 +101,7 @@ public class NovelService {
         String userId = getUserIdFromToken(getTokenFromContext());
 
         novel.setCurrentPublisher(userId);
-
+        novel.setNovelCoverImage(getDefaultCoverImageUrl());
         try{
             novel = novelRepository.save(novel);
         } catch (Exception exception) {
@@ -116,12 +122,77 @@ public class NovelService {
 
         }
 
+        //Nếu có image cover
+//        if (request.getNovelCoverImage() != null){
+//
+//        }
         response = fillData(novel, request, response);
         log.info(response.getAuthor().getName());
         return response;
 
     }
+    public String getDefaultCoverImageUrl(){
+        return "http://localhost:8889/api/v1/file/files/media/download/7e1a8df0-da25-45b8-b306-9cf34ca5a761.jpg";
+    }
 
+    public NovelCanPublishResponse checkNovelCanPublish(String novelId){
+        Novel novel = novelRepository.findById(novelId)
+                .orElseThrow(() -> new AppException(ErrorCode.NOVEL_NOT_FOUND));
+
+        int totalChapter = chapterService.getTotalChaptersByNovelId(novelId);
+
+        NovelCanPublishResponse response = NovelCanPublishResponse.builder()
+                .canPublish(true)
+                .build();
+        if (totalChapter < 1){
+            response.setMessage(ErrorCode.NOVEL_NOT_HAVE_ENOUGH_CHAPTER.getMessage());
+            response.setCanPublish(false);
+            return response;
+        }
+
+        if (novel.getNovelState() == NovelState.PENDING){
+            response.setMessage(ErrorCode.NOVEL_IS_PENDING.getMessage());
+            response.setCanPublish(false);
+            return response;
+        }else if (novel.getNovelState() == NovelState.PUBLISHED) {
+            response.setMessage(ErrorCode.NOVEL_IS_PUBLISHED.getMessage());
+            response.setCanPublish(false);
+            return response;
+        }else if (novel.getNovelState() != NovelState.CREATED){
+            response.setMessage("Novel is not in CREATED state");
+            response.setCanPublish(false);
+            return response;
+        }
+
+        List<ChapterPublishCheckResponse> chapterResponses = chapterService.checkChaptersSuitForPublish(novel.getChapters());
+        if (chapterResponses.size() > 0){
+            response.setCanPublish(false);
+            response.setErrors(chapterResponses);
+        } else {
+            response.setCanPublish(true);
+        }
+
+        return response;
+    }
+
+    public NovelResponse requestPublishNovel(String novelId){
+        Novel novel = novelRepository.findById(novelId)
+                .orElseThrow(() -> new AppException(ErrorCode.NOVEL_NOT_FOUND));
+
+        if (novel.getNovelState() != NovelState.CREATED){
+            throw new AppException(ErrorCode.NOVEL_NOT_IN_CREATED_STATE);
+        }
+
+        novel.setNovelState(NovelState.PENDING);
+
+        try {
+            novel = novelRepository.save(novel);
+        } catch (Exception exception){
+            throw new AppException(ErrorCode.UNKNOWN_ERROR);
+        }
+
+        return fetchDataMissOfNovel(novelMapper.toNovelResponse(novel));
+    }
 
 //    private void createNovelManyRelation(Novel novel, )
     private NovelResponse fillData(Novel novel, NovelCreationRequest request, NovelResponse response) {
@@ -197,7 +268,7 @@ public class NovelService {
         novel.setNovelWorldScenes(novelWorldScenes);
 
         List<Sect> sects = new ArrayList<>();
-        sectRepository.findByIdIn(request.getSectIds()).ifPresent(sects::add);
+        sects = sectRepository.findByIdIn(request.getSectIds());
 
         List<NovelSect> novelSects = new ArrayList<>();
         for (Sect sect : sects) {
@@ -301,7 +372,7 @@ public class NovelService {
         novel.setNovelWorldScenes(novelWorldScenes);
 
         List<Sect> sects = new ArrayList<>();
-        sectRepository.findByIdIn(request.getSectIds()).ifPresent(sects::add);
+        sects =sectRepository.findByIdIn(request.getSectIds());
 
         List<NovelSect> novelSects = new ArrayList<>();
         for (Sect sect : sects) {

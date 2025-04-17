@@ -1,10 +1,12 @@
 package com.sidn.metruyenchu.novelservice.service;
 
 import com.sidn.metruyenchu.novelservice.dto.PageResponse;
+import com.sidn.metruyenchu.novelservice.dto.request.chapter.ChapterContentGetRequest;
 import com.sidn.metruyenchu.novelservice.dto.request.chapter.ChapterCreationRequest;
 import com.sidn.metruyenchu.novelservice.dto.response.ChapterResponse;
 import com.sidn.metruyenchu.novelservice.dto.response.ChapterStatusResponse;
-import com.sidn.metruyenchu.novelservice.dto.response.NovelResponse;
+import com.sidn.metruyenchu.novelservice.dto.response.chapter.ChapterContentResponse;
+import com.sidn.metruyenchu.novelservice.dto.response.chapter.ChapterPublishCheckResponse;
 import com.sidn.metruyenchu.novelservice.entity.Chapter;
 import com.sidn.metruyenchu.novelservice.entity.ChapterStatus;
 import com.sidn.metruyenchu.novelservice.entity.ChapterStatusDetail;
@@ -15,6 +17,7 @@ import com.sidn.metruyenchu.novelservice.mapper.ChapterMapper;
 import com.sidn.metruyenchu.novelservice.repository.ChapterRepository;
 import com.sidn.metruyenchu.novelservice.repository.ChapterStatusRepository;
 import com.sidn.metruyenchu.novelservice.repository.NovelRepository;
+import com.sidn.metruyenchu.novelservice.repository.httpclient.FileClient;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -24,7 +27,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +42,7 @@ public class ChapterService {
     ChapterMapper  chapterMapper;
     ChapterStatusRepository chapterStatusRepository;
 
+    FileClient fileClient;
 
     public ChapterResponse getChapter(String chapterId) {
         log.info("chapterId: {}", chapterId);
@@ -49,8 +52,7 @@ public class ChapterService {
     }
 
     public PageResponse<ChapterResponse> getAllChapters(int page, int size) {
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
-        Pageable pageable = PageRequest.of(page - 1, size, sort);
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
 
         var pageData = chapterRepository.findAll(pageable);
 
@@ -189,5 +191,81 @@ public class ChapterService {
         }
 
         return chapterStatuses;
+    }
+
+    public String getRawChapterContent(ChapterContentGetRequest request) {
+        String content = fileClient.getChapterContent(request.getChapterId());
+
+
+        return content;
+    }
+
+    public ChapterContentResponse getChapterContent(ChapterContentGetRequest request) {
+        Chapter chapter = chapterRepository.findByNovelSlugAndChapterIdxAndIsDeletedIsFalse(
+                request.getNovelSlug(),
+                request.getChapterIdx()
+        ).orElseThrow(() -> new AppException(ErrorCode.CHAPTER_NOT_FOUND));
+
+
+        return chapterMapper.toChapterContentResponse(chapter);
+    }
+
+    public ChapterPublishCheckResponse checkChapterSuitForPublish(String chapterId) {
+        Chapter chapter = chapterRepository.findByIdAndIsDeletedIsFalse(chapterId)
+                .orElseThrow(() -> new AppException(ErrorCode.CHAPTER_NOT_FOUND));
+        if (chapter.getContent().length() < 100) {
+            return ChapterPublishCheckResponse.builder()
+                    .chapterId(chapter.getId())
+                    .errorMessage("Nội dung chương phải lớn hơn 100 ký tự")
+                    .suitable(false)
+                    .build();
+        }else if (chapter.getName().length() < 10) {
+            return ChapterPublishCheckResponse.builder()
+                    .chapterId(chapter.getId())
+                    .errorMessage("Tiêu đề chương phải lớn hơn 10 ký tự")
+                    .suitable(false)
+                    .build();
+        }
+        return ChapterPublishCheckResponse.builder()
+                .chapterId(chapter.getId())
+                .suitable(true)
+                .build();
+    }
+    public List<ChapterPublishCheckResponse> checkChaptersSuitForPublishById(List<String> chapterIds) {
+        List<ChapterPublishCheckResponse> responses = new ArrayList<>();
+        for (String chapterId : chapterIds) {
+            Chapter chapter = chapterRepository.findByIdAndIsDeletedIsFalse(chapterId)
+                    .orElseThrow(() -> new AppException(ErrorCode.CHAPTER_NOT_FOUND));
+            checkContentChapterConstraits(responses, chapter);
+        }
+        return responses;
+    }
+
+    public List<ChapterPublishCheckResponse> checkChaptersSuitForPublish(List<Chapter> chapters){
+        List<ChapterPublishCheckResponse> responses = new ArrayList<>();
+        for (Chapter chapter : chapters) {
+            checkContentChapterConstraits(responses, chapter);
+        }
+        return responses;
+    }
+
+    private void checkContentChapterConstraits(List<ChapterPublishCheckResponse> responses, Chapter chapter) {
+        if (chapter.getContent().length() < 10) {
+            responses.add(ChapterPublishCheckResponse.builder()
+                    .chapterId(chapter.getId())
+                    .errorMessage("Nội dung chương phải lớn hơn 10 ký tự")
+                    .suitable(false)
+                    .build());
+        }else if (chapter.getName().length() < 10) {
+            responses.add(ChapterPublishCheckResponse.builder()
+                    .chapterId(chapter.getId())
+                    .errorMessage("Tiêu đề chương phải lớn hơn 10 ký tự")
+                    .suitable(false)
+                    .build());
+        }
+    }
+
+    public int getTotalChaptersByNovelId(String novelId) {
+        return chapterRepository.countByNovelId(novelId);
     }
 }

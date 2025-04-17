@@ -33,4 +33,12 @@ public class TokenUtils {
         }
         return null;
     }
+
+    public static String getUserIdFromContext() {
+        String token = getTokenFromContext();
+        if (token != null) {
+            return getUserIdFromToken(token);
+        }
+        return null;
+    }
 }

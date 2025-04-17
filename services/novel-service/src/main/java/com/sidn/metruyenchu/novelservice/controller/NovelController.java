@@ -1,18 +1,29 @@
 package com.sidn.metruyenchu.novelservice.controller;
 
 import com.sidn.metruyenchu.novelservice.dto.ApiResponse;
+import com.sidn.metruyenchu.novelservice.dto.BaseFilterRequest;
 import com.sidn.metruyenchu.novelservice.dto.PageResponse;
 import com.sidn.metruyenchu.novelservice.dto.request.novel.CheckNovelExistedRequest;
 import com.sidn.metruyenchu.novelservice.dto.request.novel.NovelFilterRequest;
 import com.sidn.metruyenchu.novelservice.dto.request.novel.NovelCreationRequest;
 import com.sidn.metruyenchu.novelservice.dto.request.novel.NovelUpdateRequest;
+import com.sidn.metruyenchu.novelservice.dto.request.publish.NovelPublishRequestCreationRequest;
+import com.sidn.metruyenchu.novelservice.dto.request.publish.PublishRequestActionLogCreationRequest;
+import com.sidn.metruyenchu.novelservice.dto.request.publish.PublishRequestActionLogUpdateRequest;
 import com.sidn.metruyenchu.novelservice.dto.response.NovelResponse;
+import com.sidn.metruyenchu.novelservice.dto.response.novel.NovelCanPublishResponse;
+import com.sidn.metruyenchu.novelservice.dto.response.publish.NovelPublishRequestResponse;
+import com.sidn.metruyenchu.novelservice.dto.response.publish.PublishRequestActionLogResponse;
+import com.sidn.metruyenchu.novelservice.service.NovelPublishRequestService;
 import com.sidn.metruyenchu.novelservice.service.NovelService;
+import com.sidn.metruyenchu.novelservice.service.PublishRequestActionLogService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,7 +35,8 @@ import java.util.List;
 @Slf4j
 public class NovelController {
     NovelService novelService;
-
+    NovelPublishRequestService novelPublishRequestService;
+    PublishRequestActionLogService publishRequestActionLogService;
     @PostMapping("/create")
     ApiResponse<NovelResponse> createNovel(@Valid @RequestBody NovelCreationRequest request) {
         return ApiResponse.<NovelResponse>builder()
@@ -42,7 +54,7 @@ public class NovelController {
                 .build();
     }
 
-    @GetMapping("/novel")
+    @GetMapping("/filter")
     ApiResponse<PageResponse<NovelResponse>> getNovelByCategory(
 //            @RequestParam(value = "page", defaultValue = "1") int page,
 //            @RequestParam(value = "size", defaultValue = "10") int size,
@@ -141,5 +153,111 @@ public class NovelController {
                 .result(novelService.updateNovel(novelId, request))
                 .build();
     }
+
+    @GetMapping("/{novelId}/can-be-publish")
+    ApiResponse<NovelCanPublishResponse> canBePublish(@PathVariable String novelId) {
+        return ApiResponse.<NovelCanPublishResponse>builder()
+                .result(novelService.checkNovelCanPublish(novelId))
+                .build();
+    }
+
+    // ✅ Tạo mới publish request
+    @PostMapping("/publish-request")
+    public ApiResponse<NovelPublishRequestResponse> createNovelPublishRequest(
+            @Valid @RequestBody NovelPublishRequestCreationRequest request
+    ) {
+        return ApiResponse.<NovelPublishRequestResponse>builder()
+                .result(novelPublishRequestService.create(request))
+                .build();
+    }
+
+    // ✅ Lấy tất cả (không phân trang)
+    @GetMapping("/publish-request/all-request")
+    public ApiResponse<PageResponse<NovelPublishRequestResponse>> getAll(@ModelAttribute BaseFilterRequest request) {
+        return ApiResponse.<PageResponse<NovelPublishRequestResponse>>builder()
+                .result(novelPublishRequestService.getAll(request))
+                .build();
+    }
+
+    // ✅ Lấy theo requestedBy (có phân trang)
+//    @GetMapping("/by-user")
+//    public ApiResponse<PageResponse<NovelPublishRequestResponse>> getByRequestedBy(
+//            @RequestParam String username,
+//            @RequestParam(defaultValue = "1") int page,
+//            @RequestParam(defaultValue = "10") int size
+//    ) {
+//        return ResponseEntity.ok(novelPublishRequestService.getByRequestedBy());
+//    }
+
+//    // ✅ Lấy theo status (mặc định là PENDING)
+//    @GetMapping("/by-status")
+//    public ResponseEntity<PageResponse<NovelPublishRequestResponse>> getByStatus(BaseFilterRequest request) {
+//        return ResponseEntity.ok(novelPublishRequestService.getByPublishingStatus(request));
+//    }
+
+    // ✅ Lấy theo ID
+    @GetMapping("/publish-requested/{id}")
+    public ApiResponse<NovelPublishRequestResponse> getById(@PathVariable String id) {
+        return ApiResponse.<NovelPublishRequestResponse>builder()
+                .result(novelPublishRequestService.getById(id))
+                .build();
+    }
+
+    // ✅ Xoá theo ID
+    @DeleteMapping("/publish-requested/{id}")
+    public ApiResponse<Void> deleteById(@PathVariable String id) {
+        novelPublishRequestService.deleteById(id);
+        return ApiResponse.<Void>builder()
+                .build();
+    }
+
+    @GetMapping("/publish-request-action")
+    public ApiResponse<PageResponse<PublishRequestActionLogResponse>> getAllPublishRequestLog(@ModelAttribute BaseFilterRequest request) {
+        return ApiResponse.<PageResponse<PublishRequestActionLogResponse>>builder()
+                .result(publishRequestActionLogService.getAll(request))
+                .build();
+    }
+
+    @GetMapping("/publish-request-action/{id}")
+    public ApiResponse<PublishRequestActionLogResponse> getPublishRequestLogById(@PathVariable String id) {
+        return ApiResponse.<PublishRequestActionLogResponse>builder()
+                .result(publishRequestActionLogService.getById(id))
+                .build();
+    }
+
+    // ✅ Lấy danh sách đang publish
+
+    //Tajo
+    @PostMapping("/publish-request-action")
+    public ApiResponse<PublishRequestActionLogResponse> createPublishRequestActionLog(
+            @Valid @RequestBody PublishRequestActionLogCreationRequest request
+    ) {
+        return ApiResponse.<PublishRequestActionLogResponse>builder()
+                .result(publishRequestActionLogService.create(request))
+                .build();
+    }
+
+    @PutMapping("/publish-request-action/{id}")
+    public ApiResponse<PublishRequestActionLogResponse> updatePublishRequestActionLog(
+            @PathVariable String id,
+            @Valid @RequestBody PublishRequestActionLogUpdateRequest request
+    ) {
+        return ApiResponse.<PublishRequestActionLogResponse>builder()
+                .result(publishRequestActionLogService.update(id, request))
+                .build();
+    }
+
+
+
+
+//    @GetMapping("/publishing-novel")
+//    ApiResponse<List<NovelResponse>> getPublishingNovel() {
+//        return ApiResponse.<List<NovelResponse>>builder()
+//                .result(novelService.getPublishingNovel())
+//                .build();
+//    }
+
+
+    //Lay danh sach publish boi user
 
 }

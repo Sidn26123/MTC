@@ -34,7 +34,19 @@ public class WebClientConfiguration {
         return new CorsWebFilter(urlBasedCorsConfigurationSource);
     }
 
-
+//    @Bean
+//    CorsWebFilter corsWebFilter() {
+//        CorsConfiguration corsConfiguration = new CorsConfiguration();
+//        corsConfiguration.setAllowedOrigins(List.of("*")); // Chỉ định frontend cụ thể
+//        corsConfiguration.setAllowedHeaders(List.of("*"));
+//        corsConfiguration.setAllowedMethods(List.of("*"));
+//        corsConfiguration.setAllowCredentials(true); // Chỉ nên dùng nếu không đặt allowedOrigins là "*"
+//
+//        UrlBasedCorsConfigurationSource urlBasedCorsConfigurationSource = new UrlBasedCorsConfigurationSource();
+//        urlBasedCorsConfigurationSource.registerCorsConfiguration("/**", corsConfiguration);
+//
+//        return new CorsWebFilter(urlBasedCorsConfigurationSource);
+//    }
     @Bean
     IdentityClient identityClient(WebClient webClient) {
         HttpServiceProxyFactory httpServiceProxyFactory = HttpServiceProxyFactory

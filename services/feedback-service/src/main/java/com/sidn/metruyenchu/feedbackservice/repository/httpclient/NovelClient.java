@@ -2,16 +2,13 @@ package com.sidn.metruyenchu.feedbackservice.repository.httpclient;
 
 import com.sidn.metruyenchu.feedbackservice.configuration.AuthenticationRequestInterceptor;
 import com.sidn.metruyenchu.feedbackservice.dto.ApiResponse;
-import com.sidn.metruyenchu.feedbackservice.dto.request.feign.CheckChapterExistedRequest;
+import com.sidn.metruyenchu.feedbackservice.dto.request.feign.ChapterUpdateAmountFieldRequest;
 import com.sidn.metruyenchu.feedbackservice.dto.request.feign.CheckNovelExistedRequest;
 import com.sidn.metruyenchu.feedbackservice.dto.response.feign.ChapterResponse;
 import com.sidn.metruyenchu.feedbackservice.dto.response.feign.NovelResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
@@ -24,8 +21,7 @@ public interface NovelClient {
     @PostMapping(value = "/chapters/getChapterById", produces = MediaType.APPLICATION_JSON_VALUE)
     Optional<ApiResponse<ChapterResponse>> getChapter(@RequestBody String chapterId);
 
-//    @PostMapping(value = "/novel/updateRating", produces = MediaType.APPLICATION_JSON_VALUE)
-//    Optional<ApiResponse<NovelResponse>> updateRating(@RequestBody );
-
-//    @PostMapping(value = "/novels")
+    @PostMapping(value = "/novels/chapter/{chapterId}/info")
+    Optional<ApiResponse<Object>> updateChapterInfo(@RequestBody ChapterUpdateAmountFieldRequest chapterUpdateAmountFieldRequest,
+                                                         @PathVariable String chapterId);
 }

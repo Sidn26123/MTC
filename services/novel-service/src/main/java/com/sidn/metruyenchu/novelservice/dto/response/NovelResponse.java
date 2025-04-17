@@ -1,6 +1,7 @@
 package com.sidn.metruyenchu.novelservice.dto.response;
 
 import com.sidn.metruyenchu.novelservice.entity.NovelStatus;
+import com.sidn.metruyenchu.novelservice.enums.NovelState;
 import com.sidn.metruyenchu.novelservice.enums.NovelType;
 import com.sidn.metruyenchu.novelservice.enums.NovelVisibility;
 import com.sidn.metruyenchu.novelservice.enums.ProgressStatus;
@@ -32,9 +33,12 @@ public class NovelResponse {
     List<WorldSceneResponse> worldScenes;
     List<MainCharacterTraitResponse> mainCharacterTraits;
     List<SectResponse> sects;
+
     NovelType novelType;
     NovelVisibility novelVisibility;
-    ProgressStatus progressStatus = ProgressStatus.IN_PROGRESS;
+    NovelState novelState;
+    ProgressStatus progressStatus;
+
     Integer chapterReadToComment;
     Integer chapterReadToRate;
     Integer fullSetPurchaseDiscount;

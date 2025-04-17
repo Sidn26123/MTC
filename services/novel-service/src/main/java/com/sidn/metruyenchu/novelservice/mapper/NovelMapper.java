@@ -19,6 +19,7 @@ public interface NovelMapper {
 //    @Mapping(source = "novelCoverImage", target = "novelCoverImage")
     @Mapping(ignore = true, target = "status")
 //    @Mapping(source = "authorId", target = "author")
+    @Mapping(ignore = true, target = "novelCoverImage")
     Novel toNovel(NovelCreationRequest request);
 
     @Mapping(ignore = true, target = "status")

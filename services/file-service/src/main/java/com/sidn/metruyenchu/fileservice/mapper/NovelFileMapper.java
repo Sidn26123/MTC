@@ -1,9 +1,9 @@
 package com.sidn.metruyenchu.fileservice.mapper;
 
-import com.sidn.metruyenchu.fileservice.dto.request.ChapterUploadContentRequest;
+import com.sidn.metruyenchu.fileservice.dto.request.ChapterContentUploadRequest;
 import com.sidn.metruyenchu.fileservice.dto.request.NovelFileUpdateRequest;
 import com.sidn.metruyenchu.fileservice.dto.response.NovelFileResponse;
-import com.sidn.metruyenchu.fileservice.entity.NovelFile;
+import com.sidn.metruyenchu.fileservice.entity.NovelFileManagement;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
@@ -14,12 +14,12 @@ import java.util.List;
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 @EnableJpaAuditing
 public interface NovelFileMapper {
-    NovelFile toNovelFile(ChapterUploadContentRequest request);
+    NovelFileManagement toNovelFile(ChapterContentUploadRequest request);
 
-    NovelFileResponse toNovelFileResponse(NovelFile novelFile);
+    NovelFileResponse toNovelFileResponse(NovelFileManagement novelFileManagement);
 
-    List<NovelFileResponse> toNovelFileResponses(List<NovelFile> novelFiles);
+    List<NovelFileResponse> toNovelFileResponses(List<NovelFileManagement> novelFileManagements);
 
-    void updateNovelFile(@MappingTarget NovelFile novelFile, NovelFileUpdateRequest request);
+    void updateNovelFile(@MappingTarget NovelFileManagement novelFileManagement, NovelFileUpdateRequest request);
 
 }

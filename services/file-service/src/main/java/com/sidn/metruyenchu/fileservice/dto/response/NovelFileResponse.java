@@ -1,5 +1,6 @@
 package com.sidn.metruyenchu.fileservice.dto.response;
 
+import com.sidn.metruyenchu.fileservice.enums.FileCategoryEnum;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -12,8 +13,6 @@ public class NovelFileResponse {
     String id;
     String novelId;
     String chapterId;
-    String displayName;
-    String fileName;
     String relativePath;
-    String type;
+    FileCategoryEnum category;
 }

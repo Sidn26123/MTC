@@ -20,4 +20,6 @@ public class NovelUtils {
 
         return slug;
     }
+
+
 }

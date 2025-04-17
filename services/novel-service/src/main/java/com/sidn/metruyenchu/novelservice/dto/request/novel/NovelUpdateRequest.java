@@ -1,5 +1,6 @@
 package com.sidn.metruyenchu.novelservice.dto.request.novel;
 
+import com.sidn.metruyenchu.novelservice.enums.NovelState;
 import com.sidn.metruyenchu.novelservice.enums.NovelType;
 import com.sidn.metruyenchu.novelservice.enums.NovelVisibility;
 import lombok.*;
@@ -32,11 +33,14 @@ public class NovelUpdateRequest {
 
     String authorId;
 
+
     List<String> status;
 
     NovelType novelType;
 
     NovelVisibility novelVisibility;
+
+    NovelState novelState;
 
     List<String> genreIds;
 

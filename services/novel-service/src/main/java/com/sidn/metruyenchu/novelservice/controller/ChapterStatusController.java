@@ -36,7 +36,6 @@ public class ChapterStatusController {
 
     @GetMapping
     ApiResponse<List<ChapterStatusResponse>> getAllChapterStatus(){
-        log.info("abc");
         ApiResponse<ChapterStatusResponse> chapterStatusResponse = new ApiResponse<>();
         return ApiResponse.<List<ChapterStatusResponse>>builder()
                 .result(chapterStatusService.getAllChapterStatus())

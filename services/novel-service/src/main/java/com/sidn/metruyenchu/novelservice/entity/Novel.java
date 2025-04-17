@@ -1,5 +1,6 @@
 package com.sidn.metruyenchu.novelservice.entity;
 
+import com.sidn.metruyenchu.novelservice.enums.NovelState;
 import com.sidn.metruyenchu.novelservice.enums.NovelType;
 import com.sidn.metruyenchu.novelservice.enums.NovelVisibility;
 import com.sidn.metruyenchu.novelservice.enums.ProgressStatus;
@@ -44,7 +45,6 @@ public class Novel {
     @Column(nullable = false)
     String currentPublisher;
 
-    @Column(nullable = false, length = 256)
     String novelCoverImage;
 
     @Column(columnDefinition = "TEXT")
@@ -73,6 +73,11 @@ public class Novel {
     @Column(nullable = false)
     @Builder.Default
     ProgressStatus progressStatus = ProgressStatus.IN_PROGRESS;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    NovelState novelState = NovelState.CREATED; //trạng thái ban đầu
 
     @Builder.Default
     @Column(columnDefinition = "FLOAT DEFAULT 0.0")

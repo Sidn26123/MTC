@@ -114,6 +114,16 @@ public enum ErrorCode {
     OPERATION_NOT_ALLOWED(8002, "Hành động này không được phép", HttpStatus.FORBIDDEN),
     ACCOUNT_LOCKED(8003, "Tài khoản của bạn đã bị khóa", HttpStatus.FORBIDDEN),
     ACCOUNT_SUSPENDED(8004, "Tài khoản của bạn đã bị tạm ngưng", HttpStatus.FORBIDDEN),
+
+    NOVEL_IS_PENDING(8005, "Truyện đang chờ duyệt", HttpStatus.FORBIDDEN),
+    NOVEL_IS_REJECTED(8006, "Truyện đã bị từ chối", HttpStatus.FORBIDDEN),
+    NOVEL_IS_DELETED(8007, "Truyện đã bị xóa", HttpStatus.FORBIDDEN),
+    NOVEL_IS_PUBLISHED(8008, "Truyện đã được xuất bản", HttpStatus.FORBIDDEN),
+    NOVEL_NOT_IN_CREATED_STATE(8009, "Truyện không ở trạng thái đã tạo", HttpStatus.FORBIDDEN),
+    REQUEST_NOT_FOUND(8010, "Yêu cầu không tồn tại", HttpStatus.NOT_FOUND),
+    PUBLISH_REQUEST_ACTION_LOG_NOT_FOUND(8011, "Lỗi không tìm thấy hành động yêu cầu xuất bản", HttpStatus.NOT_FOUND),
+    NOVEL_NOT_HAVE_ENOUGH_CHAPTER(8012, "Truyện không có đủ chương để xuất bản", HttpStatus.BAD_REQUEST),
+
 //    // 1. General Errors
 //    UNKNOWN_ERROR(9999, "Lỗi không xác định", HttpStatus.BAD_REQUEST),
 //    INVALID_KEY(1, "Message key không hợp lệ", HttpStatus.BAD_REQUEST),
