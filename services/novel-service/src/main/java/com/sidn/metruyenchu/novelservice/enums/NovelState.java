@@ -1,16 +1,29 @@
 package com.sidn.metruyenchu.novelservice.enums;
 
-public enum NovelState {
-    CREATED, PENDING, SUSPENDED, REVIEWING, PUBLISHED, REJECTED, DELETED;
+import com.sidn.metruyenchu.novelservice.utils.EnumUtils;
+import lombok.Getter;
 
-    public static NovelState fromString(String state) {
-        for (NovelState novelState : NovelState.values()) {
-            if (novelState.name().equalsIgnoreCase(state)) {
-                return novelState;
-            }
-        }
-        throw new IllegalArgumentException("No enum constant " + NovelState.class.getCanonicalName() + "." + state);
+/**
+ * @author sidn
+ * Trạng thái truyện
+ */
+@Getter
+public enum NovelState implements EnumUtils<NovelState> {
+    CREATED("Khởi tạo"),
+    PENDING("Chờ duyệt"),
+    SUSPENDED("Tạm dừng"),
+    REVIEWING("Đang kiểm duyệt"),
+    PUBLISHED("Đã xuất bản"),
+    REJECTED("Bị từ chối"),
+    DELETED("Đã xóa");
+
+    private final String label;
+
+    NovelState(String label) {
+        this.label = label;
     }
 
-
+    public static NovelState from(String value) {
+        return EnumUtils.from(NovelState.class, value);
+    }
 }

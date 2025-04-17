@@ -1,5 +1,25 @@
 package com.sidn.metruyenchu.novelservice.enums;
 
-public enum ChapterStatGenericList {
-    VIEW_COUNT, TOTAL_COMMENT, AMOUNT_TO_UNLOCK
+import com.sidn.metruyenchu.novelservice.utils.EnumUtils;
+import lombok.Getter;
+
+/**
+ * @author sidn
+ * Các thống kê chương truyện (generic)
+ */
+@Getter
+public enum ChapterStatGenericList implements EnumUtils<ChapterStatGenericList> {
+    VIEW_COUNT("Lượt xem"),
+    TOTAL_COMMENT("Tổng bình luận"),
+    AMOUNT_TO_UNLOCK("Số xu để mở khóa");
+
+    private final String label;
+
+    ChapterStatGenericList(String label) {
+        this.label = label;
+    }
+
+    public static ChapterStatGenericList from(String value) {
+        return EnumUtils.from(ChapterStatGenericList.class, value);
+    }
 }
