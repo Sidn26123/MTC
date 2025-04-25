@@ -1,14 +1,18 @@
 import React from "react";
 import {Link} from "react-router";
 import MinialIntroduceNovelCard from "../../components/novel/MinialIntroduceNovelCard.jsx";
-import RatingDetail from "../../components/feedbacks/RatingDetail.jsx";
+import { RatingDetail } from "../../components/feedbacks/RatingDetail.jsx";
 import UserComment from "../../components/feedbacks/UserComment.jsx";
 import NovelFan from "../../components/feedbacks/NovelFan.jsx";
 import AdvertiseItem from "../../components/global/AdvertiseItem.jsx";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFlag } from '@fortawesome/free-regular-svg-icons';
+import { UserReport } from '../../components/feedbacks/Report.jsx';
+import ChapterListPanel from '../../components/novel/ChapterListPanel.jsx';
 
 const NovelOverviewPage= () => {
     const [mode, setMode] = React.useState("rating");
-
+    const [showReport, setShowReport] = React.useState(false);
     return (
         <>
             <div className={"px-20"}>
@@ -97,6 +101,10 @@ function NovelStat() {
         },
         name: "Cửu Tinh Bá Thể Quyết",
     }
+
+    const [showReport, setShowReport] = React.useState(false);
+    const [showRating, setShowRating] = React.useState(false);
+
     return (
         <>
             <div>
@@ -110,7 +118,12 @@ function NovelStat() {
                                  alt={"abc"}></img>
 
                         </div>
-                        <div className={"flex flex-col items-center mt-2 hover:cursor-pointer"}>
+                        {/*Report*/}
+                        <div className={"flex flex-row items-center mt-2 hover:cursor-pointer mb-2" }
+                            onClick={() => setShowReport(true)}>
+                            <div className={"mr-2"}>
+                                <FontAwesomeIcon icon={faFlag} />
+                            </div>
                             <div>
                                 Báo cáo
                             </div>
@@ -187,7 +200,8 @@ function NovelStat() {
                                 </span>
                             </div>
                             <div
-                                className={"flex flex-row relative items-center justify-between mr-5 border-1 border-gray-400 rounded px-1 hover:border-yellow-500 hover:cursor-pointer hover:text-yellow-500"}>
+                                className={"flex flex-row relative items-center justify-between mr-5 border-1 border-gray-400 rounded px-1 hover:border-yellow-500 hover:cursor-pointer hover:text-yellow-500"}
+                                onClick={() => setShowRating(true)}>
                                 <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
                                      xmlns:xlink="http://www.w3.org/1999/xlink"
                                      x="0px" y="0px" viewBox="0 0 122.88 101.37"
@@ -216,7 +230,7 @@ function NovelStat() {
                                 </span>
                                 <span className={"absolute -right-4 -top-4"}>
                                     <span
-                                        className="bg-yellow-400 inline-flex items-center justify-center min-w-6 h-6 ms-2 px-1 text-[10px] text-white rounded-full">
+                                        className="background-primary inline-flex items-center justify-center min-w-6 h-6 ms-2 px-1 text-[10px] text-white rounded-full">
                                         6580
                                     </span>
                                 </span>
@@ -417,6 +431,12 @@ function NovelStat() {
                     </div>
 
                 </div>
+                {showReport && (
+                    <UserReport onClose={()=>setShowReport(false)}/>
+                )}
+                {showRating && (
+                    <ChapterListPanel onClose={() => setShowRating(false)}/>
+                )}
             </div>
 
         </>
@@ -537,13 +557,13 @@ function CommentPart(){
             <div>
                 <div className="mb-6">
                     <div className="py-2 px-4 mb-4 bg-black rounded-lg rounded-t-lg border border-gray-500">
-    <textarea
-        rows="6"
-        className="px-0 w-full text-gray-300 focus:ring-0 focus:outline-none placeholder-gray-400 bg-black"
-        placeholder="Thảo luận ..."
-        required
-        style={{overflow: "hidden", overflowWrap: "break-word", resize: "none", textAlign: "start", height: "160px"}}
-    ></textarea>
+                        <textarea
+                            rows="6"
+                            className="px-0 w-full text-gray-300 focus:ring-0 focus:outline-none placeholder-gray-400 bg-black"
+                            placeholder="Thảo luận ..."
+                            required
+                            style={{overflow: "hidden", overflowWrap: "break-word", resize: "none", textAlign: "start", height: "160px"}}
+                        ></textarea>
                     </div>
                     <div className="flex items-center justify-between">
                         <div className="relative inline-block text-left">
