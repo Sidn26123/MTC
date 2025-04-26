@@ -1,0 +1,95 @@
+
+
+.background-color{
+    background-color: #272729
+}
+
+.background-color-lighter{
+    background-color: #333336
+}
+
+.base-text-color{
+    color: #A09FA3
+}
+
+.gray-text-color{
+    color: #A09FA3
+}
+
+.yellow-text-color{
+    color: #896B29
+}
+
+.primary-text-color{
+    color: #B78A29
+}
+
+.primary-bg{
+    background-color: #B78A29
+}
+
+.secondary-bg{
+    background-color: #E3DECF
+}
+
+.border-dot-b{
+    border-bottom: 1px dotted #272729
+}
+
+.slider {
+    -webkit-appearance: none; /* Ẩn style mặc định trên Chrome */
+    appearance: none;
+    width: 100%;
+    height: 8px;
+    background: #ddd; /* Màu thanh trượt */
+    border-radius: 5px;
+    outline: none;
+}
+
+/* Cục tròn trên Chrome, Safari, Edge */
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: #B78A29; /* Đổi màu cục tròn */
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+/* Cục tròn trên Firefox */
+.slider::-moz-range-thumb {
+    width: 20px;
+    height: 20px;
+    background: #B78A29; /* Đổi màu cục tròn */
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.primary-btn-outline{
+    color: #B78A29;
+    border: 1px solid #B78A29;
+    padding: 0.6em 1.2em;
+    font-size: 1em;
+    font-weight: 500;
+    font-family: inherit;
+    background-color: #272729;
+    cursor: pointer;
+    transition: border-color 0.25s;
+}
+
+.ring-primary{
+    border-color: #B78A29;
+}
+
+.animate-spin{
+    animation: spin 1s linear infinite;
+}
+
+.background-primary{
+    background-color: #B78A29;
+}
+
+.s-container {
+    scrollbar-gutter: stable;
+}
