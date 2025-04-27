@@ -8,7 +8,7 @@ import lombok.Getter;
  * Trạng thái yêu cầu xuất bản
  */
 @Getter
-public enum PublishRequest implements EnumUtils<PublishRequest> {
+public enum PublishRequestStatus implements EnumUtils<PublishRequestStatus> {
     PENDING("Chờ duyệt"),
     APPROVED("Đã duyệt"),
     REJECTED("Từ chối"),
@@ -16,11 +16,11 @@ public enum PublishRequest implements EnumUtils<PublishRequest> {
 
     private final String label;
 
-    PublishRequest(String label) {
+    PublishRequestStatus(String label) {
         this.label = label;
     }
 
-    public static PublishRequest from(String value) {
-        return EnumUtils.from(PublishRequest.class, value);
+    public static PublishRequestStatus from(String value) {
+        return EnumUtils.from(PublishRequestStatus.class, value);
     }
 }

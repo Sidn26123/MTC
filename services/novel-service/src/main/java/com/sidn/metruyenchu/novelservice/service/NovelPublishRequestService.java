@@ -5,7 +5,7 @@ import com.sidn.metruyenchu.novelservice.dto.PageResponse;
 import com.sidn.metruyenchu.novelservice.dto.request.publish.NovelPublishRequestCreationRequest;
 import com.sidn.metruyenchu.novelservice.dto.response.publish.NovelPublishRequestResponse;
 import com.sidn.metruyenchu.novelservice.entity.NovelPublishRequest;
-import com.sidn.metruyenchu.novelservice.enums.PublishRequest;
+import com.sidn.metruyenchu.novelservice.enums.PublishRequestStatus;
 import com.sidn.metruyenchu.novelservice.exception.AppException;
 import com.sidn.metruyenchu.novelservice.exception.ErrorCode;
 import com.sidn.metruyenchu.novelservice.mapper.NovelPublishRequestMapper;
@@ -33,7 +33,7 @@ public class NovelPublishRequestService {
 
     public NovelPublishRequestResponse create(NovelPublishRequestCreationRequest request) {
         NovelPublishRequest entity = novelPublishRequestMapper.toEntity(request);
-        entity.setStatus(PublishRequest.PENDING);
+        entity.setStatus(PublishRequestStatus.PENDING);
         String userId = getUserIdFromContext();
         entity.setRequestedBy(userId);
         try {
@@ -61,7 +61,7 @@ public class NovelPublishRequestService {
 
     public PageResponse<NovelPublishRequestResponse> getByPublishingStatus(BaseFilterRequest request) {
         Pageable pageable = PageUtils.from(request);
-        var pageData = novelPublishRequestRepository.findAllByStatus(PublishRequest.PENDING, pageable);
+        var pageData = novelPublishRequestRepository.findAllByStatus(PublishRequestStatus.PENDING, pageable);
         return PageUtils.toPageResponse(pageData, novelPublishRequestMapper::toResponse, request.getPage());
     }
 

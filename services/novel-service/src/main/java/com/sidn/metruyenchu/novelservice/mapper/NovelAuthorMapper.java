@@ -1,10 +1,9 @@
 package com.sidn.metruyenchu.novelservice.mapper;
 
 import com.sidn.metruyenchu.novelservice.dto.request.novel.NovelAuthorCreationRequest;
-import com.sidn.metruyenchu.novelservice.dto.response.NovelAuthorResponse;
+import com.sidn.metruyenchu.novelservice.dto.response.novel.NovelAuthorResponse;
 import com.sidn.metruyenchu.novelservice.entity.NovelAuthor;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 
 import java.util.List;
 

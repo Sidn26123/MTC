@@ -38,6 +38,13 @@ public class MainCharacterTraitController {
                 .build();
     }
 
+    @GetMapping("/getAllAvailable")
+    ApiResponse<List<MainCharacterTraitResponse>> getAllAvailableMainCharacterTrait() {
+        return ApiResponse.<List<MainCharacterTraitResponse>>builder()
+                .result(mainCharacterTraitService.getAllAvailableMainCharacterTrait())
+                .build();
+    }
+
     @GetMapping("/{mainCharacterTraitId}")
     ApiResponse<MainCharacterTraitResponse> getMainCharacterTraitById(@PathVariable String mainCharacterTraitId) {
         return ApiResponse.<MainCharacterTraitResponse>builder()

@@ -5,6 +5,7 @@ import com.sidn.metruyenchu.novelservice.dto.request.publish.PublishRequestActio
 import com.sidn.metruyenchu.novelservice.dto.response.publish.PublishRequestActionLogResponse;
 import com.sidn.metruyenchu.novelservice.entity.PublishRequestActionLog;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
@@ -16,6 +17,7 @@ public interface PublishRequestActionLogMapper {
 
     PublishRequestActionLog toEntity(PublishRequestActionLogCreationRequest request);
 
+    @Mapping(target = "actionLabel", expression = "java(entity.getAction() != null ? entity.getAction().getLabel() : null)")
     PublishRequestActionLogResponse toResponse(PublishRequestActionLog entity);
 
     List<PublishRequestActionLogResponse> toResponses(List<PublishRequestActionLog> entities);

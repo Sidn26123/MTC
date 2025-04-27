@@ -21,6 +21,7 @@ public interface ChapterRepository extends JpaRepository<Chapter, String> {
 //            "FROM Chapter c WHERE c.novel.id = :novelId AND c.isDeleted = false ORDER BY c.chapterIdx ASC")
 //    List<ChapterResponse> findChaptersByNovelId(@Param("novelId") String novelId);
     Page<Chapter> findByNovelId(String novelId, Pageable pageable);
+    Page<Chapter> findByNovel(Novel novel, Pageable pageable);
     Optional<Chapter> findByIdAndIsDeletedIsFalse(String id);
     Optional<Chapter> findByNovelSlugAndChapterIdxAndIsDeletedIsFalse(String slug, Integer chapterIdx);
 
@@ -45,6 +46,12 @@ public interface ChapterRepository extends JpaRepository<Chapter, String> {
     @Modifying
     @Query("UPDATE Chapter c SET c.amountToUnlock = :amount WHERE c.id = :chapterId")
     void updateAmountToUnlock(@Param("chapterId") String chapterId, @Param("amount") Integer amount);
+
+    @Modifying
+    @Query("UPDATE Chapter c SET c.chapterIdx = c.chapterIdx + 1 WHERE c.novel = :novel AND c.chapterIdx >= :startIdx")
+    void bulkUpdateChapterIdx(@Param("novel") Novel novel, @Param("startIdx") int startIdx);
+
+
 
     int countByNovelId(String novelId);
 }

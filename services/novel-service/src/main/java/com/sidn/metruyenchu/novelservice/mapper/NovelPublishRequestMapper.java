@@ -4,6 +4,7 @@ import com.sidn.metruyenchu.novelservice.dto.request.publish.NovelPublishRequest
 import com.sidn.metruyenchu.novelservice.dto.response.publish.NovelPublishRequestResponse;
 import com.sidn.metruyenchu.novelservice.entity.NovelPublishRequest;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import java.util.List;
@@ -14,6 +15,7 @@ public interface NovelPublishRequestMapper {
 
     NovelPublishRequest toEntity(NovelPublishRequestCreationRequest request);
 
+    @Mapping(target = "statusLabel", expression = "java(entity.getStatus() != null ? entity.getStatus().getLabel() : null)")
     NovelPublishRequestResponse toResponse(NovelPublishRequest entity);
 
     List<NovelPublishRequestResponse> toResponses(List<NovelPublishRequest> entities);

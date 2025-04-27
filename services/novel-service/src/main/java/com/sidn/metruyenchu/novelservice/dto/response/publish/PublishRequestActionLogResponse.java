@@ -16,6 +16,7 @@ public class PublishRequestActionLogResponse {
     String id;
     NovelPublishRequestResponse novelPublishRequestResponse;
     PublishRequestAction action;
+    String actionLabel;
     String actionBy;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;

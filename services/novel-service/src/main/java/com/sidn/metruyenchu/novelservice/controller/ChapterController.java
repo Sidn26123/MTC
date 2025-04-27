@@ -2,11 +2,10 @@ package com.sidn.metruyenchu.novelservice.controller;
 
 import com.sidn.metruyenchu.novelservice.dto.ApiResponse;
 import com.sidn.metruyenchu.novelservice.dto.PageResponse;
-import com.sidn.metruyenchu.novelservice.dto.request.chapter.ChapterContentGetRequest;
-import com.sidn.metruyenchu.novelservice.dto.request.chapter.ChapterCreationRequest;
-import com.sidn.metruyenchu.novelservice.dto.request.chapter.ChapterUpdateAmountFieldRequest;
+import com.sidn.metruyenchu.novelservice.dto.request.chapter.*;
 import com.sidn.metruyenchu.novelservice.dto.response.ChapterResponse;
 import com.sidn.metruyenchu.novelservice.dto.response.chapter.ChapterContentResponse;
+import com.sidn.metruyenchu.novelservice.dto.response.chapter.ChapterListResponse;
 import com.sidn.metruyenchu.novelservice.service.ChapterService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -81,8 +80,13 @@ public class ChapterController {
     ApiResponse<PageResponse<ChapterResponse>> getChaptersByNovelId(@PathVariable String novelId,
                                                                     @RequestParam(value = "page", defaultValue = "1") int page,
                                                                     @RequestParam(value = "size", defaultValue = "10") int size){
+        ChaptersOfNovelGetRequest request = ChaptersOfNovelGetRequest.builder()
+                .novelId(novelId)
+                .build();
+        request.setPage(page);
+        request.setSize(size);
         return ApiResponse.<PageResponse<ChapterResponse>>builder()
-                .result(chapterService.getChaptersByNovelId(novelId, page, size))
+                .result(chapterService.getChaptersByNovelId(request))
                 .build();
     }
 
@@ -104,6 +108,16 @@ public class ChapterController {
 
         return ApiResponse.<ChapterContentResponse>builder()
                 .result(chapterService.getChapterContent(request))
+                .build();
+    }
+
+    @GetMapping("/truyen/{novelSlug}/chapterList")
+    ApiResponse<PageResponse<ChapterListResponse>> getChapterList(@PathVariable String novelSlug, @RequestBody ChapterListGetRequest request){
+//        ChapterListGetRequest request = ChapterListGetRequest.builder().build();
+        request.setNovelSlug(novelSlug);
+
+        return ApiResponse.<PageResponse<ChapterListResponse>>builder()
+                .result(chapterService.getChapterList(request))
                 .build();
     }
 

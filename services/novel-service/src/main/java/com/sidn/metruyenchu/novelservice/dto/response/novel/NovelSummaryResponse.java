@@ -1,4 +1,4 @@
-package com.sidn.metruyenchu.novelservice.dto.response;
+package com.sidn.metruyenchu.novelservice.dto.response.novel;
 
 public class NovelSummaryResponse {
 }

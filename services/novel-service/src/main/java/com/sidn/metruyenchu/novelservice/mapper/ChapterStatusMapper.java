@@ -11,7 +11,9 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface ChapterStatusMapper {
     ChapterStatus toChapterStatus(ChapterStatusCreationRequest request);
+
     @Mapping(source = "id", target = "id")
+
     ChapterStatusResponse toChapterStatusResponse(ChapterStatus chapterStatus);
 
     List<ChapterStatusResponse> toChapterStatusResponses(List<ChapterStatus> chapterStatuses);
