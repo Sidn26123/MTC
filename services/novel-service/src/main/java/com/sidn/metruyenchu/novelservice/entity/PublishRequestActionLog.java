@@ -9,6 +9,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
+/**
+ * Entity lưu lịch sử các hành động đối với yêu cầu xuất bản truyện.
+ */
 @Getter
 @Setter
 @Builder

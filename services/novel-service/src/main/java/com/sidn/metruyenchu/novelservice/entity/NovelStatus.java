@@ -9,7 +9,10 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
-
+/**
+ * Trạng thái truyện như
+ * CREATED, PENDING, SUSPENDED, REVIEWING
+ */
 @Getter
 @Setter
 @Builder
@@ -18,10 +21,7 @@ import java.util.Set;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 public class NovelStatus {
-    /**
-     * Trạng thái truyện
-     * CREATED, PENDING, SUSPENDED, REVIEWING
-     */
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;

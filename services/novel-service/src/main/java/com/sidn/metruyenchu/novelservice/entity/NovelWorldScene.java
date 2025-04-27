@@ -8,6 +8,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
+/**
+ * Bảng trung gian giữa truyện và bối cảnh thế giới trong truyện
+ */
 @Getter
 @Setter
 @Builder

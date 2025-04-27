@@ -1,7 +1,6 @@
 package com.sidn.metruyenchu.novelservice.entity;
 
-import com.sidn.metruyenchu.novelservice.enums.PublishRequest;
-import com.sidn.metruyenchu.novelservice.enums.PublishRequestAction;
+import com.sidn.metruyenchu.novelservice.enums.PublishRequestStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -10,6 +9,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
+/**
+ * Yêu cầu xuất bản truyện
+ */
 @Getter
 @Setter
 @Builder
@@ -31,7 +33,7 @@ public class NovelPublishRequest {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    PublishRequest status;
+    PublishRequestStatus status;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

@@ -9,6 +9,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Tác giả truyện (người viết truyện - tác giả thật sự)
+ */
 @Getter
 @Setter
 @Builder
@@ -17,9 +20,7 @@ import java.util.List;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
 public class NovelAuthor {
-    /**
-     * Tác giả truyện
-     */
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
