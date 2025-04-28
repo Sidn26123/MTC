@@ -127,6 +127,11 @@ public enum ErrorCode {
     BOOKSHELF_OF_USER_NOT_FOUND(10000, "Thư viện của người dùng không tồn tại", HttpStatus.NOT_FOUND),
     BOOKSHELF_ITEM_NOT_FOUND(10001, "Mục trong thư viện không tồn tại", HttpStatus.NOT_FOUND),
 
+    MARKED_NOVEL_NOT_FOUND(10002, "Truyện đã đánh dấu không tồn tại", HttpStatus.NOT_FOUND),
+    MARKED_NOVEL_ALREADY_EXISTS(10003, "Truyện đã đánh dấu đã tồn tại", HttpStatus.BAD_REQUEST),
+    BOOKSHELF_ITEM_ALREADY_EXISTS(10004, "Mục trong thư viện đã tồn tại", HttpStatus.BAD_REQUEST),
+    BOOKSHELF_ITEM_NOT_BELONG_TO_USER(10005, "Mục trong thư viện không thuộc về người dùng này", HttpStatus.BAD_REQUEST),
+
 //    // 1. General Errors
 //    UNKNOWN_ERROR(9999, "Lỗi không xác định", HttpStatus.BAD_REQUEST),
 //    INVALID_KEY(1, "Message key không hợp lệ", HttpStatus.BAD_REQUEST),

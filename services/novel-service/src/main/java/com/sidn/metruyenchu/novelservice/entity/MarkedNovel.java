@@ -32,7 +32,7 @@ public class MarkedNovel {
     Novel novel;
 
     /// Idx của chapter được truy cập gần nhất của truyện được bookark tại thời điểm bookmark. (Nếu chưa đọc thì chapter = 0; nếu bookmark ở ngoài sẽ lấy theo idx chapter của truyện)
-    Integer chapter;
+    Integer markedAtChapter;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
