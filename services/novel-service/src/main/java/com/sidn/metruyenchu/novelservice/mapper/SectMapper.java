@@ -5,10 +5,11 @@ import com.sidn.metruyenchu.novelservice.dto.response.SectResponse;
 import com.sidn.metruyenchu.novelservice.entity.Sect;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface SectMapper {
     Sect toSect(SectCreationRequest request);
     @Mapping(source = "id", target = "id")

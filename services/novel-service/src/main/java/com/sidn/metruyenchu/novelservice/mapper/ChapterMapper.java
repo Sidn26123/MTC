@@ -1,6 +1,7 @@
 package com.sidn.metruyenchu.novelservice.mapper;
 
 import com.sidn.metruyenchu.novelservice.dto.request.chapter.ChapterCreationRequest;
+import com.sidn.metruyenchu.novelservice.dto.request.chapter.ChapterUpdateRequest;
 import com.sidn.metruyenchu.novelservice.dto.response.ChapterResponse;
 import com.sidn.metruyenchu.novelservice.dto.response.chapter.ChapterContentResponse;
 import com.sidn.metruyenchu.novelservice.dto.response.chapter.ChapterListResponse;
@@ -31,5 +32,5 @@ public interface ChapterMapper {
     ChapterListResponse toChapterListResponse(Chapter chapter);
 
     @Mapping(target = "chapterStatus", ignore = true)
-    void updateChapterFromRequest(@MappingTarget Chapter chapter, ChapterCreationRequest request);
+    void update(@MappingTarget Chapter chapter, ChapterUpdateRequest request);
 }

@@ -4,10 +4,11 @@ import com.sidn.metruyenchu.novelservice.dto.request.novel.NovelAuthorCreationRe
 import com.sidn.metruyenchu.novelservice.dto.response.novel.NovelAuthorResponse;
 import com.sidn.metruyenchu.novelservice.entity.NovelAuthor;
 import org.mapstruct.Mapper;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface NovelAuthorMapper {
     NovelAuthor toNovelAuthor(NovelAuthorCreationRequest request);
 
