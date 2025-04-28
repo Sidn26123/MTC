@@ -7,6 +7,7 @@ import com.sidn.metruyenchu.novelservice.dto.request.bookshelf.BookShelfCreateRe
 import com.sidn.metruyenchu.novelservice.dto.request.bookshelf.BookShelfGetRequest;
 import com.sidn.metruyenchu.novelservice.dto.request.bookshelf.BookShelfUpdateRequest;
 import com.sidn.metruyenchu.novelservice.dto.request.bookshelfItem.BookShelfItemCreateRequest;
+import com.sidn.metruyenchu.novelservice.dto.request.bookshelfItem.BookShelfItemGetRequest;
 import com.sidn.metruyenchu.novelservice.dto.response.bookshelf.BookShelfResponse;
 import com.sidn.metruyenchu.novelservice.dto.response.bookshelfItem.BookShelfItemResponse;
 import com.sidn.metruyenchu.novelservice.service.BookShelfItemService;
@@ -80,9 +81,19 @@ public class BookShelfController {
 
     // --- BookShelfItem CRUD ---
 
+    @GetMapping("/{bookShelfId}/items")
+    public ApiResponse<PageResponse<BookShelfItemResponse>> getItemsInBookShelf(@PathVariable String bookShelfId,
+                                                                 @Valid @RequestBody BookShelfItemGetRequest request) {
+        return ApiResponse.<PageResponse<BookShelfItemResponse>>builder()
+                .result(bookShelfItemService.getBookShelfItemsInBookShelf(bookShelfId, request))
+                .build();
+    }
+
     @PostMapping("/{bookShelfId}/items")
     public ApiResponse<BookShelfItemResponse> addItemToBookShelf(@PathVariable String bookShelfId,
                                                                  @Valid @RequestBody BookShelfItemCreateRequest request) {
+        request.setBookShelfId(bookShelfId);
+
         return ApiResponse.<BookShelfItemResponse>builder()
                 .result(bookShelfItemService.addItemToBookShelf(bookShelfId, request))
                 .build();

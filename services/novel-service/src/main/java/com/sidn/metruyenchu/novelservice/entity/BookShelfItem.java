@@ -18,6 +18,9 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
+@Table(
+        uniqueConstraints = @UniqueConstraint(columnNames = {"bookshelf_id", "novel_id"})
+)
 public class BookShelfItem {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

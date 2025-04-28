@@ -18,6 +18,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
+
 public class BookShelf {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

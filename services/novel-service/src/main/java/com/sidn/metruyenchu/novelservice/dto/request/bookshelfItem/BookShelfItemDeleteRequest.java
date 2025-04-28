@@ -8,9 +8,8 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class BookShelfItemCreateRequest {
+public class BookShelfItemDeleteRequest {
     String bookShelfId;
     String novelId;
-    Integer currentChapterIdx;
-//    Boolean isDeleted = true;
+    String bookShelfItemId;
 }
