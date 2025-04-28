@@ -119,12 +119,17 @@ public class BookShelfController {
                 .build();
     }
 
-    //Bo
-    @GetMapping("/{bookShelfId}/items/{itemId}")
+    /**
+     * Lấy item trong bookshelf có novel id
+     * @param bookShelfId
+     * @param novelId
+     * @return
+     */
+    @GetMapping("/{bookShelfId}/items/{novelId}")
     public ApiResponse<BookShelfItemResponse> getBookShelfItem(@PathVariable String bookShelfId,
-                                                               @PathVariable String itemId) {
+                                                               @PathVariable String novelId) {
         return ApiResponse.<BookShelfItemResponse>builder()
-                .result(bookShelfItemService.getBookShelfItem(bookShelfId, itemId))
+                .result(bookShelfItemService.getBookShelfItemByNovelId(bookShelfId, novelId))
                 .build();
     }
 

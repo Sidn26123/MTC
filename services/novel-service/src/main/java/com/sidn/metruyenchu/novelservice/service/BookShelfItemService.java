@@ -87,8 +87,8 @@ public class BookShelfItemService {
 
 
 
-    public BookShelfItemResponse getBookShelfItem(String bookShelfId, String novelId) {
-        BookShelfItem item = bookShelfItemRepository.findByNovelId(novelId)
+    public BookShelfItemResponse getBookShelfItemByNovelId(String bookShelfId, String novelId) {
+        BookShelfItem item = bookShelfItemRepository.findByNovelIdAndBookShelfId(novelId, bookShelfId)
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKSHELF_ITEM_NOT_FOUND));
 
         return bookShelfItemMapper.toResponse(item);

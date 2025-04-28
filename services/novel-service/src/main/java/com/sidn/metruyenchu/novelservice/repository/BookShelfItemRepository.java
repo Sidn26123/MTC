@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BookShelfItemRepository extends JpaRepository<BookShelfItem, String> {
-    BookShelfItem findByNovelIdAndBookShelfId(String novelId, String bookShelfId);
+    Optional<BookShelfItem> findByNovelIdAndBookShelfId(String novelId, String bookShelfId);
     void deleteByNovelIdAndBookShelfId(String novelId, String bookShelfId);
 
     List<BookShelfItem> findAllByBookShelfId(String bookShelfId);
