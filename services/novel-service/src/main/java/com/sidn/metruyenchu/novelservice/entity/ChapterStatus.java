@@ -9,6 +9,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
+/**
+ * Entity trạng thái của truyện như WAITING - chờ để đăng như đã hẹn giờ trước, PUBLISHED
+ */
 @Getter
 @Setter
 @Builder

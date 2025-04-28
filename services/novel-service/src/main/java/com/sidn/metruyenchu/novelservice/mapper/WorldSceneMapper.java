@@ -5,10 +5,11 @@ import com.sidn.metruyenchu.novelservice.dto.response.WorldSceneResponse;
 import com.sidn.metruyenchu.novelservice.entity.WorldScene;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface WorldSceneMapper {
     WorldScene toWorldScene(WorldSceneCreationRequest worldScene);
     @Mapping(source = "id", target = "id")

@@ -1,8 +1,7 @@
 package com.sidn.metruyenchu.novelservice.service;
 
-import com.sidn.metruyenchu.novelservice.dto.ApiResponse;
 import com.sidn.metruyenchu.novelservice.dto.request.novel.NovelAuthorCreationRequest;
-import com.sidn.metruyenchu.novelservice.dto.response.NovelAuthorResponse;
+import com.sidn.metruyenchu.novelservice.dto.response.novel.NovelAuthorResponse;
 import com.sidn.metruyenchu.novelservice.entity.NovelAuthor;
 import com.sidn.metruyenchu.novelservice.exception.AppException;
 import com.sidn.metruyenchu.novelservice.exception.ErrorCode;
@@ -14,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;

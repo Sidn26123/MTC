@@ -7,6 +7,8 @@ import com.sidn.metruyenchu.novelservice.dto.request.novel.NovelUpdateRequest;
 import com.sidn.metruyenchu.novelservice.dto.response.*;
 import com.sidn.metruyenchu.novelservice.dto.response.chapter.ChapterPublishCheckResponse;
 import com.sidn.metruyenchu.novelservice.dto.response.novel.NovelCanPublishResponse;
+import com.sidn.metruyenchu.novelservice.dto.response.novel.NovelResponse;
+import com.sidn.metruyenchu.novelservice.dto.response.novel.NovelStatusResponse;
 import com.sidn.metruyenchu.novelservice.entity.*;
 import com.sidn.metruyenchu.novelservice.enums.NovelState;
 import com.sidn.metruyenchu.novelservice.exception.AppException;
@@ -102,6 +104,18 @@ public class NovelService {
 
         novel.setCurrentPublisher(userId);
         novel.setNovelCoverImage(getDefaultCoverImageUrl());
+
+        if (request.getAuthorId() != null){
+            NovelAuthor novelAuthor = novelAuthorRepository.findById(request.getAuthorId())
+                    .orElseThrow(() -> new AppException(ErrorCode.NOVEL_NOT_FOUND));
+//            response.setAuthor(novelAuthorMapper.toNovelAuthorResponse(novelAuthor));
+//            log.info("Author: {}", novelAuthor.getName());
+//            log.info(response.getAuthor().getName());
+            novel.setAuthor(novelAuthor);
+
+
+        }
+
         try{
             novel = novelRepository.save(novel);
         } catch (Exception exception) {
@@ -112,21 +126,14 @@ public class NovelService {
 
         NovelResponse response = novelMapper.toNovelResponse(novel);
 
-        if (request.getAuthorId() != null){
-            NovelAuthor novelAuthor = novelAuthorRepository.findById(request.getAuthorId())
-                    .orElseThrow(() -> new AppException(ErrorCode.NOVEL_NOT_FOUND));
-            response.setAuthor(novelAuthorMapper.toNovelAuthorResponse(novelAuthor));
-            log.info(novelAuthor.getName());
-            log.info(response.getAuthor().getName());
 
-
-        }
 
         //Nếu có image cover
 //        if (request.getNovelCoverImage() != null){
 //
 //        }
         response = fillData(novel, request, response);
+
         log.info(response.getAuthor().getName());
         return response;
 
@@ -139,7 +146,7 @@ public class NovelService {
         Novel novel = novelRepository.findById(novelId)
                 .orElseThrow(() -> new AppException(ErrorCode.NOVEL_NOT_FOUND));
 
-        int totalChapter = chapterService.getTotalChaptersByNovelId(novelId);
+        int totalChapter = novel.getTotalChapters();
 
         NovelCanPublishResponse response = NovelCanPublishResponse.builder()
                 .canPublish(true)
@@ -174,6 +181,10 @@ public class NovelService {
 
         return response;
     }
+
+//    public NovelStatus getDefaultNovelDetailStatus(){
+//        return novelStatusDetailRepository.find
+//    }
 
     public NovelResponse requestPublishNovel(String novelId){
         Novel novel = novelRepository.findById(novelId)

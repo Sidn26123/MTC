@@ -1,6 +1,9 @@
-package com.sidn.metruyenchu.novelservice.dto.response;
+package com.sidn.metruyenchu.novelservice.dto.response.novel;
 
-import com.sidn.metruyenchu.novelservice.entity.NovelStatus;
+import com.sidn.metruyenchu.novelservice.dto.response.GenreResponse;
+import com.sidn.metruyenchu.novelservice.dto.response.MainCharacterTraitResponse;
+import com.sidn.metruyenchu.novelservice.dto.response.SectResponse;
+import com.sidn.metruyenchu.novelservice.dto.response.WorldSceneResponse;
 import com.sidn.metruyenchu.novelservice.enums.NovelState;
 import com.sidn.metruyenchu.novelservice.enums.NovelType;
 import com.sidn.metruyenchu.novelservice.enums.NovelVisibility;
@@ -10,7 +13,6 @@ import lombok.experimental.FieldDefaults;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -35,9 +37,13 @@ public class NovelResponse {
     List<SectResponse> sects;
 
     NovelType novelType;
+    String novelTypeLabel;
     NovelVisibility novelVisibility;
+    String novelVisibilityLabel;
     NovelState novelState;
+    String novelStateLabel;
     ProgressStatus progressStatus;
+    String progressStatusLabel;
 
     Integer chapterReadToComment;
     Integer chapterReadToRate;

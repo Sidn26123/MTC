@@ -17,7 +17,7 @@ import java.util.Optional;
 public interface NovelRepository extends JpaRepository<Novel, String>, JpaSpecificationExecutor<Novel> {
     Novel findByName(String name);
 
-    Novel findBySlug(String slug);
+    Optional<Novel> findBySlug(String slug);
 
     Page<Novel> findByNameContaining(String keyword, Pageable pageable);
 
@@ -82,5 +82,8 @@ public interface NovelRepository extends JpaRepository<Novel, String>, JpaSpecif
     @Query("UPDATE Novel n SET n.avgRate = :rate WHERE n.id = :novelId")
     void updateAvgRate(@Param("novelId") String novelId, @Param("rate") Float rate);
 
+    @Modifying
+    @Query("UPDATE Novel n SET n.totalChapters = :totalChapters WHERE n.id = :novelId")
+    void updateTotalChapters(@Param("novelId") String novelId, @Param("totalChapters") int totalChapters);
 
 }

@@ -4,11 +4,12 @@ import com.sidn.metruyenchu.novelservice.dto.request.genre.GenreCreationRequest;
 import com.sidn.metruyenchu.novelservice.dto.response.GenreResponse;
 import com.sidn.metruyenchu.novelservice.entity.Genre;
 import org.mapstruct.Mapper;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 @EnableJpaAuditing
 public interface GenreMapper {
     Genre toGenre(GenreCreationRequest request);

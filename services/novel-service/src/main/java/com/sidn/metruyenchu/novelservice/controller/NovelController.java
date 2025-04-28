@@ -10,7 +10,7 @@ import com.sidn.metruyenchu.novelservice.dto.request.novel.NovelUpdateRequest;
 import com.sidn.metruyenchu.novelservice.dto.request.publish.NovelPublishRequestCreationRequest;
 import com.sidn.metruyenchu.novelservice.dto.request.publish.PublishRequestActionLogCreationRequest;
 import com.sidn.metruyenchu.novelservice.dto.request.publish.PublishRequestActionLogUpdateRequest;
-import com.sidn.metruyenchu.novelservice.dto.response.NovelResponse;
+import com.sidn.metruyenchu.novelservice.dto.response.novel.NovelResponse;
 import com.sidn.metruyenchu.novelservice.dto.response.novel.NovelCanPublishResponse;
 import com.sidn.metruyenchu.novelservice.dto.response.publish.NovelPublishRequestResponse;
 import com.sidn.metruyenchu.novelservice.dto.response.publish.PublishRequestActionLogResponse;
@@ -22,8 +22,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;

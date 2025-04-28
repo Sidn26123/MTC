@@ -5,9 +5,11 @@ import com.sidn.metruyenchu.novelservice.enums.NovelState;
 import com.sidn.metruyenchu.novelservice.enums.NovelType;
 import com.sidn.metruyenchu.novelservice.enums.NovelVisibility;
 import com.sidn.metruyenchu.novelservice.enums.ProgressStatus;
+import com.sidn.metruyenchu.novelservice.utils.Range;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
@@ -29,18 +31,37 @@ public class NovelFilterRequest extends BaseFilterRequest {
     List<String> genres;
     List<String> status;
 
-    List<Integer> chapterReadToCommentRange;
-    List<Integer> chapterReadToRateRange;
-    List<Integer> wordCountRange;
+    Integer chapterReadToCommentFrom;
+    Integer chapterReadToCommentTo;
+
+    Integer chapterReadToRateFrom;
+    Integer chapterReadToRateTo;
+
+    Integer wordCountFrom;
+    Integer wordCountTo;
+
+    Float avgRateFrom;
+    Float avgRateTo;
+
+    Integer totalRatesFrom;
+    Integer totalRatesTo;
+
+    Integer totalCommentsFrom;
+    Integer totalCommentsTo;
 
     List<NovelType> novelTypes;
     List<NovelVisibility> novelVisibilities;
     List<ProgressStatus> progressStatuses;
     List<NovelState> novelStates;
 
+    LocalDateTime createdAtFrom;
+    LocalDateTime createdAtTo;
+    LocalDateTime updatedAtFrom;
+    LocalDateTime updatedAtTo;
 
 
     Boolean isPublished;
+    Boolean isDeleted;
     //Với các field có kiểu dữ liệu là int, [;]
 //    String sortBy = "created_at";
 //    String sortOrder = "DESC";

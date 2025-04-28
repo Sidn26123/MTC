@@ -1,7 +1,7 @@
 package com.sidn.metruyenchu.novelservice.service;
 
 import com.sidn.metruyenchu.novelservice.dto.request.novel.NovelStatusCreationRequest;
-import com.sidn.metruyenchu.novelservice.dto.response.NovelStatusResponse;
+import com.sidn.metruyenchu.novelservice.dto.response.novel.NovelStatusResponse;
 import com.sidn.metruyenchu.novelservice.entity.NovelStatus;
 import com.sidn.metruyenchu.novelservice.exception.AppException;
 import com.sidn.metruyenchu.novelservice.exception.ErrorCode;

@@ -92,4 +92,10 @@ public class MainCharacterTraitService {
                 .map(mainCharacterTraitMapper::toMainCharacterTraitResponse)
                 .collect(Collectors.toList());
     }
+
+    public List<MainCharacterTraitResponse> getAllAvailableMainCharacterTrait() {
+        return mainCharacterTraitRepository.findAllByIsActiveAndIsDeleted(true, false).stream()
+                .map(mainCharacterTraitMapper::toMainCharacterTraitResponse)
+                .collect(Collectors.toList());
+    }
 }

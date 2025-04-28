@@ -19,9 +19,11 @@ public class ChapterResponse {
     Integer chapterIdx;
     Long viewCount;
     String content;
+
     List<ChapterStatusResponse> chapterStatus;
     Integer amountToUnlock;
-    ChapterState chapterState;
+    ChapterState state;
+    String stateLabel;
     String novel;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;

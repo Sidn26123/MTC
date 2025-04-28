@@ -13,6 +13,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+/**
+ * Entity thể hiện thể loại của truyện
+ */
 @Getter
 @Setter
 @Builder

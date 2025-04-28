@@ -8,6 +8,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
+/**
+ * Tính cách nhân vật chính
+ */
 @Getter
 @Setter
 @Builder
