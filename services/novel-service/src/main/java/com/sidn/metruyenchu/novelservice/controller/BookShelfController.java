@@ -99,6 +99,7 @@ public class BookShelfController {
                 .build();
     }
 
+    //Bo
     @GetMapping("/{bookShelfId}/items/{itemId}")
     public ApiResponse<BookShelfItemResponse> getBookShelfItem(@PathVariable String bookShelfId,
                                                                @PathVariable String itemId) {
@@ -107,12 +108,33 @@ public class BookShelfController {
                 .build();
     }
 
-    @DeleteMapping("/{bookShelfId}/items/{itemId}")
-    public ApiResponse<String> deleteBookShelfItem(@PathVariable String bookShelfId,
-                                                   @PathVariable String itemId) {
-        bookShelfItemService.deleteBookShelfItem(bookShelfId, itemId);
+    @GetMapping("/items/{itemId}")
+    public ApiResponse<BookShelfItemResponse> getBookShelfItem(@PathVariable String itemId) {
+        return ApiResponse.<BookShelfItemResponse>builder()
+                .result(bookShelfItemService.getBookShelfItemById(itemId))
+                .build();
+    }
+
+    @DeleteMapping("/items/{itemId}")
+    public ApiResponse<String> deleteBookShelfItem(@PathVariable String itemId) {
+        bookShelfItemService.deleteBookShelfItemById(itemId);
         return ApiResponse.<String>builder()
-                .result(String.format("Item %s đã xoá thành công khỏi Bookshelf %s", itemId, bookShelfId))
+                .result(String.format("Item %s đã xoá thành công khỏi Bookshelf", itemId))
+                .build();
+    }
+
+    /**
+     * Delete item from bookshelf which have novel id
+     * @param bookShelfId
+     * @param novelId
+     * @return
+     */
+    @DeleteMapping("/{bookShelfId}/items/{novelId}")
+    public ApiResponse<String> deleteBookShelfItemByNovelId(@PathVariable String bookShelfId,
+                                                   @PathVariable String novelId) {
+        bookShelfItemService.deleteBookShelfItemByNovelId(bookShelfId, novelId);
+        return ApiResponse.<String>builder()
+                .result(String.format("Item %s đã xoá thành công khỏi Bookshelf %s", novelId, bookShelfId))
                 .build();
     }
 

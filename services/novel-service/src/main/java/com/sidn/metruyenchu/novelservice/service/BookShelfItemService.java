@@ -14,7 +14,6 @@ import com.sidn.metruyenchu.novelservice.repository.BookShelfItemRepository;
 import com.sidn.metruyenchu.novelservice.repository.BookShelfRepository;
 import com.sidn.metruyenchu.novelservice.repository.NovelRepository;
 import com.sidn.metruyenchu.novelservice.utils.PageUtils;
-import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -86,19 +85,39 @@ public class BookShelfItemService {
 
 
 
-    // Get item by ID
-    public BookShelfItemResponse getBookShelfItem(String bookShelfId, String itemId) {
-        BookShelfItem item = bookShelfItemRepository.findById(itemId)
-                .filter(i -> i.getBookShelf().getId().equals(bookShelfId))
+    public BookShelfItemResponse getBookShelfItem(String bookShelfId, String novelId) {
+        BookShelfItem item = bookShelfItemRepository.findByNovelId(novelId)
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKSHELF_ITEM_NOT_FOUND));
 
         return bookShelfItemMapper.toResponse(item);
     }
 
-    // Delete item from bookshelf (hard delete luôn)
-    public void deleteBookShelfItem(String bookShelfId, String itemId) {
+    // Get item by ID
+    public BookShelfItemResponse getBookShelfItemById(String itemId) {
         BookShelfItem item = bookShelfItemRepository.findById(itemId)
-                .filter(i -> i.getBookShelf().getId().equals(bookShelfId))
+                .orElseThrow(() -> new AppException(ErrorCode.BOOKSHELF_ITEM_NOT_FOUND));
+
+        return bookShelfItemMapper.toResponse(item);
+    }
+
+    /**
+     * Delete item from bookshelf (hard delete luôn)
+     * @param itemId
+     */
+    public void deleteBookShelfItemById(String itemId) {
+        BookShelfItem item = bookShelfItemRepository.findById(itemId)
+                .orElseThrow(() -> new AppException(ErrorCode.BOOKSHELF_ITEM_NOT_FOUND));
+
+        try {
+            bookShelfItemRepository.delete(item);
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.UNKNOWN_ERROR);
+        }
+    }
+
+    // Delete item from bookshelf (hard delete luôn) với điều kiện là item có novelId
+    public void deleteBookShelfItemByNovelId(String bookShelfId, String novelId) {
+        BookShelfItem item = bookShelfItemRepository.findByNovelId(novelId)
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKSHELF_ITEM_NOT_FOUND));
 
         try {

@@ -18,4 +18,5 @@ public interface BookShelfItemRepository extends JpaRepository<BookShelfItem, St
     boolean existsByIdAndBookShelfId(String itemId, String bookShelfId);
     Optional<BookShelfItem> findByBookShelfIdAndNovelId(String bookShelfId, String novelId);
 
+    Optional<BookShelfItem> findByNovelId(String novelId);
 }
