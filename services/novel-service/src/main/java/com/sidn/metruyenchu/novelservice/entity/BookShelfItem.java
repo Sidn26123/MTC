@@ -46,4 +46,7 @@ public class BookShelfItem {
     @Builder.Default
     Boolean isDeleted = false;
 
+    ///Nếu noticed thì sẽ có thông báo tới user khi truyện có chương mới, truyeện đổi status như: hoàn thành, drop ...
+    @Builder.Default
+    Boolean isNoticed = false;
 }

@@ -24,7 +24,6 @@ public class MarkedNovel {
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 
-
     /// ID user
     String userId;
 
@@ -44,4 +43,8 @@ public class MarkedNovel {
 
     @Builder.Default
     Boolean isDeleted = false;
+
+    ///Nếu noticed thì sẽ có thông báo tới user khi truyện có chương mới, truyeện đổi status như: hoàn thành, drop ...
+    @Builder.Default
+    Boolean isNoticed = false;
 }
