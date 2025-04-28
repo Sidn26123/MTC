@@ -63,7 +63,7 @@ public class ChapterController {
     }
 
     @PutMapping("/{chapterId}")
-    ApiResponse<ChapterResponse> updateChapter(@PathVariable String chapterId, @Valid @RequestBody ChapterCreationRequest request){
+    ApiResponse<ChapterResponse> updateChapter(@PathVariable String chapterId, @Valid @RequestBody ChapterUpdateRequest request){
         return ApiResponse.<ChapterResponse>builder()
                 .result(chapterService.updateChapter(chapterId, request))
                 .build();

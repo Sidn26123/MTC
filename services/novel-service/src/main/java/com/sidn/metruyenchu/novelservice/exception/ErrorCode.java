@@ -124,6 +124,9 @@ public enum ErrorCode {
     PUBLISH_REQUEST_ACTION_LOG_NOT_FOUND(8011, "Lỗi không tìm thấy hành động yêu cầu xuất bản", HttpStatus.NOT_FOUND),
     NOVEL_NOT_HAVE_ENOUGH_CHAPTER(8012, "Truyện không có đủ chương để xuất bản", HttpStatus.BAD_REQUEST),
 
+    BOOKSHELF_OF_USER_NOT_FOUND(10000, "Thư viện của người dùng không tồn tại", HttpStatus.NOT_FOUND),
+    BOOKSHELF_ITEM_NOT_FOUND(10001, "Mục trong thư viện không tồn tại", HttpStatus.NOT_FOUND),
+
 //    // 1. General Errors
 //    UNKNOWN_ERROR(9999, "Lỗi không xác định", HttpStatus.BAD_REQUEST),
 //    INVALID_KEY(1, "Message key không hợp lệ", HttpStatus.BAD_REQUEST),

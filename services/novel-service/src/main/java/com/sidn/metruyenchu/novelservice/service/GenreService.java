@@ -17,85 +17,85 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Service
-@RequiredArgsConstructor
-@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@Slf4j
-public class GenreService {
-    GenreRepository genreRepository;
-    GenreMapper genreMapper;
+    @Service
+    @RequiredArgsConstructor
+    @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+    @Slf4j
+    public class GenreService {
+        GenreRepository genreRepository;
+        GenreMapper genreMapper;
 
-    //CRUD genre
-    //get all genre
-//    @PreAuthorize("hasRole('ADMIN')")
-    public List<GenreResponse> getAllGenre() {
-        return genreRepository.findAll().stream()
-                .map(genreMapper::toGenreResponse)
-                .collect(Collectors.toList());
-    }
-
-    //get genre by id
-    public GenreResponse getGenreById(String genreId) {
-        return genreRepository.findById(genreId)
-                .map(genreMapper::toGenreResponse)
-                .orElseThrow(() -> new AppException(ErrorCode.GENRE_NOT_FOUND)
-                );
-    }
-
-    //create genre
-    public GenreResponse createGenre(GenreCreationRequest request) {
-        Genre genre = genreMapper.toGenre(request);
-
-        genreRepository.findByName(genre.getName())
-                .ifPresent(checkGenre -> {
-                    throw new AppException(ErrorCode.GENRE_ALREADY_EXISTS);
-                });
-        try {
-            genre = genreRepository.save(genre);
-        } catch (Exception exception) {
-            throw new AppException(ErrorCode.UNKNOWN_ERROR);
+        //CRUD genre
+        //get all genre
+    //    @PreAuthorize("hasRole('ADMIN')")
+        public List<GenreResponse> getAllGenre() {
+            return genreRepository.findAll().stream()
+                    .map(genreMapper::toGenreResponse)
+                    .collect(Collectors.toList());
         }
 
-        return genreMapper.toGenreResponse(genre);
-    }
-
-    //update genre
-    public GenreResponse updateGenre(String genreId, GenreCreationRequest request) {
-        Genre genre = genreRepository.findById(genreId).orElseThrow(
-                () -> new AppException(ErrorCode.GENRE_NOT_FOUND)
-        );
-
-        genre.setName(request.getName());
-
-        try {
-            genre = genreRepository.save(genre);
-        } catch (Exception exception) {
-            throw new AppException(ErrorCode.UNKNOWN_ERROR);
+        //get genre by id
+        public GenreResponse getGenreById(String genreId) {
+            return genreRepository.findById(genreId)
+                    .map(genreMapper::toGenreResponse)
+                    .orElseThrow(() -> new AppException(ErrorCode.GENRE_NOT_FOUND)
+                    );
         }
 
-        return genreMapper.toGenreResponse(genre);
-    }
+        //create genre
+        public GenreResponse createGenre(GenreCreationRequest request) {
+            Genre genre = genreMapper.toGenre(request);
 
-    //delete genre
-    public void deleteGenre(String genreId) {
-//        if (!genreRepository.existsById(genreId)) {
-//            throw new AppException(ErrorCode.GENRE_NOT_FOUND);
-//        }
-//        genreRepository.deleteById(genreId);
-        Genre genre = genreRepository.findById(genreId).orElseThrow(
-                () -> new AppException(ErrorCode.GENRE_NOT_FOUND)
-        );
-        genre.setIsDeleted(true);
-        try {
-            genre = genreRepository.save(genre);
-        } catch (Exception exception) {
-            throw new AppException(ErrorCode.UNKNOWN_ERROR);
+            genreRepository.findByName(genre.getName())
+                    .ifPresent(checkGenre -> {
+                        throw new AppException(ErrorCode.GENRE_ALREADY_EXISTS);
+                    });
+            try {
+                genre = genreRepository.save(genre);
+            } catch (Exception exception) {
+                throw new AppException(ErrorCode.UNKNOWN_ERROR);
+            }
+
+            return genreMapper.toGenreResponse(genre);
+        }
+
+        //update genre
+        public GenreResponse updateGenre(String genreId, GenreCreationRequest request) {
+            Genre genre = genreRepository.findById(genreId).orElseThrow(
+                    () -> new AppException(ErrorCode.GENRE_NOT_FOUND)
+            );
+
+            genre.setName(request.getName());
+
+            try {
+                genre = genreRepository.save(genre);
+            } catch (Exception exception) {
+                throw new AppException(ErrorCode.UNKNOWN_ERROR);
+            }
+
+            return genreMapper.toGenreResponse(genre);
+        }
+
+        //delete genre
+        public void deleteGenre(String genreId) {
+    //        if (!genreRepository.existsById(genreId)) {
+    //            throw new AppException(ErrorCode.GENRE_NOT_FOUND);
+    //        }
+    //        genreRepository.deleteById(genreId);
+            Genre genre = genreRepository.findById(genreId).orElseThrow(
+                    () -> new AppException(ErrorCode.GENRE_NOT_FOUND)
+            );
+            genre.setIsDeleted(true);
+            try {
+                genre = genreRepository.save(genre);
+            } catch (Exception exception) {
+                throw new AppException(ErrorCode.UNKNOWN_ERROR);
+            }
+
+        }
+
+        public List<GenreResponse> getActivatingGenre() {
+            return genreRepository.findAllByIsActiveAndIsDeleted(true,false).stream().map(genreMapper::toGenreResponse).toList();
         }
 
     }
-
-    public List<GenreResponse> getActivatingGenre() {
-        return genreRepository.findAllByIsActiveAndIsDeleted(true,false).stream().map(genreMapper::toGenreResponse).toList();
-    }
-
-}

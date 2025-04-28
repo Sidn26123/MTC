@@ -8,9 +8,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
 
-
 /**
- * Entity lưu các truyện được đánh dấu.
+ * Bảng chi tiết các item trong bookshelf, mỗi item là 1 novel được đọc
  */
 @Getter
 @Setter
@@ -19,21 +18,20 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
-public class MarkedNovel {
+public class BookShelfItem {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 
-
-    /// ID user
-    String userId;
+    @ManyToOne
+    @JoinColumn(name = "bookshelf_id")
+    BookShelf bookShelf;
 
     @ManyToOne
     @JoinColumn(name = "novel_id")
     Novel novel;
 
-    /// Idx của chapter được truy cập gần nhất của truyện được bookark tại thời điểm bookmark. (Nếu chưa đọc thì chapter = 0; nếu bookmark ở ngoài sẽ lấy theo idx chapter của truyện)
-    Integer chapter;
+    Integer currentChapterIdx;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -44,4 +42,5 @@ public class MarkedNovel {
 
     @Builder.Default
     Boolean isDeleted = false;
+
 }

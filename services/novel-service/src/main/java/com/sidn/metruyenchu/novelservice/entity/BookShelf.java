@@ -23,11 +23,11 @@ public class BookShelf {
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
 
-    @ManyToOne
-    @JoinColumn(name = "novel_id")
-    Novel novel;
+    ///Belongs to
+    String userId;
 
-    Integer currentChapterIdx;
+    ///Tên gợi nhớ của bookshelf
+    String name;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)
@@ -38,4 +38,9 @@ public class BookShelf {
 
     @Builder.Default
     Boolean isDeleted = false;
+
+    ///Nếu action thì bookshelf sẽ hiển thị cho user trong UI, ít nhất mỗi user phải có 1 bookshelf activating
+    @Builder.Default
+    Boolean isActive = true;
+
 }

@@ -1,10 +1,7 @@
 package com.sidn.metruyenchu.novelservice.service;
 
 import com.sidn.metruyenchu.novelservice.dto.PageResponse;
-import com.sidn.metruyenchu.novelservice.dto.request.chapter.ChapterContentGetRequest;
-import com.sidn.metruyenchu.novelservice.dto.request.chapter.ChapterCreationRequest;
-import com.sidn.metruyenchu.novelservice.dto.request.chapter.ChapterListGetRequest;
-import com.sidn.metruyenchu.novelservice.dto.request.chapter.ChaptersOfNovelGetRequest;
+import com.sidn.metruyenchu.novelservice.dto.request.chapter.*;
 import com.sidn.metruyenchu.novelservice.dto.response.ChapterResponse;
 import com.sidn.metruyenchu.novelservice.dto.response.ChapterStatusResponse;
 import com.sidn.metruyenchu.novelservice.dto.response.chapter.ChapterContentResponse;
@@ -187,10 +184,10 @@ public class ChapterService {
      * @param request
      * @return
      */
-    public ChapterResponse updateChapter(String chapterId, ChapterCreationRequest request) {
+    public ChapterResponse updateChapter(String chapterId, ChapterUpdateRequest request) {
         var chapter = chapterRepository.findById(chapterId).
                 orElseThrow(() -> new AppException(ErrorCode.CHAPTER_NOT_FOUND));
-        chapter = chapterMapper.toChapter(request);
+        chapterMapper.update(chapter, request);
 //        chapterMapper.updateChapterFromRequest(chapter, request);
         try {
             chapter = chapterRepository.save(chapter);
