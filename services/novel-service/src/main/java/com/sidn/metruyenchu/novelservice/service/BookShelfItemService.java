@@ -3,6 +3,7 @@ package com.sidn.metruyenchu.novelservice.service;
 import com.sidn.metruyenchu.novelservice.dto.PageResponse;
 import com.sidn.metruyenchu.novelservice.dto.request.bookshelfItem.BookShelfItemCreateRequest;
 import com.sidn.metruyenchu.novelservice.dto.request.bookshelfItem.BookShelfItemGetRequest;
+import com.sidn.metruyenchu.novelservice.dto.request.bookshelfItem.BookShelfItemUpdateRequest;
 import com.sidn.metruyenchu.novelservice.dto.response.bookshelfItem.BookShelfItemResponse;
 import com.sidn.metruyenchu.novelservice.entity.BookShelf;
 import com.sidn.metruyenchu.novelservice.entity.BookShelfItem;
@@ -14,6 +15,7 @@ import com.sidn.metruyenchu.novelservice.repository.BookShelfItemRepository;
 import com.sidn.metruyenchu.novelservice.repository.BookShelfRepository;
 import com.sidn.metruyenchu.novelservice.repository.NovelRepository;
 import com.sidn.metruyenchu.novelservice.utils.PageUtils;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -50,13 +52,13 @@ public class BookShelfItemService {
 
         Optional<BookShelfItem> existingItem = bookShelfItemRepository.findByBookShelfIdAndNovelId(bookShelfId, request.getNovelId());
 
+        // Nếu đã có item trong bookshelf thì cập nhật lại
         if (existingItem.isPresent()) {
             item = existingItem.get();
             bookShelfItemMapper.updateEntity(item, request);
 //            item.setCurrentChapterIdx(request.getCurrentChapterIdx());
         } else {
-            log.info("Item not found");
-
+            // Nếu chưa có item trong bookshelf thì tạo mới
             BookShelf bookShelf = bookShelfRepository.findById(bookShelfId)
                     .orElseThrow(() -> new AppException(ErrorCode.BOOKSHELF_OF_USER_NOT_FOUND));
 
@@ -137,6 +139,12 @@ public class BookShelfItemService {
     }
 
     //Lấy tất cả item trong bookshelf dạng list
+
+    /**
+     * Lấy tất cả item trong bookshelf
+     * @param bookShelfId
+     * @return
+     */
     public List<BookShelfItemResponse> getAllBookShelfItemsInBookShelf(String bookShelfId) {
         //Lay tất cả item trong bookshelf
         List<BookShelfItem> items = bookShelfItemRepository.findAllByBookShelfId(bookShelfId);
@@ -148,10 +156,31 @@ public class BookShelfItemService {
 
 
     //Lay tất cả item trong bookshelf
+
+    /**
+     * Lấy tất cả item trong bookshelf
+     * @param bookShelfId
+     * @return
+     */
     public List<BookShelfItem> getAllBookShelfItemsInBookShelfEntity(String bookShelfId) {
 
         return bookShelfItemRepository.findAllByBookShelfId(bookShelfId);
     }
 
+    /**
+     * Cập nhật lại item trong bookshelf
+     * @param itemId
+     * @param request
+     * @return
+     */
+    public BookShelfItemResponse updateBookShelfItem(String itemId, @Valid BookShelfItemUpdateRequest request) {
+        BookShelfItem item = bookShelfItemRepository.findById(itemId)
+                .orElseThrow(() -> new AppException(ErrorCode.BOOKSHELF_ITEM_NOT_FOUND));
 
+        bookShelfItemMapper.updateEntity(item, request);
+
+        item = bookShelfItemRepository.save(item);
+
+        return bookShelfItemMapper.toResponse(item);
+    }
 }

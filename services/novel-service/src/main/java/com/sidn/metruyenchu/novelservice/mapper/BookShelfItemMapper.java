@@ -1,6 +1,7 @@
 package com.sidn.metruyenchu.novelservice.mapper;
 
 import com.sidn.metruyenchu.novelservice.dto.request.bookshelfItem.BookShelfItemCreateRequest;
+import com.sidn.metruyenchu.novelservice.dto.request.bookshelfItem.BookShelfItemUpdateRequest;
 import com.sidn.metruyenchu.novelservice.dto.response.bookshelfItem.BookShelfItemResponse;
 import com.sidn.metruyenchu.novelservice.entity.BookShelfItem;
 import org.mapstruct.Mapper;
@@ -17,6 +18,7 @@ public interface BookShelfItemMapper {
 
     List<BookShelfItemResponse> toResponses(List<BookShelfItem> bookShelfItems);
 
+    void updateEntity(@MappingTarget BookShelfItem bookShelfItem, BookShelfItemUpdateRequest request);
     void updateEntity(@MappingTarget BookShelfItem bookShelfItem, BookShelfItemCreateRequest request);
 
 }

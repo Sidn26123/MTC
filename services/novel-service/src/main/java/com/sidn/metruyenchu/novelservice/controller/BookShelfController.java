@@ -8,6 +8,7 @@ import com.sidn.metruyenchu.novelservice.dto.request.bookshelf.BookShelfGetReque
 import com.sidn.metruyenchu.novelservice.dto.request.bookshelf.BookShelfUpdateRequest;
 import com.sidn.metruyenchu.novelservice.dto.request.bookshelfItem.BookShelfItemCreateRequest;
 import com.sidn.metruyenchu.novelservice.dto.request.bookshelfItem.BookShelfItemGetRequest;
+import com.sidn.metruyenchu.novelservice.dto.request.bookshelfItem.BookShelfItemUpdateRequest;
 import com.sidn.metruyenchu.novelservice.dto.response.bookshelf.BookShelfResponse;
 import com.sidn.metruyenchu.novelservice.dto.response.bookshelfItem.BookShelfItemResponse;
 import com.sidn.metruyenchu.novelservice.service.BookShelfItemService;
@@ -28,6 +29,11 @@ public class BookShelfController {
     BookShelfService bookShelfService;
     BookShelfItemService bookShelfItemService;
 
+    /**
+     * Được gọi khi user onboard lần đầu tiên
+     * @param request
+     * @return
+     */
     @PostMapping("/init")
     public ApiResponse<BookShelfResponse> initBookShelf(@Valid @RequestBody BookShelfCreateRequest request) {
         return ApiResponse.<BookShelfResponse>builder()
@@ -99,6 +105,20 @@ public class BookShelfController {
                 .build();
     }
 
+    /**
+     * Cập nhật lại item trong bookshelf
+     * @param itemId UUID
+     * @param request BookShelfItemUpdateRequest
+     * @return
+     */
+    @PutMapping("/items/{itemId}")
+    public ApiResponse<BookShelfItemResponse> updateBookShelfItem(@PathVariable String itemId,
+                                                              @Valid @RequestBody BookShelfItemUpdateRequest request) {
+        return ApiResponse.<BookShelfItemResponse>builder()
+                .result(bookShelfItemService.updateBookShelfItem(itemId, request))
+                .build();
+    }
+
     //Bo
     @GetMapping("/{bookShelfId}/items/{itemId}")
     public ApiResponse<BookShelfItemResponse> getBookShelfItem(@PathVariable String bookShelfId,
@@ -138,6 +158,11 @@ public class BookShelfController {
                 .build();
     }
 
+    /**
+     * Kích hoạt bookshelf, mỗi user có thể có nhiều bookshelf nhưng chỉ có 1 bookshelf được kích hoạt
+     * @param request BookShelfActiveRequest
+     * @return String
+     */
     @PostMapping("/active")
     public ApiResponse<String> activeBookShelf(@Valid @RequestBody BookShelfActiveRequest request) {
         bookShelfService.activeBookShelf(request);
