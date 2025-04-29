@@ -95,7 +95,7 @@ public class MarkedNovelController {
      * @param markedNovelId ID của truyện đã đánh dấu
      * @return ApiResponse<Void>
      */
-    @DeleteMapping("/{markedNovelId}")
+    @DeleteMapping("/hard/{markedNovelId}")
     public ApiResponse<Void> deleteMarkedNovel(@PathVariable String markedNovelId) {
         markedNovelService.deleteMarkedNovel(markedNovelId);
         return ApiResponse.<Void>builder().build();
