@@ -16,6 +16,7 @@ public interface NovelPublishRequestMapper {
     NovelPublishRequest toEntity(NovelPublishRequestCreationRequest request);
 
     @Mapping(target = "statusLabel", expression = "java(entity.getStatus() != null ? entity.getStatus().getLabel() : null)")
+    @Mapping(target = "novelId", source = "novel.id")
     NovelPublishRequestResponse toResponse(NovelPublishRequest entity);
 
     List<NovelPublishRequestResponse> toResponses(List<NovelPublishRequest> entities);

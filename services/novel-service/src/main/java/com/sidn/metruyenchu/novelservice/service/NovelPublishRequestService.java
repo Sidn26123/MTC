@@ -4,12 +4,14 @@ import com.sidn.metruyenchu.novelservice.dto.BaseFilterRequest;
 import com.sidn.metruyenchu.novelservice.dto.PageResponse;
 import com.sidn.metruyenchu.novelservice.dto.request.publish.NovelPublishRequestCreationRequest;
 import com.sidn.metruyenchu.novelservice.dto.response.publish.NovelPublishRequestResponse;
+import com.sidn.metruyenchu.novelservice.entity.Novel;
 import com.sidn.metruyenchu.novelservice.entity.NovelPublishRequest;
 import com.sidn.metruyenchu.novelservice.enums.PublishRequestStatus;
 import com.sidn.metruyenchu.novelservice.exception.AppException;
 import com.sidn.metruyenchu.novelservice.exception.ErrorCode;
 import com.sidn.metruyenchu.novelservice.mapper.NovelPublishRequestMapper;
 import com.sidn.metruyenchu.novelservice.repository.NovelPublishRequestRepository;
+import com.sidn.metruyenchu.novelservice.repository.NovelRepository;
 import com.sidn.metruyenchu.novelservice.utils.PageUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -30,20 +32,26 @@ public class NovelPublishRequestService {
 
     NovelPublishRequestRepository novelPublishRequestRepository;
     NovelPublishRequestMapper novelPublishRequestMapper;
+    private final NovelRepository novelRepository;
 
     public NovelPublishRequestResponse create(NovelPublishRequestCreationRequest request) {
-        NovelPublishRequest entity = novelPublishRequestMapper.toEntity(request);
-        entity.setStatus(PublishRequestStatus.PENDING);
+        NovelPublishRequest novelPublishRequest = novelPublishRequestMapper.toEntity(request);
+        novelPublishRequest.setStatus(PublishRequestStatus.PENDING);
+
+        Novel novel = novelRepository.findById(request.getNovelId())
+                .orElseThrow(() -> new AppException(ErrorCode.NOVEL_NOT_FOUND));
+
         String userId = getUserIdFromContext();
-        entity.setRequestedBy(userId);
+        novelPublishRequest.setRequestedBy(userId);
+        novelPublishRequest.setNovel(novel);
         try {
-            entity = novelPublishRequestRepository.save(entity);
+            novelPublishRequest = novelPublishRequestRepository.save(novelPublishRequest);
         } catch (Exception ex) {
             log.error("Error creating publish request", ex);
             throw new AppException(ErrorCode.UNKNOWN_ERROR);
         }
 
-        return novelPublishRequestMapper.toResponse(entity);
+        return novelPublishRequestMapper.toResponse(novelPublishRequest);
     }
 
     public PageResponse<NovelPublishRequestResponse> getAll(BaseFilterRequest request) {
