@@ -84,6 +84,13 @@ public class NovelSpecification {
         };
     }
 
+    public static Specification<Novel> ofPublisher(String publisherId) {
+        return (root, query, cb) -> {
+            if (publisherId == null || publisherId.trim().isEmpty()) return null;
+            return cb.equal(root.get("currentPublisher"), publisherId);
+        };
+    }
+
     public static Specification<Novel> filter(NovelFilterRequest request) {
         return Specification
                 .where(NovelSpecification.hasSearchText(request.getSearchText()))
@@ -94,6 +101,7 @@ public class NovelSpecification {
                 .and(NovelSpecification.hasStatus(request.getStatus()))
                 .and(NovelSpecification.isPublished(request.getIsPublished()))
                 .and(NovelSpecification.ofAuthor(request.getAuthorId()))
+                .and(NovelSpecification.ofPublisher(request.getCurrentPublisher()))
                 .and(NovelSpecification.notDeleted())
                 ;
     }
@@ -108,6 +116,7 @@ public class NovelSpecification {
                 .and(NovelSpecification.hasStatus(request.getStatus()))
                 .and(NovelSpecification.isPublished(request.getIsPublished()))
                 .and(NovelSpecification.ofAuthor(request.getAuthorId()))
+                .and(NovelSpecification.ofPublisher(request.getCurrentPublisher()))
                 ;
     }
 //    public static Specification<Novel> filter(NovelFilterRequest request) {
