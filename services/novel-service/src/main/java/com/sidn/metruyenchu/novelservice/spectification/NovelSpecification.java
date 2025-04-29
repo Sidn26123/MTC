@@ -72,6 +72,18 @@ public class NovelSpecification {
     public static Specification<Novel> notDeleted() {
         return (root, query, cb) -> cb.isFalse(root.get("isDeleted"));
     }
+
+    public static Specification<Novel> ofAuthor(String authorId) {
+//        return (root, query, cb) -> {
+//            if (authorId == null || authorId.trim().isEmpty()) return null;
+//            return cb.equal(root.get("author").get("id"), authorId);
+//        };
+        return (root, query, cb) -> {
+            if (authorId == null || authorId.trim().isEmpty()) return null;
+            return cb.equal(root.get("author").get("id"), authorId);
+        };
+    }
+
     public static Specification<Novel> filter(NovelFilterRequest request) {
         return Specification
                 .where(NovelSpecification.hasSearchText(request.getSearchText()))
@@ -81,7 +93,22 @@ public class NovelSpecification {
                 .and(NovelSpecification.hasGenres(request.getGenres()))
                 .and(NovelSpecification.hasStatus(request.getStatus()))
                 .and(NovelSpecification.isPublished(request.getIsPublished()))
-                .and(NovelSpecification.notDeleted());
+                .and(NovelSpecification.ofAuthor(request.getAuthorId()))
+                .and(NovelSpecification.notDeleted())
+                ;
+    }
+
+    public static Specification<Novel> fullyFilter(NovelFilterRequest request) {
+        return Specification
+                .where(NovelSpecification.hasSearchText(request.getSearchText()))
+                .and(NovelSpecification.hasSects(request.getSects()))
+                .and(NovelSpecification.hasWorldScenes(request.getWorldScenes()))
+                .and(NovelSpecification.hasMainCharacterTraits(request.getMainCharacterTraits()))
+                .and(NovelSpecification.hasGenres(request.getGenres()))
+                .and(NovelSpecification.hasStatus(request.getStatus()))
+                .and(NovelSpecification.isPublished(request.getIsPublished()))
+                .and(NovelSpecification.ofAuthor(request.getAuthorId()))
+                ;
     }
 //    public static Specification<Novel> filter(NovelFilterRequest request) {
 //        return (root, query, cb) -> {
