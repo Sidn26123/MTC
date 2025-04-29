@@ -109,16 +109,16 @@ public class Novel {
     @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     List<Chapter> chapters = new ArrayList<>();
 
-    @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     List<NovelSect> novelSects;
 
-    @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     List<NovelWorldScene> novelWorldScenes;
 
-    @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     List<NovelMainCharacterTrait> novelMainCharacterTraits;
 
-    @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     List<NovelGenre> novelGenres;
 
 

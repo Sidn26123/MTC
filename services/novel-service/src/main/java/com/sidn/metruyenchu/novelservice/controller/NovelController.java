@@ -3,10 +3,7 @@ package com.sidn.metruyenchu.novelservice.controller;
 import com.sidn.metruyenchu.novelservice.dto.ApiResponse;
 import com.sidn.metruyenchu.novelservice.dto.BaseFilterRequest;
 import com.sidn.metruyenchu.novelservice.dto.PageResponse;
-import com.sidn.metruyenchu.novelservice.dto.request.novel.CheckNovelExistedRequest;
-import com.sidn.metruyenchu.novelservice.dto.request.novel.NovelFilterRequest;
-import com.sidn.metruyenchu.novelservice.dto.request.novel.NovelCreationRequest;
-import com.sidn.metruyenchu.novelservice.dto.request.novel.NovelUpdateRequest;
+import com.sidn.metruyenchu.novelservice.dto.request.novel.*;
 import com.sidn.metruyenchu.novelservice.dto.request.publish.NovelPublishRequestCreationRequest;
 import com.sidn.metruyenchu.novelservice.dto.request.publish.PublishRequestActionLogCreationRequest;
 import com.sidn.metruyenchu.novelservice.dto.request.publish.PublishRequestActionLogUpdateRequest;
@@ -245,17 +242,15 @@ public class NovelController {
                 .build();
     }
 
-
-
-
-//    @GetMapping("/publishing-novel")
-//    ApiResponse<List<NovelResponse>> getPublishingNovel() {
-//        return ApiResponse.<List<NovelResponse>>builder()
-//                .result(novelService.getPublishingNovel())
-//                .build();
-//    }
-
-
-    //Lay danh sach publish boi user
+    /**
+     * Lấy danh sách truyêện có cùng author (tác giả)
+     */
+    @GetMapping("/author/{authorId}/novels")
+    public ApiResponse<PageResponse<NovelResponse>> getNovelsByAuthor(@PathVariable String authorId, @ModelAttribute NovelFilterRequest request) {
+        request.setAuthorId(authorId);
+        return ApiResponse.<PageResponse<NovelResponse>>builder()
+                .result(novelService.getNovelWithFilter(request))
+                .build();
+    }
 
 }

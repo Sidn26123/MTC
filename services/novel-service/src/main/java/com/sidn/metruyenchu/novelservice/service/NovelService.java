@@ -3,9 +3,11 @@ package com.sidn.metruyenchu.novelservice.service;
 import com.sidn.metruyenchu.novelservice.dto.PageResponse;
 import com.sidn.metruyenchu.novelservice.dto.request.novel.NovelFilterRequest;
 import com.sidn.metruyenchu.novelservice.dto.request.novel.NovelCreationRequest;
+import com.sidn.metruyenchu.novelservice.dto.request.novel.NovelOfAuthorFilterRequest;
 import com.sidn.metruyenchu.novelservice.dto.request.novel.NovelUpdateRequest;
 import com.sidn.metruyenchu.novelservice.dto.response.*;
 import com.sidn.metruyenchu.novelservice.dto.response.chapter.ChapterPublishCheckResponse;
+import com.sidn.metruyenchu.novelservice.dto.response.novel.NovelBasicInfoResponse;
 import com.sidn.metruyenchu.novelservice.dto.response.novel.NovelCanPublishResponse;
 import com.sidn.metruyenchu.novelservice.dto.response.novel.NovelResponse;
 import com.sidn.metruyenchu.novelservice.dto.response.novel.NovelStatusResponse;
@@ -655,8 +657,9 @@ public class NovelService {
     }
 
     public PageResponse<NovelResponse> getNovelWithFilter(NovelFilterRequest request){
-        Sort sort = Sort.by(Sort.Direction.DESC, "created_at");
-        Pageable pageable = PageRequest.of(request.getPage() - 1, request.getSize(), sort);
+//        Sort sort = Sort.by(Sort.Direction.DESC, "created_at");
+//        Pageable pageable = PageRequest.of(request.getPage() - 1, request.getSize(), sort);
+        Pageable pageable = PageUtils.from(request);
 
 //        Page<Novel> novels = novelRepository.findAll(NovelSpecification.filter(request), pageable);
         Page<Novel> novels = novelRepository.findNovelWithFilter(request, pageable);
@@ -665,13 +668,26 @@ public class NovelService {
         for (Novel novel : novels){
             novelResponses.add(getDataWithManyRelationOfNovel(novel));
         }
-        return PageResponse.<NovelResponse>builder()
-                .currentPage(request.getPage())
-                .pageSize(request.getSize())
-                .totalPages(novels.getTotalPages())
-                .totalElements(novels.getTotalElements())
-//                .data(novels.stream().map(this::fetchDataMissOfNovel).toList())
-                .data(novelResponses)
-                .build();
+//        return PageResponse.<NovelResponse>builder()
+//                .currentPage(request.getPage())
+//                .pageSize(request.getSize())
+//                .totalPages(novels.getTotalPages())
+//                .totalElements(novels.getTotalElements())
+////                .data(novels.stream().map(this::fetchDataMissOfNovel).toList())
+//                .data(novelResponses)
+//                .build();
+        return PageUtils.toPageResponse(novels,
+                novelMapper::toNovelResponse,
+                request.getPage()
+        );
     }
+
+//    public PageResponse<NovelBasicInfoResponse> getNovelOfAuthor(NovelOfAuthorFilterRequest request){
+//        Pageable pageable = PageUtils.from(request);
+//
+//
+//    }
+
+
+
 }

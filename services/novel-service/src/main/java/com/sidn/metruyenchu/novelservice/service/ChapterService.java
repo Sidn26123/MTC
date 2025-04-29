@@ -11,6 +11,7 @@ import com.sidn.metruyenchu.novelservice.entity.Chapter;
 import com.sidn.metruyenchu.novelservice.entity.ChapterStatus;
 import com.sidn.metruyenchu.novelservice.entity.ChapterStatusDetail;
 import com.sidn.metruyenchu.novelservice.entity.Novel;
+import com.sidn.metruyenchu.novelservice.enums.NovelVisibility;
 import com.sidn.metruyenchu.novelservice.exception.AppException;
 import com.sidn.metruyenchu.novelservice.exception.ErrorCode;
 import com.sidn.metruyenchu.novelservice.mapper.ChapterMapper;
@@ -32,6 +33,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.sidn.metruyenchu.novelservice.utils.TokenUtils.getUserIdFromContext;
 
 
 /**
@@ -319,6 +322,9 @@ public class ChapterService {
                 request.getChapterIdx()
         ).orElseThrow(() -> new AppException(ErrorCode.CHAPTER_NOT_FOUND));
 
+        String userId = getUserIdFromContext();
+
+        checkUserCanReadChapterThrow(chapter, userId);
 
         return chapterMapper.toChapterContentResponse(chapter);
     }
@@ -394,6 +400,54 @@ public class ChapterService {
         return chapterRepository.countByNovelId(novelId);
     }
 
+    /**
+     * Kiểm tra user có tể truy cập nội dung chương hay không
+     */
+    public boolean checkUserCanReadChapter(CanUserReadChapterCheckRequest request){
+        Chapter chapter = chapterRepository.findByIdAndIsDeletedIsFalse(request.getChapterId())
+                .orElseThrow(() -> new AppException(ErrorCode.CHAPTER_NOT_FOUND));
+
+        boolean canRead = true;
+
+        //Nếu public thì có thể đọc
+        if (chapter.getNovel().getNovelVisibility() == NovelVisibility.PUBLIC) {
+            return true;
+        }
+
+        //Nếu là tác giả thì có thể đọc
+        if (chapter.getNovel().getAuthor().getId().equals(request.getUserId())) {
+            return true;
+        }
+
+        if (chapter.getNovel().getNovelVisibility() == NovelVisibility.PRIVATE) {
+            return false;
+        }
+
+
+        return true;
+    }
+
+    public void checkUserCanReadChapterThrow(Chapter chapter, String userId) {
+
+        boolean canRead = false;
+
+        //Nếu public thì có thể đọc
+        if (chapter.getNovel().getNovelVisibility() == NovelVisibility.PUBLIC) {
+            return;
+        }
+
+        //Nếu là tác giả thì có thể đọc
+        if (chapter.getNovel().getAuthor().getId().equals(userId)) {
+            return;
+        }
+
+        throw new AppException(ErrorCode.USER_NOT_HAVE_PERMISSION);
+    }
+
+    public void checkUserCanReadChapterThrow(Chapter chapter) {
+        String userId = getUserIdFromContext();
+        checkUserCanReadChapterThrow(chapter, userId);
+    }
 
 
 }

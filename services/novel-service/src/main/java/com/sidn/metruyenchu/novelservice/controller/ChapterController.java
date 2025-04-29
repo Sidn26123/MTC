@@ -121,7 +121,14 @@ public class ChapterController {
                 .build();
     }
 
+    @GetMapping("/chapter/readable")
+    ApiResponse<Boolean> getReadableChapter(@ModelAttribute CanUserReadChapterCheckRequest request){
 
+
+        return ApiResponse.<Boolean>builder()
+                .result(chapterService.checkUserCanReadChapter(request))
+                .build();
+    }
 
     @GetMapping("/novel")
     ApiResponse<PageResponse<ChapterResponse>> getNovels(

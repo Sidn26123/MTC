@@ -131,6 +131,8 @@ public enum ErrorCode {
     MARKED_NOVEL_ALREADY_EXISTS(10003, "Truyện đã đánh dấu đã tồn tại", HttpStatus.BAD_REQUEST),
     BOOKSHELF_ITEM_ALREADY_EXISTS(10004, "Mục trong thư viện đã tồn tại", HttpStatus.BAD_REQUEST),
     BOOKSHELF_ITEM_NOT_BELONG_TO_USER(10005, "Mục trong thư viện không thuộc về người dùng này", HttpStatus.BAD_REQUEST),
+    USER_NOT_HAVE_PERMISSION(10006, "Người dùng không có quyền thực hiện hành động này", HttpStatus.FORBIDDEN),
+
 
 //    // 1. General Errors
 //    UNKNOWN_ERROR(9999, "Lỗi không xác định", HttpStatus.BAD_REQUEST),

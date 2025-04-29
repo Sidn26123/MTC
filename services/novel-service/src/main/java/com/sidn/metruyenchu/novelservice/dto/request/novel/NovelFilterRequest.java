@@ -24,7 +24,7 @@ public class NovelFilterRequest extends BaseFilterRequest {
     String slug;
     String novelId;
     String originName;
-    String currenPublisher;
+    String currentPublisher;
     List<String> sects;
     List<String> worldScenes;
     List<String> mainCharacterTraits;
