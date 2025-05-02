@@ -1,8 +1,17 @@
 import React from "react";
-import LoadingSpining from './LoadingSpining.jsx';
+import LoadingSpinning from './LoadingSpinning.jsx';
+import { FilterItem } from '../../common/NovelFilterComponent.jsx';
+import { useNovelProgressStatus, useToggleFilterItem } from '../../stores/selectors/novelFilterSelector.js';
 
 const NovelFilter = ({onClose}) => {
     const [isLoading, setIsLoading] = React.useState(false);
+
+    const novelProgressStatus = useNovelProgressStatus();
+    console.log("NovelProgressStatus", novelProgressStatus);
+
+    const toggleFilterItem = useToggleFilterItem();
+    // const toggleFilterItem = (itemId) =>  useToggleFilterItem("novelProgressStatus", itemId);
+
     return (
         <>
             <div>
@@ -13,7 +22,7 @@ const NovelFilter = ({onClose}) => {
                             <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
                                 <div className="bg-panel p-6 max-w-5/7 w-full rounded-xl background-color-lighter">
                                     {isLoading && (
-                                        <LoadingSpining />
+                                        <LoadingSpinning />
                                     )}
                                     <div className="flex justify-between items-center">
                                         <h3 className="font-bold text-xl">Mục lục</h3>
@@ -30,35 +39,46 @@ const NovelFilter = ({onClose}) => {
                                             </svg>
                                         </button>
                                     </div>
-                                    <div
-                                        className={"highlight rounded-lg grid grid-cols-1 md:grid-cols-2 gap-6"}>
-                                        {/*List part*/}
+                                    <div className="highlight rounded-lg grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        {/* List part */}
                                         <div>
-                                            <h2 className="text-base font-semibold text-title"
-                                                data-x-text="item.name">Tình trạng</h2>
-                                            <div className="leading-10 space-x-2 mt-2">
-                                                <div className="inline-flex"><input
-                                                    data-x-bind="InputSelect(item, value)"
-                                                    data-x-model="selected[item.filter]" className="hidden peer"
-                                                    id="status-1" type="checkbox" value="1" /><label
-                                                    className="select-none cursor-pointer rounded border border-title text-title text-xs py-1 px-3 duration-200 ease-in-out peer-checked:bg-yellow-500  peer-checked:text-white"
-                                                    htmlFor="status-1"><span
-                                                    data-x-text="subItem">Còn tiếp</span></label></div>
-                                                <div className="inline-flex"><input
-                                                    data-x-bind="InputSelect(item, value)"
-                                                    data-x-model="selected[item.filter]" className="hidden peer"
-                                                    id="status-2" type="checkbox" value="2" /><label
-                                                    className="select-none cursor-pointer rounded border border-title text-title text-xs py-1 px-3 duration-200 ease-in-out peer-checkek:bg-yellow-500 peer-checked:text-white"
-                                                    htmlFor="status-2"><span
-                                                    data-x-text="subItem">Hoàn thành</span></label></div>
-                                                <div className="inline-flex"><input
-                                                    data-x-bind="InputSelect(item, value)"
-                                                    data-x-model="selected[item.filter]" className="hidden peer"
-                                                    id="status-3" type="checkbox" value="3" /><label
-                                                    data-x-bind:for="item.filter+'-'+value"
-                                                    className="select-none cursor-pointer rounded border border-title text-title text-xs py-1 px-3 duration-200 ease-in-out peer-checked:bg-primary peer-checked:text-white"
-                                                    htmlFor="status-3"><span
-                                                    data-x-text="subItem">Tạm dừng</span></label></div>
+                                            <h2 className="text-base font-semibold text-title text-left">
+                                                Tình trạng
+                                            </h2>
+                                            <div className="leading-10 space-x-2 mt-2 flex flex-wrap justify-start">
+                                                {novelProgressStatus?.map?.((item) => (
+                                                    <div key={item.id} className="inline-flex">
+                                                        <FilterItem
+                                                            filter={item}
+                                                            onFilterChange={() =>
+                                                                toggleFilterItem("novelProgressStatus", item.id)
+                                                            }
+                                                        />
+                                                    </div>
+                                                ))}
+
+                                                {/*<div className="inline-flex"><input*/}
+                                                {/*    data-x-bind="InputSelect(item, value)"*/}
+                                                {/*    data-x-model="selected[item.filter]" className="hidden peer"*/}
+                                                {/*    id="status-1" type="checkbox" value="1" /><label*/}
+                                                {/*    className="select-none cursor-pointer rounded border border-title text-title text-xs py-1 px-3 duration-200 ease-in-out peer-checked:bg-yellow-500  peer-checked:text-white"*/}
+                                                {/*    htmlFor="status-1"><span*/}
+                                                {/*    data-x-text="subItem">Còn tiếp</span></label></div>*/}
+                                                {/*<div className="inline-flex"><input*/}
+                                                {/*    data-x-bind="InputSelect(item, value)"*/}
+                                                {/*    data-x-model="selected[item.filter]" className="hidden peer"*/}
+                                                {/*    id="status-2" type="checkbox" value="2" /><label*/}
+                                                {/*    className="select-none cursor-pointer rounded border border-title text-title text-xs py-1 px-3 duration-200 ease-in-out peer-checkek:bg-yellow-500 peer-checked:text-white"*/}
+                                                {/*    htmlFor="status-2"><span*/}
+                                                {/*    data-x-text="subItem">Hoàn thành</span></label></div>*/}
+                                                {/*<div className="inline-flex"><input*/}
+                                                {/*    data-x-bind="InputSelect(item, value)"*/}
+                                                {/*    data-x-model="selected[item.filter]" className="hidden peer"*/}
+                                                {/*    id="status-3" type="checkbox" value="3" /><label*/}
+                                                {/*    data-x-bind:for="item.filter+'-'+value"*/}
+                                                {/*    className="select-none cursor-pointer rounded border border-title text-title text-xs py-1 px-3 duration-200 ease-in-out peer-checked:bg-primary peer-checked:text-white"*/}
+                                                {/*    htmlFor="status-3"><span*/}
+                                                {/*    data-x-text="subItem">Tạm dừng</span></label></div>*/}
                                             </div>
                                         </div>
                                         <div>
