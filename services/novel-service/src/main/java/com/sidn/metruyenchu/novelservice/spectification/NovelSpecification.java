@@ -2,6 +2,8 @@ package com.sidn.metruyenchu.novelservice.spectification;
 
 import com.sidn.metruyenchu.novelservice.dto.request.novel.NovelFilterRequest;
 import com.sidn.metruyenchu.novelservice.entity.*;
+import com.sidn.metruyenchu.novelservice.enums.*;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
@@ -61,6 +63,16 @@ public class NovelSpecification {
             return join.get("novelStatus").get("id").in(statusIds);
         };
     }
+    public static Specification<Novel> hasNovelState(NovelState state) {
+        return (root, query, cb) -> {
+            if (state == null) {
+                // Nếu không truyền vào trạng thái cụ thể, mặc định lọc theo PUBLISHED
+                return cb.equal(root.get("novelState"), NovelState.PUBLISHED);
+            }
+            return cb.equal(root.get("novelState"), state);
+        };
+    }
+
 
     public static Specification<Novel> isPublished(Boolean isPublished) {
         return (root, query, cb) -> {
@@ -91,6 +103,90 @@ public class NovelSpecification {
         };
     }
 
+    public static Specification<Novel> hasNovelState(List<NovelState> states) {
+        return (root, query, cb) -> {
+            if (states == null || states.isEmpty()) {
+                return cb.equal(root.get("novelState"), NovelState.PUBLISHED);
+            }
+            CriteriaBuilder.In<NovelState> inClause = cb.in(root.get("novelState"));
+            for (NovelState state : states) {
+                inClause.value(state);
+            }
+            return inClause;
+        };
+    }
+
+    public static Specification<Novel> hasNovelTypes(List<NovelType> types) {
+        return (root, query, cb) -> {
+            if (types == null || types.isEmpty()) {
+                return null; // Không lọc theo type nếu không có yêu cầu
+            }
+            CriteriaBuilder.In<NovelType> inClause = cb.in(root.get("novelType"));
+            for (NovelType type : types) {
+                inClause.value(type);
+            }
+            return inClause;
+        };
+    }
+
+    public static Specification<Novel> hasNovelVisibilities(List<NovelVisibility> visibilities) {
+        return (root, query, cb) -> {
+            if (visibilities == null || visibilities.isEmpty()) {
+//                return cb.equal(root.get("novelVisibility"), NovelVisibility.PRIVATE); // mặc định
+                return null;
+            }
+            CriteriaBuilder.In<NovelVisibility> inClause = cb.in(root.get("novelVisibility"));
+            for (NovelVisibility visibility : visibilities) {
+                inClause.value(visibility);
+            }
+            return inClause;
+        };
+    }
+
+    public static Specification<Novel> hasProgressStatuses(List<ProgressStatus> statuses) {
+        return (root, query, cb) -> {
+            if (statuses == null || statuses.isEmpty()) {
+//                return cb.equal(root.get("progressStatus"), ProgressStatus.IN_PROGRESS); // mặc định
+                return null;
+            }
+            CriteriaBuilder.In<ProgressStatus> inClause = cb.in(root.get("progressStatus"));
+            for (ProgressStatus status : statuses) {
+                inClause.value(status);
+            }
+            return inClause;
+        };
+    }
+
+    public static Specification<Novel> hasNovelStates(List<NovelState> states) {
+        return (root, query, cb) -> {
+            if (states == null || states.isEmpty()) {
+//                return cb.equal(root.get("novelState"), NovelState.PUBLISHED); // mặc định
+                return null;
+            }
+            CriteriaBuilder.In<NovelState> inClause = cb.in(root.get("novelState"));
+            for (NovelState state : states) {
+                inClause.value(state);
+            }
+            return inClause;
+        };
+    }
+
+    public static Specification<Novel> hasNovelAttributes(List<NovelAttribute> attributes) {
+        return (root, query, cb) -> {
+            if (attributes == null || attributes.isEmpty()) {
+//                return cb.equal(root.get("novelAttribute"), NovelAttribute.FREE); // mặc định
+                return null;
+            }
+            CriteriaBuilder.In<NovelAttribute> inClause = cb.in(root.get("novelAttribute"));
+            for (NovelAttribute attribute : attributes) {
+                inClause.value(attribute);
+            }
+            return inClause;
+        };
+    }
+
+
+
     public static Specification<Novel> filter(NovelFilterRequest request) {
         return Specification
                 .where(NovelSpecification.hasSearchText(request.getSearchText()))
@@ -102,6 +198,11 @@ public class NovelSpecification {
                 .and(NovelSpecification.isPublished(request.getIsPublished()))
                 .and(NovelSpecification.ofAuthor(request.getAuthorId()))
                 .and(NovelSpecification.ofPublisher(request.getCurrentPublisher()))
+                .and(NovelSpecification.hasNovelTypes(request.getNovelTypes()))
+                .and(NovelSpecification.hasNovelVisibilities(request.getNovelVisibilities()))
+                .and(NovelSpecification.hasProgressStatuses(request.getProgressStatuses()))
+                .and(NovelSpecification.hasNovelStates(request.getNovelStates()))
+                .and(NovelSpecification.hasNovelAttributes(request.getNovelAttributes()))
                 .and(NovelSpecification.notDeleted())
                 ;
     }
@@ -117,6 +218,11 @@ public class NovelSpecification {
                 .and(NovelSpecification.isPublished(request.getIsPublished()))
                 .and(NovelSpecification.ofAuthor(request.getAuthorId()))
                 .and(NovelSpecification.ofPublisher(request.getCurrentPublisher()))
+                .and(NovelSpecification.hasNovelTypes(request.getNovelTypes()))
+                .and(NovelSpecification.hasNovelVisibilities(request.getNovelVisibilities()))
+                .and(NovelSpecification.hasProgressStatuses(request.getProgressStatuses()))
+                .and(NovelSpecification.hasNovelStates(request.getNovelStates()))
+                .and(NovelSpecification.hasNovelAttributes(request.getNovelAttributes()))
                 ;
     }
 //    public static Specification<Novel> filter(NovelFilterRequest request) {
