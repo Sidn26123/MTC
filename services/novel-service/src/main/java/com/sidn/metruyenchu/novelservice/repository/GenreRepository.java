@@ -12,6 +12,7 @@ public interface GenreRepository extends JpaRepository<Genre, String> {
     boolean existsByName(String name);
     Optional<Genre> findByName(String name);
     List<Genre> findAllByIsActiveAndIsDeleted(Boolean isActive, Boolean isDeleted);
+    List<Genre> findAllByIsActiveAndIsDeletedOrderByName(Boolean isActive, Boolean isDeleted);
 
     Optional<Genre> findByIdIn(List<String> genreIds);
 }

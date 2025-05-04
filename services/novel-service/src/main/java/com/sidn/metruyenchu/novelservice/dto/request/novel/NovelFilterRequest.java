@@ -1,11 +1,7 @@
 package com.sidn.metruyenchu.novelservice.dto.request.novel;
 
 import com.sidn.metruyenchu.novelservice.dto.BaseFilterRequest;
-import com.sidn.metruyenchu.novelservice.enums.NovelState;
-import com.sidn.metruyenchu.novelservice.enums.NovelType;
-import com.sidn.metruyenchu.novelservice.enums.NovelVisibility;
-import com.sidn.metruyenchu.novelservice.enums.ProgressStatus;
-import com.sidn.metruyenchu.novelservice.utils.Range;
+import com.sidn.metruyenchu.novelservice.enums.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -53,6 +49,7 @@ public class NovelFilterRequest extends BaseFilterRequest {
     List<NovelVisibility> novelVisibilities;
     List<ProgressStatus> progressStatuses;
     List<NovelState> novelStates;
+    List<NovelAttribute> novelAttributes;
 
     LocalDateTime createdAtFrom;
     LocalDateTime createdAtTo;

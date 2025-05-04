@@ -430,7 +430,7 @@ public class ChapterService {
     public void checkUserCanReadChapterThrow(Chapter chapter, String userId) {
 
         boolean canRead = false;
-
+        log.info(String.valueOf(chapter.getNovel().getNovelVisibility()));
         //Nếu public thì có thể đọc
         if (chapter.getNovel().getNovelVisibility() == NovelVisibility.PUBLIC) {
             return;

@@ -1,17 +1,14 @@
 package com.sidn.metruyenchu.novelservice.dto.request.novel;
 
-import com.sidn.metruyenchu.novelservice.entity.NovelStatus;
+import com.sidn.metruyenchu.novelservice.enums.ProgressStatus;
 import com.sidn.metruyenchu.novelservice.enums.NovelType;
 import com.sidn.metruyenchu.novelservice.enums.NovelVisibility;
-import com.sidn.metruyenchu.novelservice.enums.ProgressStatus;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -77,7 +74,7 @@ public class NovelCreationRequest {
 
     List<String> worldSceneIds;
 
-//    List<String> statusIds;
+    List<String> statusIds;
 
 
 }

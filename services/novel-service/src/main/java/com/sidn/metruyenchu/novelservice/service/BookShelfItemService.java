@@ -183,4 +183,18 @@ public class BookShelfItemService {
 
         return bookShelfItemMapper.toResponse(item);
     }
+
+    public PageResponse<BookShelfItemResponse> getBookShelfItemsInActiveBookShelf(String userId, BookShelfItemGetRequest request) {
+        List<BookShelf> bookShelfList = bookShelfRepository.findAllByUserId(userId);
+        BookShelf bookShelf = bookShelfList.stream()
+                .filter(BookShelf::getIsActive)
+                .findFirst()
+                .orElseThrow(() -> new AppException(ErrorCode.BOOKSHELF_OF_USER_NOT_FOUND));
+
+        Pageable pageable = PageUtils.from(request);
+
+        var pageData = bookShelfItemRepository.findAllByBookShelfId(bookShelf.getId(), pageable);
+
+        return null;
+    }
 }

@@ -119,4 +119,13 @@ public class BookShelfService {
 
     }
 
+    public BookShelfResponse getActiveBookShelfOfUser(String userId) {
+        List<BookShelf> bookShelfList = bookShelfRepository.findAllByUserId(userId);
+        BookShelf bookShelf = bookShelfList.stream()
+                .filter(BookShelf::getIsActive)
+                .findFirst()
+                .orElseThrow(() -> new AppException(ErrorCode.BOOKSHELF_OF_USER_NOT_FOUND));
+
+        return bookShelfMapper.toResponse(bookShelf);
+    }
 }

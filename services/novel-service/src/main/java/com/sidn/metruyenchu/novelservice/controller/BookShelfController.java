@@ -69,6 +69,24 @@ public class BookShelfController {
                 .build();
     }
 
+    //Get current active bookshelf of user
+    @GetMapping("/user/{userId}/active")
+    public ApiResponse<BookShelfResponse> getActiveBookShelfOfUser(@PathVariable String userId) {
+        return ApiResponse.<BookShelfResponse>builder()
+                .result(bookShelfService.getActiveBookShelfOfUser(userId))
+                .build();
+    }
+
+    //Get item of current active bookshelf of user
+    @GetMapping("/user/{userId}/active/items")
+    public ApiResponse<PageResponse<BookShelfItemResponse>> getItemsInActiveBookShelfOfUser(@PathVariable String userId,
+                                                                                               @ModelAttribute BookShelfItemGetRequest request) {
+        return ApiResponse.<PageResponse<BookShelfItemResponse>>builder()
+                .result(bookShelfItemService.getBookShelfItemsInActiveBookShelf(userId, request))
+                .build();
+    }
+
+
     @PutMapping("/{bookShelfId}")
     public ApiResponse<BookShelfResponse> updateBookShelf(@PathVariable String bookShelfId,
                                                           @Valid @RequestBody BookShelfUpdateRequest request) {
@@ -89,7 +107,7 @@ public class BookShelfController {
 
     @GetMapping("/{bookShelfId}/items")
     public ApiResponse<PageResponse<BookShelfItemResponse>> getItemsInBookShelf(@PathVariable String bookShelfId,
-                                                                 @Valid @RequestBody BookShelfItemGetRequest request) {
+                                                                 @Valid @ModelAttribute BookShelfItemGetRequest request) {
         return ApiResponse.<PageResponse<BookShelfItemResponse>>builder()
                 .result(bookShelfItemService.getBookShelfItemsInBookShelf(bookShelfId, request))
                 .build();

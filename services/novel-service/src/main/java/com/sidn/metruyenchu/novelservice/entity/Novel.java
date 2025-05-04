@@ -1,9 +1,6 @@
 package com.sidn.metruyenchu.novelservice.entity;
 
-import com.sidn.metruyenchu.novelservice.enums.NovelState;
-import com.sidn.metruyenchu.novelservice.enums.NovelType;
-import com.sidn.metruyenchu.novelservice.enums.NovelVisibility;
-import com.sidn.metruyenchu.novelservice.enums.ProgressStatus;
+import com.sidn.metruyenchu.novelservice.enums.*;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -82,6 +79,13 @@ public class Novel {
     @Builder.Default
     NovelState novelState = NovelState.CREATED; //trạng thái ban đầu
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    @Builder.Default
+    NovelAttribute novelAttribute = NovelAttribute.FREE; //thuộc tính truyện
+
+
+
     @Builder.Default
     @Column(columnDefinition = "FLOAT DEFAULT 0.0")
     Float avgRate = 0.0f;
@@ -105,6 +109,9 @@ public class Novel {
 
     @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     List<NovelStatusDetail> status = new ArrayList<>();
+//    @ManyToOne
+//    @JoinColumn(name = "novel_status_id")
+//    NovelStatus novelStatus;
 
     @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     List<Chapter> chapters = new ArrayList<>();

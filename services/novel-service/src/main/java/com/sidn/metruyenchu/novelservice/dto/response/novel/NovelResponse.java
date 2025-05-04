@@ -4,10 +4,10 @@ import com.sidn.metruyenchu.novelservice.dto.response.GenreResponse;
 import com.sidn.metruyenchu.novelservice.dto.response.MainCharacterTraitResponse;
 import com.sidn.metruyenchu.novelservice.dto.response.SectResponse;
 import com.sidn.metruyenchu.novelservice.dto.response.WorldSceneResponse;
+import com.sidn.metruyenchu.novelservice.enums.ProgressStatus;
 import com.sidn.metruyenchu.novelservice.enums.NovelState;
 import com.sidn.metruyenchu.novelservice.enums.NovelType;
 import com.sidn.metruyenchu.novelservice.enums.NovelVisibility;
-import com.sidn.metruyenchu.novelservice.enums.ProgressStatus;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -52,6 +52,7 @@ public class NovelResponse {
     Float avgRate;
     Integer totalRates;
     Integer totalComments;
+    Integer totalChapters;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
     Boolean isDeleted = false;

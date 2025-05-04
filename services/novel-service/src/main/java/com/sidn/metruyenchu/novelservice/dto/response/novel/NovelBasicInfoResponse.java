@@ -1,17 +1,9 @@
 package com.sidn.metruyenchu.novelservice.dto.response.novel;
 
 import com.sidn.metruyenchu.novelservice.dto.response.GenreResponse;
-import com.sidn.metruyenchu.novelservice.dto.response.MainCharacterTraitResponse;
-import com.sidn.metruyenchu.novelservice.dto.response.SectResponse;
-import com.sidn.metruyenchu.novelservice.dto.response.WorldSceneResponse;
-import com.sidn.metruyenchu.novelservice.enums.NovelState;
-import com.sidn.metruyenchu.novelservice.enums.NovelType;
-import com.sidn.metruyenchu.novelservice.enums.NovelVisibility;
-import com.sidn.metruyenchu.novelservice.enums.ProgressStatus;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Data

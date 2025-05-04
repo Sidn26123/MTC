@@ -1,5 +1,6 @@
 package com.sidn.metruyenchu.novelservice.service;
 
+import com.sidn.metruyenchu.novelservice.dto.BaseFilterRequest;
 import com.sidn.metruyenchu.novelservice.dto.PageResponse;
 import com.sidn.metruyenchu.novelservice.dto.request.novel.NovelFilterRequest;
 import com.sidn.metruyenchu.novelservice.dto.request.novel.NovelCreationRequest;
@@ -435,9 +436,10 @@ public class NovelService {
     }
 
 
-    public PageResponse<NovelResponse> getAllNovels(int page, int size) {
-        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
-        Pageable pageable = PageRequest.of(page - 1, size, sort);
+    public PageResponse<NovelResponse> getAllNovels(BaseFilterRequest request) {
+//        Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
+//        Pageable pageable = PageRequest.of(page - 1, size, sort);
+        Pageable pageable = PageUtils.from(request);
 
         var pageData = novelRepository.findAll(pageable);
 
@@ -450,7 +452,7 @@ public class NovelService {
         }
 
         return PageResponse.<NovelResponse>builder()
-                .currentPage(page)
+                .currentPage(request.getPage())
                 .pageSize(pageData.getSize())
                 .totalPages(pageData.getTotalPages())
                 .totalElements(pageData.getTotalElements())

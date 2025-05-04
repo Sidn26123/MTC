@@ -41,25 +41,17 @@ public class NovelController {
 
     @GetMapping
     ApiResponse<PageResponse<NovelResponse>> getAllNovels(
-            @RequestParam(value = "page", defaultValue = "1") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size
+//            @RequestParam(value = "page", defaultValue = "1") int page,
+//            @RequestParam(value = "size", defaultValue = "10") int size
+            @ModelAttribute BaseFilterRequest request
     ) {
         return ApiResponse.<PageResponse<NovelResponse>>builder()
-                .result(novelService.getAllNovels(page, size))
+                .result(novelService.getAllNovels(request))
                 .build();
     }
 
     @GetMapping("/filter")
     ApiResponse<PageResponse<NovelResponse>> getNovelByCategory(
-//            @RequestParam(value = "page", defaultValue = "1") int page,
-//            @RequestParam(value = "size", defaultValue = "10") int size,
-//            @RequestParam(value = "sort", defaultValue = "ASC") String sort,
-//            @RequestParam(required = false) String searchText,
-//            @RequestParam(required = false) List<String> status,
-//            @RequestParam(required = false) List<String> genres,
-//            @RequestParam(required = false) List<String> sects,
-//            @RequestParam(required = false) List<String> worldScenes,
-//            @RequestParam(required = false) List<String> mainCharacterTraits
             @ModelAttribute NovelFilterRequest request
             ) {
         return ApiResponse.<PageResponse<NovelResponse>>builder()
