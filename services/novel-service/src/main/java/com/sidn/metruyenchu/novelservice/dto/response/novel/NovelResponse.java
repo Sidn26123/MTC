@@ -53,6 +53,9 @@ public class NovelResponse {
     Integer totalRates;
     Integer totalComments;
     Integer totalChapters;
+    Integer totalViews;
+    Integer totalBookmarks;
+    Integer totalPromotions;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
     Boolean isDeleted = false;

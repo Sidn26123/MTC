@@ -50,10 +50,19 @@ public class NovelController {
                 .build();
     }
 
-    @GetMapping("/filter")
+//    @GetMapping("/filter")
+//    ApiResponse<PageResponse<NovelResponse>> getNovelByCategory(
+//            @ModelAttribute NovelFilterRequest request
+//            ) {
+//        return ApiResponse.<PageResponse<NovelResponse>>builder()
+//                .result(novelService.getNovels(request))
+//                .build();
+//    }
+//
+    @PostMapping("/filter")
     ApiResponse<PageResponse<NovelResponse>> getNovelByCategory(
-            @ModelAttribute NovelFilterRequest request
-            ) {
+            @RequestBody NovelFilterRequest request
+    ) {
         return ApiResponse.<PageResponse<NovelResponse>>builder()
                 .result(novelService.getNovels(request))
                 .build();

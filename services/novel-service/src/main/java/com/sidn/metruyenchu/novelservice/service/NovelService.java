@@ -92,8 +92,9 @@ public class NovelService {
     }
 
     public NovelResponse getNovelBySlug(String novelSlug) {
-        NovelResponse response = novelMapper.toNovelResponse(novelRepository.findBySlug(novelSlug));
-
+        Novel novel = novelRepository.findBySlug(novelSlug)
+                .orElseThrow(() -> new AppException(ErrorCode.NOVEL_NOT_FOUND));
+        NovelResponse response = novelMapper.toNovelResponse(novel);
         return getDataMissOfNovel(response);
     }
 
@@ -297,6 +298,14 @@ public class NovelService {
                 .toList();
 
         novel.setNovelSects(novelSects);
+
+
+        log.info("Novel: {}", novel.getName());
+        log.info("Sect: {}", sectResponses.getFirst().getName());
+        log.info("Novel: {}", novel.getNovelSects());
+        log.info("Name: {}", worldScenes.getFirst().getName());
+        log.info("Name: {}", mainCharacterTraits.getFirst().getName());
+
 
         try {
             novel = novelRepository.save(novel);

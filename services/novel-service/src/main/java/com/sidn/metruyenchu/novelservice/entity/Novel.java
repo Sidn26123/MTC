@@ -40,7 +40,6 @@ public class Novel {
     @Column(columnDefinition = "TEXT")
     String originLink;
 
-    Integer totalChapters;
 
     @Column(nullable = false)
     String currentPublisher;
@@ -91,10 +90,28 @@ public class Novel {
     Float avgRate = 0.0f;
 
     @Builder.Default
+    @Column(columnDefinition = "INTEGER DEFAULT 0")
     Integer totalRates = 0;
 
     @Builder.Default
+    @Column(columnDefinition = "INTEGER DEFAULT 0")
     Integer totalComments = 0;
+
+    @Builder.Default
+    @Column(columnDefinition = "INTEGER DEFAULT 0")
+    Integer totalChapters = 0;
+
+    @Builder.Default
+    @Column(columnDefinition = "INTEGER DEFAULT 0")
+    Integer totalViews = 0;
+
+    @Builder.Default
+    @Column(columnDefinition = "INTEGER DEFAULT 0")
+    Integer totalPromotions = 0;
+
+    @Builder.Default
+    @Column(columnDefinition = "INTEGER DEFAULT 0")
+    Integer totalBookmarks = 0;
 
     @ManyToOne
     @JoinColumn(name = "author_id")

@@ -27,6 +27,12 @@ public class NovelFilterRequest extends BaseFilterRequest {
     List<String> genres;
     List<String> status;
 
+    List<NovelType> novelTypes;
+    List<NovelVisibility> novelVisibilities;
+    List<ProgressStatus> progressStatuses;
+    List<NovelState> novelStates;
+    List<NovelAttribute> novelAttributes;
+
     Integer chapterReadToCommentFrom;
     Integer chapterReadToCommentTo;
 
@@ -44,12 +50,6 @@ public class NovelFilterRequest extends BaseFilterRequest {
 
     Integer totalCommentsFrom;
     Integer totalCommentsTo;
-
-    List<NovelType> novelTypes;
-    List<NovelVisibility> novelVisibilities;
-    List<ProgressStatus> progressStatuses;
-    List<NovelState> novelStates;
-    List<NovelAttribute> novelAttributes;
 
     LocalDateTime createdAtFrom;
     LocalDateTime createdAtTo;

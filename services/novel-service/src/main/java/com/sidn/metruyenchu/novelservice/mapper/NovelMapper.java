@@ -26,6 +26,7 @@ public interface NovelMapper {
     @Mapping(target = "novelVisibilityLabel", expression = "java(novel.getNovelVisibility() != null ? novel.getNovelVisibility().getLabel() : null)")
     @Mapping(target = "novelStateLabel", expression = "java(novel.getNovelState() != null ? novel.getNovelState().getLabel() : null)")
     @Mapping(target = "progressStatusLabel", expression = "java(novel.getProgressStatus() != null ? novel.getProgressStatus().getLabel() : null)")
+    @Mapping(target = "totalViews", source = "totalViews")
     @Mapping(ignore = true, target = "status")
     NovelResponse toNovelResponse(Novel novel);
 

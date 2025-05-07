@@ -130,6 +130,35 @@ public class ChapterController {
                 .build();
     }
 
+    @PostMapping("/filter")
+    ApiResponse<PageResponse<ChapterResponse>> getChaptersByFilter(
+            @RequestBody ChapterFilterRequest request
+    ) {
+        return ApiResponse.<PageResponse<ChapterResponse>>builder()
+                .result(chapterService.getChaptersByFilter(request))
+                .build();
+    }
+
+
+
+//    @GetMapping("/novel/{novelId}/chapters")
+//    ApiResponse<PageResponse<ChapterResponse>> getChaptersByNovelId(
+//            @PathVariable String novelId,
+//            @RequestParam(value = "page", defaultValue = "1") int page,
+//            @RequestParam(value = "size", defaultValue = "10") int size
+//    ) {
+//        ChaptersOfNovelGetRequest request = ChaptersOfNovelGetRequest.builder()
+//                .novelId(novelId)
+//                .page(page)
+//                .size(size)
+//                .build();
+//
+//        return ApiResponse.<PageResponse<ChapterResponse>>builder()
+//                .result(chapterService.getChaptersByNovelId(request))
+//                .build();
+//    }
+
+
     @GetMapping("/novel")
     ApiResponse<PageResponse<ChapterResponse>> getNovels(
             @RequestParam(value = "page", defaultValue = "1") int page,

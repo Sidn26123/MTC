@@ -62,8 +62,6 @@ public class NovelCreationRequest {
     @Builder.Default
     Integer wordCount = 0;
 
-
-
     List<String> status;
 
     List<String> genreIds;

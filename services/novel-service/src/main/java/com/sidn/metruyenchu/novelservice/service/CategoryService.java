@@ -54,7 +54,7 @@ public class CategoryService {
     }
 
     /**
-     * Lấy danh sách trạng thái truyện (nháp, đã duyệt, ...).
+     * Lấy danh sách trạng thái truyện (khởi tạo, chờ duyệt, đã duyệt, ...).
      *
      * @return danh sách CategoryResponse.
      */
