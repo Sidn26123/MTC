@@ -19,6 +19,7 @@ import com.sidn.metruyenchu.novelservice.repository.ChapterRepository;
 import com.sidn.metruyenchu.novelservice.repository.ChapterStatusRepository;
 import com.sidn.metruyenchu.novelservice.repository.NovelRepository;
 import com.sidn.metruyenchu.novelservice.repository.httpclient.FileClient;
+import com.sidn.metruyenchu.novelservice.spectification.ChapterSpecification;
 import com.sidn.metruyenchu.novelservice.utils.PageUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -447,6 +448,22 @@ public class ChapterService {
     public void checkUserCanReadChapterThrow(Chapter chapter) {
         String userId = getUserIdFromContext();
         checkUserCanReadChapterThrow(chapter, userId);
+    }
+
+    /**
+     * Lọc các chương theo các điều kiện trong ChapterFilterRequest.
+     * @param request ChapterFilterRequest
+     * @return Danh sách các chương đã lọc PageResponse<ChapterResponse>
+     */
+    public PageResponse<ChapterResponse> filter(ChapterFilterRequest request) {
+        Pageable pageable = PageUtils.from(request);
+        var pageData = chapterRepository.findAll(ChapterSpecification.filter(request), pageable);
+
+        return PageUtils.toPageResponse(
+                pageData,
+                chapterMapper::toChapterResponse,
+                request.getPage()
+        );
     }
 
 

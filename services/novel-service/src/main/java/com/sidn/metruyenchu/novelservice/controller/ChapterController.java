@@ -135,7 +135,7 @@ public class ChapterController {
             @RequestBody ChapterFilterRequest request
     ) {
         return ApiResponse.<PageResponse<ChapterResponse>>builder()
-                .result(chapterService.getChaptersByFilter(request))
+                .result(chapterService.filter(request))
                 .build();
     }
 
