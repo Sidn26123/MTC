@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Truyện của bạn được thích</title>
+</head>
+<body>
+<div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif;">
+    <h2>Tin vui! 🎉</h2>
+    <p>Xin chào,</p>
+    <p><strong th:text="${likerName}">Người dùng</strong> đã thích truyện
+        "<span th:text="${storyTitle}">Tên truyện</span>" của bạn!</p>
+
+    <div style="background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 20px 0;">
+        <p style="margin: 0;">Truyện của bạn đang nhận được nhiều sự quan tâm từ độc giả.
+            Hãy tiếp tục sáng tác để mang đến những câu chuyện tuyệt vời!</p>
+    </div>
+
+    <a href="{{actionUrl}}"
+       style="background: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">
+        Xem truyện
+    </a>
+
+    <hr style="margin: 30px 0;">
+    <p style="color: #666; font-size: 12px;">
+        Bạn nhận được email này vì đã bật thông báo cho hoạt động truyện.
+        <a href="/settings/notifications">Thay đổi cài đặt</a>
+    </p>
+</div>
+</body>
+</html>
