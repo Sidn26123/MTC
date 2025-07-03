@@ -43,7 +43,7 @@ public class Report {
     @Column(name = "target_id")
     String targetId;
 
-    String reportEntityId;
+//    String reportEntityId;
 
     String title;
 
@@ -94,8 +94,4 @@ public class Report {
 
     @Column(name = "resolved_at")
     private LocalDateTime resolvedAt;
-
-
-
-
 }

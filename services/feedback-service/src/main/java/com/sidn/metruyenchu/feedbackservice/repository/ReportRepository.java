@@ -1,12 +1,16 @@
 package com.sidn.metruyenchu.feedbackservice.repository;
 
+import com.sidn.metruyenchu.feedbackservice.entity.Comment;
 import com.sidn.metruyenchu.feedbackservice.entity.Report;
 import com.sidn.metruyenchu.feedbackservice.enums.ReportStatus;
+import com.sidn.metruyenchu.feedbackservice.enums.TargetType;
+import com.sidn.metruyenchu.feedbackservice.spectifications.ReportSpecification;
 import com.sidn.metruyenchu.shared_library.enums.feedback.ReportType;
 import com.sidn.metruyenchu.shared_library.enums.user.UserRole;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -31,7 +35,7 @@ import java.util.Optional;
 ////    Page<Report> findAllByReportEntityIdAndReportEntityTypeAndStatus(String reportEntityId, FeedbackType reportEntityType, Pageable pageable);
 //
 //}
-public interface ReportRepository extends JpaRepository<Report, String> {
+public interface ReportRepository extends JpaRepository<Report, String>, JpaSpecificationExecutor<Report> {
 
     // Tìm report chưa bị xóa
     Optional<Report> findByIdAndIsDeletedIsFalse(String id);
@@ -53,5 +57,6 @@ public interface ReportRepository extends JpaRepository<Report, String> {
 
     // Alias (có thể trùng với cái trên), lấy các report do user tạo
     Page<Report> findByReporterId(String reporterId, Pageable pageable);
+
+    Page<Report> findByTargetTypeAndTargetId(TargetType targetType, String commentId, Pageable pageable);
 }
-// Nếu bạn cần filter thêm theo entityType (FeedbackType), có thể dùng meth

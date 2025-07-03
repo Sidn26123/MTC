@@ -1,6 +1,8 @@
 package com.sidn.metruyenchu.feedbackservice.service;
 
 import com.sidn.metruyenchu.feedbackservice.dto.ApiResponse;
+import com.sidn.metruyenchu.feedbackservice.spectifications.ReportSpecification;
+import com.sidn.metruyenchu.shared_library.dto.BaseFilterRequest;
 import com.sidn.metruyenchu.shared_library.dto.PageResponse;
 import com.sidn.metruyenchu.feedbackservice.dto.request.PaginationRequest;
 import com.sidn.metruyenchu.feedbackservice.dto.request.report.*;
@@ -25,6 +27,7 @@ import com.sidn.metruyenchu.shared_library.enums.feedback.AssigneeRole;
 import com.sidn.metruyenchu.shared_library.enums.feedback.ReportType;
 import com.sidn.metruyenchu.shared_library.enums.user.UserRole;
 import com.sidn.metruyenchu.shared_library.utils.PageUtils;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -105,8 +108,15 @@ public class ReportService {
      * @return Thông tin của báo cáo đã tạo.
      */
     public ReportResponse reportNovel(ReportCreationRequest request) {
-        request.setReportType(ReportType.NOVEL_CONTENT);
+        request.setReportType(ReportType.NOVEL_VIOLATION);
         return createReport(request);
+    }
+
+    public ReportResponse reportChapter(ReportCreationRequest request) {
+        request.setReportType(ReportType.NOVEL_CONTENT);
+        request.setTargetType(TargetType.CHAPTER);
+        return createReport(request);
+
     }
 
     /**
@@ -130,11 +140,17 @@ public class ReportService {
 //     * @param request Thông tin xác thực và quyền hạn của người request.
      * @return Chi tiết của báo cáo.
      */
-    public ReportHandleDetailResponse getReportById(String reportId) {
-
-        return reportHandleDetailRepository.findById(reportId)
-                .map(reportHandleDetailMapper::toReportHandleDetailResponse)
+//    public ReportHandleDetailResponse getReportById(String reportId) {
+//
+//        return reportHandleDetailRepository.findById(reportId)
+//                .map(reportHandleDetailMapper::toReportHandleDetailResponse)
+//                .orElseThrow(() -> new AppException(ErrorCode.REPORT_NOT_FOUND));
+//    }
+    public ReportResponse getReportById(String reportId){
+        Report report = reportRepository.findById(reportId)
                 .orElseThrow(() -> new AppException(ErrorCode.REPORT_NOT_FOUND));
+
+        return reportMapper.toResponse(report);
     }
 
     public Report getReportEntityById(String reportId) {
@@ -388,4 +404,46 @@ public class ReportService {
     }
 
 
+    public PageResponse<ReportResponse> getReportsByCommentId(String commentId, BaseFilterRequest request) {
+        Pageable pageable = PageUtils.from(request);
+
+        Page<Report> reports = reportRepository.findByTargetTypeAndTargetId(TargetType.COMMENT, commentId, pageable);
+
+        return PageUtils.toPageResponse(
+                reports,
+                reportMapper::toResponse,
+                pageable.getPageNumber() + 1
+        );
+    }
+
+
+    public PageResponse<ReportResponse> getReportsByRatingId(String ratingId, BaseFilterRequest filterRequest) {
+        ReportFilterRequest request = ReportFilterRequest.builder()
+                .targetType(TargetType.RATING)
+                .targetId(ratingId)
+                .build();
+        Pageable pageable = PageUtils.from(filterRequest);
+        Page<Report> reports = reportRepository.findAll(ReportSpecification.filter(request), pageable);
+
+        return PageUtils.toPageResponse(
+                reports,
+                reportMapper::toResponse,
+                pageable.getPageNumber() + 1
+        );
+    }
+
+    public PageResponse<ReportResponse> getReportsByNovelId(String novelId, BaseFilterRequest filterRequest) {
+        ReportFilterRequest request = ReportFilterRequest.builder()
+                .targetType(TargetType.NOVEL)
+                .targetId(novelId)
+                .build();
+        Pageable pageable = PageUtils.from(filterRequest);
+        Page<Report> reports = reportRepository.findAll(ReportSpecification.filter(request), pageable);
+
+        return PageUtils.toPageResponse(
+                reports,
+                reportMapper::toResponse,
+                pageable.getPageNumber() + 1
+        );
+    }
 }

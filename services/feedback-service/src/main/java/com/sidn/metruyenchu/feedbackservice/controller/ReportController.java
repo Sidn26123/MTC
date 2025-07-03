@@ -5,6 +5,7 @@ import com.sidn.metruyenchu.feedbackservice.dto.request.report.ReportCreationReq
 import com.sidn.metruyenchu.feedbackservice.dto.request.report.ReportUpdateRequest;
 import com.sidn.metruyenchu.feedbackservice.dto.response.ReportResponse;
 import com.sidn.metruyenchu.feedbackservice.service.ReportService;
+import com.sidn.metruyenchu.shared_library.dto.BaseFilterRequest;
 import com.sidn.metruyenchu.shared_library.dto.PageResponse;
 import com.sidn.metruyenchu.shared_library.enums.user.UserRole;
 import io.swagger.v3.oas.annotations.Operation;
@@ -52,6 +53,47 @@ public class ReportController {
                 .build();
     }
 
+    @GetMapping("/{reportId}")
+    ApiResponse<ReportResponse> getReportById(
+            @PathVariable String reportId
+    ) {
+        return ApiResponse.<ReportResponse>builder()
+                .result(reportService.getReportById(reportId))
+                .build();
+    }
+
+    @GetMapping("/comment/{commentId}")
+    ApiResponse<PageResponse<ReportResponse>> getReportsByCommentId(
+            @PathVariable String commentId,
+            @ModelAttribute BaseFilterRequest filterRequest
+            ) {
+        return ApiResponse.<PageResponse<ReportResponse>>builder()
+                .result(reportService.getReportsByCommentId(commentId, filterRequest))
+                .build();
+    }
+
+    @GetMapping("/rating/{ratingId}")
+    ApiResponse<PageResponse<ReportResponse>> getReportsByRatingId(
+            @PathVariable String ratingId,
+            @ModelAttribute BaseFilterRequest filterRequest
+    ) {
+        return ApiResponse.<PageResponse<ReportResponse>>builder()
+                .result(reportService.getReportsByRatingId(ratingId, filterRequest))
+                .build();
+    }
+
+    @GetMapping("/novel/{novelId}")
+    ApiResponse<PageResponse<ReportResponse>> getReportsByNovelId(
+            @PathVariable String novelId,
+            @ModelAttribute BaseFilterRequest filterRequest
+    ) {
+        return ApiResponse.<PageResponse<ReportResponse>>builder()
+                .result(reportService.getReportsByNovelId(novelId, filterRequest))
+                .build();
+    }
+
+
+
     @PutMapping("/{reportId}/status")
     ApiResponse<ReportResponse> updateReportStatus(
             @PathVariable String reportId,
@@ -71,6 +113,28 @@ public class ReportController {
                 .result(reportService.reportRating(request))
                 .build();
     }
+
+    @PostMapping("/novel")
+    ApiResponse<ReportResponse> createReportForNovel(
+            @Valid @RequestBody ReportCreationRequest request
+    ) {
+        return ApiResponse.<ReportResponse>builder()
+                .result(reportService.reportNovel(request))
+                .build();
+    }
+
+    @PostMapping("/chapter")
+    ApiResponse<ReportResponse> createReportForChapter(
+            @Valid @RequestBody ReportCreationRequest request
+    ) {
+        return ApiResponse.<ReportResponse>builder()
+                .result(reportService.reportChapter(request))
+                .build();
+    }
+
+
+
+
 //
 //    @PostMapping("/rating")
 //    ApiResponse<ReportResponse> createReportForRating(
