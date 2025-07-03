@@ -1,0 +1,28 @@
+spring:
+  config:
+    import: optional:configserver:http://localhost:8888
+  application:
+    name: payment-service
+#  mail:
+#    host: smtp.gmail.com
+#    port: 587
+#    username: sidaconchocha@gmail.com
+#    password: omuskbxdciecgvrx
+#    properties:
+#        mail.smtp.auth: true
+#        mail.smtp.starttls.enable: true
+#
+#server:
+#  servlet:
+#    context-path: /payment
+#
+#payment:
+#  vnPay:
+#    url: "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
+#    tmnCode: "40OUBIAR"
+#    secretKey: "05ACOWF8T3HTPKWXKBB8UUGK5DVYU93J"
+#    returnUrl: "http://localhost:8889/api/v1/payment/payments/vn-pay-callback"
+#    version: "2.1.0"
+#    command: "pay"
+#    orderType: "other"
+
