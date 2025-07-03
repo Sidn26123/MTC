@@ -22,7 +22,6 @@ import com.sidn.metruyenchu.feedbackservice.repository.ReportRepository;
 import com.sidn.metruyenchu.feedbackservice.repository.httpclient.NovelClient;
 import com.sidn.metruyenchu.shared_library.enums.feedback.ActorRole;
 import com.sidn.metruyenchu.shared_library.enums.feedback.AssigneeRole;
-import com.sidn.metruyenchu.shared_library.enums.feedback.ReportActionType;
 import com.sidn.metruyenchu.shared_library.enums.feedback.ReportType;
 import com.sidn.metruyenchu.shared_library.enums.user.UserRole;
 import com.sidn.metruyenchu.shared_library.utils.PageUtils;
@@ -131,10 +130,15 @@ public class ReportService {
 //     * @param request Thông tin xác thực và quyền hạn của người request.
      * @return Chi tiết của báo cáo.
      */
-    public ReportHandleDetailResponse getReportDetail(String reportId) {
+    public ReportHandleDetailResponse getReportById(String reportId) {
 
         return reportHandleDetailRepository.findById(reportId)
                 .map(reportHandleDetailMapper::toReportHandleDetailResponse)
+                .orElseThrow(() -> new AppException(ErrorCode.REPORT_NOT_FOUND));
+    }
+
+    public Report getReportEntityById(String reportId) {
+        return reportRepository.findById(reportId)
                 .orElseThrow(() -> new AppException(ErrorCode.REPORT_NOT_FOUND));
     }
 

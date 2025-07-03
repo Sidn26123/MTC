@@ -4,10 +4,13 @@ import com.sidn.metruyenchu.feedbackservice.dto.request.report.ReportCommentRequ
 import com.sidn.metruyenchu.feedbackservice.dto.response.report.ReportCommentResponse;
 import com.sidn.metruyenchu.feedbackservice.entity.ReportComment;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface ReportCommentMapper {
     ReportComment toEntity(ReportCommentRequest request);
+
+    @Mapping(target = "reportId", source = "report.id")
     ReportCommentResponse toResponse(ReportComment reportComment);
 }
