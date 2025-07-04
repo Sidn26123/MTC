@@ -349,10 +349,10 @@ public class ReportService {
 //        };
 //    }
 
-    public PageResponse<ReportResponse> getReportsForUser(String userId, UserRole role, Pageable pageable) {
+    public PageResponse<ReportResponse> getReportsForUser(String userId, AssigneeRole role, Pageable pageable) {
         Page<Report> reports = switch (role) {
             case ADMIN -> reportRepository.findAll(pageable);
-            case PUBLISHER -> reportRepository.findByAssignedToAndAssignedRole(userId, UserRole.PUBLISHER, pageable);
+            case PUBLISHER -> reportRepository.findByAssignedToAndAssignedRole(userId, AssigneeRole.PUBLISHER, pageable);
             default -> reportRepository.findByReporterId(userId, pageable);
         };
 

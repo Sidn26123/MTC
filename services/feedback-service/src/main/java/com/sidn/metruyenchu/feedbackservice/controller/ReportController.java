@@ -7,6 +7,7 @@ import com.sidn.metruyenchu.feedbackservice.dto.response.ReportResponse;
 import com.sidn.metruyenchu.feedbackservice.service.ReportService;
 import com.sidn.metruyenchu.shared_library.dto.BaseFilterRequest;
 import com.sidn.metruyenchu.shared_library.dto.PageResponse;
+import com.sidn.metruyenchu.shared_library.enums.feedback.AssigneeRole;
 import com.sidn.metruyenchu.shared_library.enums.user.UserRole;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -47,7 +48,7 @@ public class ReportController {
             @RequestParam(value = "size", defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        UserRole userRole = UserRole.valueOf(role.toUpperCase());
+        AssigneeRole userRole = AssigneeRole.valueOf(role.toUpperCase());
         return ApiResponse.<PageResponse<ReportResponse>>builder()
                 .result(reportService.getReportsForUser(userId, userRole, pageable))
                 .build();
