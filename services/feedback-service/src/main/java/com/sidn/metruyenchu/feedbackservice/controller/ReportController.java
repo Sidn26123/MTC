@@ -30,15 +30,6 @@ import org.springframework.web.bind.annotation.*;
 public class ReportController {
     ReportService reportService;
 
-    @Operation(summary = "Tạo báo cáo")
-    @PostMapping("/comment")
-    ApiResponse<ReportResponse> createReportForComment(
-            @Valid @RequestBody ReportCreationRequest request
-    ) {
-        return ApiResponse.<ReportResponse>builder()
-                .result(reportService.reportComment(request))
-                .build();
-    }
     @Operation(summary = "Xem danh sách báo cáo của người dùng")
     @GetMapping("/user/{userId}")
     ApiResponse<PageResponse<ReportResponse>> getReportByUserId(
@@ -93,6 +84,15 @@ public class ReportController {
                 .build();
     }
 
+    @GetMapping("/chapter/{chapterId}")
+    ApiResponse<PageResponse<ReportResponse>> getReportsByChapterId(
+            @PathVariable String chapterId,
+            @ModelAttribute BaseFilterRequest filterRequest
+    ) {
+        return ApiResponse.<PageResponse<ReportResponse>>builder()
+                .result(reportService.getReportsByChapterId(chapterId, filterRequest))
+                .build();
+    }
 
 
     @PutMapping("/{reportId}/status")
@@ -105,6 +105,15 @@ public class ReportController {
                 .build();
     }
 
+    @Operation(summary = "Tạo báo cáo")
+    @PostMapping("/comment")
+    ApiResponse<ReportResponse> createReportForComment(
+            @Valid @RequestBody ReportCreationRequest request
+    ) {
+        return ApiResponse.<ReportResponse>builder()
+                .result(reportService.reportComment(request))
+                .build();
+    }
 
     @PostMapping("/rating")
     ApiResponse<ReportResponse> createReportForRating(
@@ -132,6 +141,27 @@ public class ReportController {
                 .result(reportService.reportChapter(request))
                 .build();
     }
+
+    @PutMapping("/{reportId}")
+    ApiResponse<ReportResponse> updateReport(
+            @PathVariable String reportId,
+            @Valid @RequestBody ReportUpdateRequest request
+    ) {
+        return ApiResponse.<ReportResponse>builder()
+                .result(reportService.updateReport(reportId, request))
+                .build();
+    }
+
+    @DeleteMapping("/{reportId}")
+    ApiResponse<String> deleteReport(
+            @PathVariable String reportId
+    ) {
+        reportService.deleteReport(reportId);
+        return ApiResponse.<String>builder()
+                .result("Report deleted")
+                .build();
+    }
+
 
 
 
