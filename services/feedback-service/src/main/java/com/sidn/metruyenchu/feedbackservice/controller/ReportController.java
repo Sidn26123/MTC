@@ -7,6 +7,7 @@ import com.sidn.metruyenchu.feedbackservice.dto.response.ReportResponse;
 import com.sidn.metruyenchu.feedbackservice.service.ReportService;
 import com.sidn.metruyenchu.shared_library.dto.BaseFilterRequest;
 import com.sidn.metruyenchu.shared_library.dto.PageResponse;
+import com.sidn.metruyenchu.shared_library.enums.feedback.AssigneeRole;
 import com.sidn.metruyenchu.shared_library.enums.user.UserRole;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,15 +30,6 @@ import org.springframework.web.bind.annotation.*;
 public class ReportController {
     ReportService reportService;
 
-    @Operation(summary = "Tạo báo cáo")
-    @PostMapping("/comment")
-    ApiResponse<ReportResponse> createReportForComment(
-            @Valid @RequestBody ReportCreationRequest request
-    ) {
-        return ApiResponse.<ReportResponse>builder()
-                .result(reportService.reportComment(request))
-                .build();
-    }
     @Operation(summary = "Xem danh sách báo cáo của người dùng")
     @GetMapping("/user/{userId}")
     ApiResponse<PageResponse<ReportResponse>> getReportByUserId(
@@ -47,7 +39,7 @@ public class ReportController {
             @RequestParam(value = "size", defaultValue = "10") int size
     ) {
         Pageable pageable = PageRequest.of(page, size);
-        UserRole userRole = UserRole.valueOf(role.toUpperCase());
+        AssigneeRole userRole = AssigneeRole.valueOf(role.toUpperCase());
         return ApiResponse.<PageResponse<ReportResponse>>builder()
                 .result(reportService.getReportsForUser(userId, userRole, pageable))
                 .build();
@@ -92,6 +84,15 @@ public class ReportController {
                 .build();
     }
 
+    @GetMapping("/chapter/{chapterId}")
+    ApiResponse<PageResponse<ReportResponse>> getReportsByChapterId(
+            @PathVariable String chapterId,
+            @ModelAttribute BaseFilterRequest filterRequest
+    ) {
+        return ApiResponse.<PageResponse<ReportResponse>>builder()
+                .result(reportService.getReportsByChapterId(chapterId, filterRequest))
+                .build();
+    }
 
 
     @PutMapping("/{reportId}/status")
@@ -104,6 +105,15 @@ public class ReportController {
                 .build();
     }
 
+    @Operation(summary = "Tạo báo cáo")
+    @PostMapping("/comment")
+    ApiResponse<ReportResponse> createReportForComment(
+            @Valid @RequestBody ReportCreationRequest request
+    ) {
+        return ApiResponse.<ReportResponse>builder()
+                .result(reportService.reportComment(request))
+                .build();
+    }
 
     @PostMapping("/rating")
     ApiResponse<ReportResponse> createReportForRating(
@@ -131,6 +141,27 @@ public class ReportController {
                 .result(reportService.reportChapter(request))
                 .build();
     }
+
+    @PutMapping("/{reportId}")
+    ApiResponse<ReportResponse> updateReport(
+            @PathVariable String reportId,
+            @Valid @RequestBody ReportUpdateRequest request
+    ) {
+        return ApiResponse.<ReportResponse>builder()
+                .result(reportService.updateReport(reportId, request))
+                .build();
+    }
+
+    @DeleteMapping("/{reportId}")
+    ApiResponse<String> deleteReport(
+            @PathVariable String reportId
+    ) {
+        reportService.deleteReport(reportId);
+        return ApiResponse.<String>builder()
+                .result("Report deleted")
+                .build();
+    }
+
 
 
 

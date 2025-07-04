@@ -13,7 +13,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 @EnableJpaAuditing
 public interface ReportMapper {
-    @Mapping(source = "reportEntityId", target = "reportEntityId")
     Report toReport(ReportCreationRequest request);
 
     ReportResponse toResponse(Report Report);

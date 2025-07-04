@@ -299,7 +299,7 @@ public class ReportService {
 
             case BUG:
             case SUPPORT:
-//                assignToAdmin(report);
+                assignToAdmin(report);
                 break;
             case COMMENT:
                 log.info("S");
@@ -309,6 +309,10 @@ public class ReportService {
 //                assignToBoth(report);
                 break;
         }
+    }
+
+    private void assignToAdmin(Report report) {
+//        String userId =
     }
 
     private void assignToPublisher(Report report) {
@@ -349,10 +353,10 @@ public class ReportService {
 //        };
 //    }
 
-    public PageResponse<ReportResponse> getReportsForUser(String userId, UserRole role, Pageable pageable) {
+    public PageResponse<ReportResponse> getReportsForUser(String userId, AssigneeRole role, Pageable pageable) {
         Page<Report> reports = switch (role) {
             case ADMIN -> reportRepository.findAll(pageable);
-            case PUBLISHER -> reportRepository.findByAssignedToAndAssignedRole(userId, UserRole.PUBLISHER, pageable);
+            case PUBLISHER -> reportRepository.findByAssignedToAndAssignedRole(userId, AssigneeRole.PUBLISHER, pageable);
             default -> reportRepository.findByReporterId(userId, pageable);
         };
 
@@ -436,6 +440,21 @@ public class ReportService {
         ReportFilterRequest request = ReportFilterRequest.builder()
                 .targetType(TargetType.NOVEL)
                 .targetId(novelId)
+                .build();
+        Pageable pageable = PageUtils.from(filterRequest);
+        Page<Report> reports = reportRepository.findAll(ReportSpecification.filter(request), pageable);
+
+        return PageUtils.toPageResponse(
+                reports,
+                reportMapper::toResponse,
+                pageable.getPageNumber() + 1
+        );
+    }
+
+    public PageResponse<ReportResponse> getReportsByChapterId(String chapterId, BaseFilterRequest filterRequest) {
+        ReportFilterRequest request = ReportFilterRequest.builder()
+                .targetType(TargetType.CHAPTER)
+                .targetId(chapterId)
                 .build();
         Pageable pageable = PageUtils.from(filterRequest);
         Page<Report> reports = reportRepository.findAll(ReportSpecification.filter(request), pageable);

@@ -5,6 +5,7 @@ import com.sidn.metruyenchu.feedbackservice.entity.Report;
 import com.sidn.metruyenchu.feedbackservice.enums.ReportStatus;
 import com.sidn.metruyenchu.feedbackservice.enums.TargetType;
 import com.sidn.metruyenchu.feedbackservice.spectifications.ReportSpecification;
+import com.sidn.metruyenchu.shared_library.enums.feedback.AssigneeRole;
 import com.sidn.metruyenchu.shared_library.enums.feedback.ReportType;
 import com.sidn.metruyenchu.shared_library.enums.user.UserRole;
 import org.springframework.data.domain.Page;
@@ -47,13 +48,13 @@ public interface ReportRepository extends JpaRepository<Report, String>, JpaSpec
     Page<Report> findAllByReporterId(String reporterId, Pageable pageable);
 
     // Lọc theo reportEntityId và reportType
-    Page<Report> findAllByReportEntityIdAndReportType(String reportEntityId, ReportType reportType, Pageable pageable);
+//    Page<Report> findAllByReportEntityIdAndReportType(String reportEntityId, ReportType reportType, Pageable pageable);
 
     // Tìm các report có trạng thái cụ thể và được tạo trước thời điểm nào đó (để auto xóa, auto đóng,...)
     List<Report> findByStatusAndCreatedAtBefore(ReportStatus reportStatus, LocalDateTime cutoff);
 
     // Lấy các report được giao cho một user cụ thể
-    Page<Report> findByAssignedToAndAssignedRole(String assignedTo, UserRole assignedRole, Pageable pageable);
+    Page<Report> findByAssignedToAndAssignedRole(String assignedTo, AssigneeRole assignedRole, Pageable pageable);
 
     // Alias (có thể trùng với cái trên), lấy các report do user tạo
     Page<Report> findByReporterId(String reporterId, Pageable pageable);
