@@ -299,7 +299,7 @@ public class ReportService {
 
             case BUG:
             case SUPPORT:
-//                assignToAdmin(report);
+                assignToAdmin(report);
                 break;
             case COMMENT:
                 log.info("S");
@@ -309,6 +309,10 @@ public class ReportService {
 //                assignToBoth(report);
                 break;
         }
+    }
+
+    private void assignToAdmin(Report report) {
+//        String userId =
     }
 
     private void assignToPublisher(Report report) {
@@ -436,6 +440,21 @@ public class ReportService {
         ReportFilterRequest request = ReportFilterRequest.builder()
                 .targetType(TargetType.NOVEL)
                 .targetId(novelId)
+                .build();
+        Pageable pageable = PageUtils.from(filterRequest);
+        Page<Report> reports = reportRepository.findAll(ReportSpecification.filter(request), pageable);
+
+        return PageUtils.toPageResponse(
+                reports,
+                reportMapper::toResponse,
+                pageable.getPageNumber() + 1
+        );
+    }
+
+    public PageResponse<ReportResponse> getReportsByChapterId(String chapterId, BaseFilterRequest filterRequest) {
+        ReportFilterRequest request = ReportFilterRequest.builder()
+                .targetType(TargetType.CHAPTER)
+                .targetId(chapterId)
                 .build();
         Pageable pageable = PageUtils.from(filterRequest);
         Page<Report> reports = reportRepository.findAll(ReportSpecification.filter(request), pageable);
