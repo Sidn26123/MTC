@@ -28,7 +28,8 @@ public class Draft {
     String title;
 
     // Nội dung bản nháp
-    @Lob
+//    @Lob
+    @Column(columnDefinition = "TEXT")
     String content;
 
     // Ghi chú cá nhân (tuỳ chọn)

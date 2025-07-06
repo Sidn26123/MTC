@@ -31,7 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class DraftService {
     DraftRepository draftRepository;
-    NovelRepository novelRepository;
+    NovelService novelService;
     ChapterRepository chapterRepository;
     DraftMapper draftMapper;
 
@@ -53,8 +53,7 @@ public class DraftService {
         var draft = draftMapper.toEntity(request);
 
         if (request.getNovelId() != null) {
-            Novel novel = novelRepository.findById(request.getNovelId())
-                    .orElseThrow(() -> new AppException(ErrorCode.NOVEL_NOT_FOUND));
+            Novel novel = novelService.getNovelEntityById(request.getNovelId());
             draft.setNovel(novel);
         }
 
