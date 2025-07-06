@@ -1,0 +1,77 @@
+package com.sidn.metruyenchu.novelservice.service;
+
+import com.sidn.metruyenchu.novelservice.dto.request.draft.DraftCreationRequest;
+import com.sidn.metruyenchu.novelservice.dto.response.draft.DraftResponse;
+import com.sidn.metruyenchu.novelservice.entity.Chapter;
+import com.sidn.metruyenchu.novelservice.entity.Draft;
+import com.sidn.metruyenchu.novelservice.entity.Novel;
+import com.sidn.metruyenchu.novelservice.mapper.DraftMapper;
+import com.sidn.metruyenchu.novelservice.repository.ChapterRepository;
+import com.sidn.metruyenchu.novelservice.repository.DraftRepository;
+import com.sidn.metruyenchu.novelservice.repository.NovelRepository;
+import com.sidn.metruyenchu.shared_library.dto.PageResponse;
+import com.sidn.metruyenchu.shared_library.exceptions.AppException;
+import com.sidn.metruyenchu.shared_library.exceptions.ErrorCode;
+import com.sidn.metruyenchu.shared_library.utils.PageUtils;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+
+@Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Slf4j
+public class DraftService {
+    DraftRepository draftRepository;
+    NovelRepository novelRepository;
+    ChapterRepository chapterRepository;
+    DraftMapper draftMapper;
+
+    public DraftResponse getDraft(String draftId) {
+        return draftMapper.toResponse(
+                draftRepository.findByIdAndIsDeletedFalse(draftId)
+                        .orElseThrow(() -> new AppException(ErrorCode.DRAFT_NOT_FOUND))
+        );
+    }
+
+    public PageResponse<DraftResponse> getDrafts(String publisher, int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "updatedAt"));
+        var data = draftRepository.findByPublisherAndIsDeletedFalse(publisher, pageable);
+        return PageUtils.toPageResponse(data, draftMapper::toResponse, page);
+    }
+
+    @Transactional
+    public DraftResponse createDraft(DraftCreationRequest request) {
+        var draft = draftMapper.toEntity(request);
+
+        if (request.getNovelId() != null) {
+            Novel novel = novelRepository.findById(request.getNovelId())
+                    .orElseThrow(() -> new AppException(ErrorCode.NOVEL_NOT_FOUND));
+            draft.setNovel(novel);
+        }
+
+        if (request.getChapterId() != null) {
+            Chapter chapter = chapterRepository.findById(request.getChapterId())
+                    .orElseThrow(() -> new AppException(ErrorCode.CHAPTER_NOT_FOUND));
+            draft.setChapter(chapter);
+        }
+
+        return draftMapper.toResponse(draftRepository.save(draft));
+    }
+
+    @Transactional
+    public void softDeleteDraft(String draftId) {
+        Draft draft = draftRepository.findByIdAndIsDeletedFalse(draftId)
+                .orElseThrow(() -> new AppException(ErrorCode.DRAFT_NOT_FOUND));
+        draft.setIsDeleted(true);
+        draftRepository.save(draft);
+    }
+}
