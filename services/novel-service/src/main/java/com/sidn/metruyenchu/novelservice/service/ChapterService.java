@@ -580,4 +580,9 @@ public class ChapterService {
 
         return null;
     }
+
+    public Chapter findEntityById(String chapterId) {
+        return chapterRepository.findByIdAndIsDeletedIsFalse(chapterId)
+                .orElseThrow(() -> new AppException(ErrorCode.CHAPTER_NOT_FOUND));
+    }
 }

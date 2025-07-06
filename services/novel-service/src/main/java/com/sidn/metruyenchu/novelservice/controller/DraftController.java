@@ -2,6 +2,7 @@ package com.sidn.metruyenchu.novelservice.controller;
 
 import com.sidn.metruyenchu.novelservice.dto.ApiResponse;
 import com.sidn.metruyenchu.novelservice.dto.request.draft.DraftCreationRequest;
+import com.sidn.metruyenchu.novelservice.dto.request.draft.DraftUpdateRequest;
 import com.sidn.metruyenchu.novelservice.dto.request.genre.GenreCreationRequest;
 import com.sidn.metruyenchu.novelservice.dto.response.GenreResponse;
 import com.sidn.metruyenchu.novelservice.dto.response.draft.DraftResponse;
@@ -54,5 +55,15 @@ public class DraftController {
     ApiResponse<Void> deleteDraft(@PathVariable("id") String draftId) {
         draftService.softDeleteDraft(draftId);
         return ApiResponse.<Void>builder().build();
+    }
+
+    @PutMapping("/{id}")
+    ApiResponse<DraftResponse> updateDraft(
+            @PathVariable("id") String draftId,
+            @Valid @RequestBody DraftUpdateRequest request
+    ) {
+        return ApiResponse.<DraftResponse>builder()
+                .result(draftService.updateDraft(draftId, request))
+                .build();
     }
 }

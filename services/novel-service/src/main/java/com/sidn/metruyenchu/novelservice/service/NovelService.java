@@ -745,4 +745,8 @@ public class NovelService {
     }
 
 
+    public Novel findEntityById(String novelId) {
+        return novelRepository.findById(novelId)
+                    .orElseThrow(() -> new AppException(ErrorCode.NOVEL_NOT_FOUND));
+    }
 }

@@ -1,6 +1,7 @@
 package com.sidn.metruyenchu.novelservice.service;
 
 import com.sidn.metruyenchu.novelservice.dto.request.draft.DraftCreationRequest;
+import com.sidn.metruyenchu.novelservice.dto.request.draft.DraftUpdateRequest;
 import com.sidn.metruyenchu.novelservice.dto.response.draft.DraftResponse;
 import com.sidn.metruyenchu.novelservice.entity.Chapter;
 import com.sidn.metruyenchu.novelservice.entity.Draft;
@@ -8,7 +9,6 @@ import com.sidn.metruyenchu.novelservice.entity.Novel;
 import com.sidn.metruyenchu.novelservice.mapper.DraftMapper;
 import com.sidn.metruyenchu.novelservice.repository.ChapterRepository;
 import com.sidn.metruyenchu.novelservice.repository.DraftRepository;
-import com.sidn.metruyenchu.novelservice.repository.NovelRepository;
 import com.sidn.metruyenchu.shared_library.dto.PageResponse;
 import com.sidn.metruyenchu.shared_library.exceptions.AppException;
 import com.sidn.metruyenchu.shared_library.exceptions.ErrorCode;
@@ -17,7 +17,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -34,6 +33,7 @@ public class DraftService {
     NovelService novelService;
     ChapterRepository chapterRepository;
     DraftMapper draftMapper;
+    private final ChapterService chapterService;
 
     public DraftResponse getDraft(String draftId) {
         return draftMapper.toResponse(
@@ -72,5 +72,25 @@ public class DraftService {
                 .orElseThrow(() -> new AppException(ErrorCode.DRAFT_NOT_FOUND));
         draft.setIsDeleted(true);
         draftRepository.save(draft);
+    }
+
+    @Transactional
+    public DraftResponse updateDraft(String draftId, DraftUpdateRequest request) {
+        Draft draft = draftRepository.findByIdAndIsDeletedFalse(draftId)
+                .orElseThrow(() -> new AppException(ErrorCode.DRAFT_NOT_FOUND));
+
+        draftMapper.updateEntity(draft, request);
+
+        if (request.getNovelId() != null) {
+            Novel novel = novelService.findEntityById(request.getNovelId());
+            draft.setNovel(novel);
+        }
+
+        if (request.getChapterId() != null) {
+            Chapter chapter = chapterService.findEntityById(request.getChapterId());
+            draft.setChapter(chapter);
+        }
+
+        return draftMapper.toResponse(draftRepository.save(draft));
     }
 }
