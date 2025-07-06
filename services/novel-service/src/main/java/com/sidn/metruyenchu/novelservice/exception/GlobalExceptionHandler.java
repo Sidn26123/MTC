@@ -22,7 +22,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = Exception.class)
     ResponseEntity<ApiResponse> handlingRuntimeException(final RuntimeException exception) {
         ApiResponse apiResponse = new ApiResponse();
-        log.error(exception.getMessage(), exception);
+        log.error("Error occurred: {}", exception.getMessage(), exception);
+
         apiResponse.setCode(ErrorCode.UNKNOWN_ERROR.getCode());
         apiResponse.setMessage(ErrorCode.UNKNOWN_ERROR.getMessage());
 
@@ -31,15 +32,15 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(value = AppException.class)
-    ResponseEntity<ApiResponse> handlingAppException(final AppException exception) {
+    ResponseEntity<ApiResponse> handlingAppException(AppException exception) {
         ErrorCode errorCode = exception.getErrorCode();
+        log.error("Error occurred: {}", errorCode.getMessage(), exception);
         ApiResponse apiResponse = new ApiResponse();
 
         apiResponse.setCode(errorCode.getCode());
         apiResponse.setMessage(errorCode.getMessage());
 
-
-        return ResponseEntity.badRequest().body(apiResponse);
+        return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponse);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
