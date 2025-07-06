@@ -1,6 +1,8 @@
 package com.sidn.metruyenchu.novelservice.controller;
 
 import com.sidn.metruyenchu.novelservice.dto.ApiResponse;
+import com.sidn.metruyenchu.novelservice.dto.request.statistic.NovelClassificationDto;
+import com.sidn.metruyenchu.novelservice.dto.request.statistic.TopNovelDto;
 import com.sidn.metruyenchu.novelservice.enums.TimeSegmentUnit;
 import com.sidn.metruyenchu.novelservice.service.NovelStatisticService;
 import com.sidn.metruyenchu.shared_library.dto.request.TimeRangeStatisticDto;
@@ -41,6 +43,82 @@ public class NovelStatisticController {
                         startDate.atStartOfDay(),
                         endDate.atTime(LocalTime.MAX),
                         TimeSegmentUnit.valueOf(segmentType)
+                ))
+                .build();
+    }
+    @GetMapping("/approved")
+    public ApiResponse<List<TimeRangeStatisticDto>> getApprovedStats(
+            @RequestParam("startDate") @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate startDate,
+            @RequestParam("endDate") @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate endDate,
+            @RequestParam("segmentType") TimeSegmentUnit segmentType
+    ) {
+        return ApiResponse.<List<TimeRangeStatisticDto>>builder()
+                .result(novelStatisticService.getApprovedSegmentStat(
+                        startDate.atStartOfDay(),
+                        endDate.atTime(LocalTime.MAX),
+                        segmentType
+                ))
+                .build();
+    }
+
+    @GetMapping("/classification/progress")
+    public ApiResponse<List<NovelClassificationDto>> getClassificationByProgressStatus() {
+        return ApiResponse.<List<NovelClassificationDto>>builder()
+                .result(novelStatisticService.getByProgressStatus())
+                .build();
+    }
+
+    @GetMapping("/interaction/bookmarks")
+    public ApiResponse<Long> getTotalBookmarks() {
+        return ApiResponse.<Long>builder()
+                .result(novelStatisticService.getTotalBookmarks())
+                .build();
+    }
+
+    @GetMapping("/interaction/views")
+    public ApiResponse<Long> getTotalViews() {
+        return ApiResponse.<Long>builder()
+                .result(novelStatisticService.getTotalViews())
+                .build();
+    }
+
+    @GetMapping("/interaction/ratings")
+    public ApiResponse<Long> getTotalRatings() {
+        return ApiResponse.<Long>builder()
+                .result(novelStatisticService.getTotalRatings())
+                .build();
+    }
+
+    @GetMapping("/interaction/comments")
+    public ApiResponse<Long> getTotalComments() {
+        return ApiResponse.<Long>builder()
+                .result(novelStatisticService.getTotalComments())
+                .build();
+    }
+
+    @GetMapping("/top/bookmarks")
+    public ApiResponse<List<TopNovelDto>> getTopNovelsByBookmarks(@RequestParam(defaultValue = "10") int limit) {
+        return ApiResponse.<List<TopNovelDto>>builder()
+                .result(novelStatisticService.getTopNovelsByBookmarks(limit))
+                .build();
+    }
+
+    @GetMapping("/word-count/total")
+    public ApiResponse<Long> getTotalWordCount() {
+        return ApiResponse.<Long>builder()
+                .result(novelStatisticService.getTotalWordCount())
+                .build();
+    }
+
+    @GetMapping("/word-count/range")
+    public ApiResponse<Long> getWordCountBetween(
+            @RequestParam("startDate") @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate startDate,
+            @RequestParam("endDate") @DateTimeFormat(pattern = "dd/MM/yyyy") LocalDate endDate
+    ) {
+        return ApiResponse.<Long>builder()
+                .result(novelStatisticService.getWordCountBetween(
+                        startDate.atStartOfDay(),
+                        endDate.atTime(LocalTime.MAX)
                 ))
                 .build();
     }

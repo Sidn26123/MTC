@@ -85,7 +85,9 @@ public interface NovelStatisticsRepository extends JpaRepository<Novel, String> 
     @Query("SELECT COUNT(n) FROM Novel n WHERE n.novelState = 'APPROVED' AND n.updatedAt BETWEEN :startTime AND :endTime AND n.isDeleted = false")
     Long countNovelsApprovedBetween(@Param("startTime") LocalDateTime startTime, 
                                     @Param("endTime") LocalDateTime endTime);
-    
+
+
+
 //    @Query("SELECT new com.example.dto.TimeRangeStatisticDto(" +
 //           "CASE WHEN :segments = 7 THEN DATE_TRUNC('day', n.updatedAt) " +
 //           "     WHEN :segments = 52 THEN DATE_TRUNC('week', n.updatedAt) " +
@@ -109,42 +111,99 @@ public interface NovelStatisticsRepository extends JpaRepository<Novel, String> 
 //    List<TimeRangeStatisticDto> getNovelsApprovedByTimeSegments(@Param("startTime") LocalDateTime startTime,
 //                                                                @Param("endTime") LocalDateTime endTime,
 //                                                                @Param("segments") Integer segments);
-//
-//    // Classification Statistics
-//    @Query("SELECT new com.sidn.metruyenchu.novelservice.dto.request.statistic.NovelClassificationDto(ps.name, ps.name, COUNT(n), 'PROGRESS_STATUS') " +
+
+    @Query(value = """
+        SELECT DATE_TRUNC('day', n.updated_at) AS start_time,
+               DATE_TRUNC('day', n.updated_at) + INTERVAL '1 day' - INTERVAL '1 second' AS end_time,
+               COUNT(*) AS total
+        FROM novel n
+        WHERE n.novel_state = 'APPROVED'
+          AND n.updated_at BETWEEN :start AND :end
+          AND n.is_deleted = false
+        GROUP BY start_time
+        ORDER BY start_time
+    """, nativeQuery = true)
+    List<Object[]> getApprovedCountByDay(@Param("start") LocalDateTime start,
+                                         @Param("end") LocalDateTime end);
+
+    @Query(value = """
+        SELECT DATE_TRUNC('week', n.updated_at) AS start_time,
+               DATE_TRUNC('week', n.updated_at) + INTERVAL '1 week' - INTERVAL '1 second' AS end_time,
+               COUNT(*) AS total
+        FROM novel n
+        WHERE n.novel_state = 'APPROVED'
+          AND n.updated_at BETWEEN :start AND :end
+          AND n.is_deleted = false
+        GROUP BY start_time
+        ORDER BY start_time
+    """, nativeQuery = true)
+    List<Object[]> getApprovedCountByWeek(@Param("start") LocalDateTime start,
+                                          @Param("end") LocalDateTime end);
+
+    @Query(value = """
+        SELECT DATE_TRUNC('month', n.updated_at) AS start_time,
+               DATE_TRUNC('month', n.updated_at) + INTERVAL '1 month' - INTERVAL '1 second' AS end_time,
+               COUNT(*) AS total
+        FROM novel_publish_request n
+        WHERE n.status = 'APPROVED'
+          AND n.updated_at BETWEEN :start AND :end
+        GROUP BY start_time
+        ORDER BY start_time
+    """, nativeQuery = true)
+    List<Object[]> getApprovedCountByMonth(@Param("start") LocalDateTime start,
+                                           @Param("end") LocalDateTime end);
+
+
+    // Classification Statistics
+//    @Query("SELECT new com.sidn.metruyenchu.novelservice.dto.request.statistic.NovelClassificationDto(n.name, n.name, COUNT(n), 'PROGRESS_STATUS') " +
 //           "FROM Novel n " +
 //           "GROUP BY n.progressStatus")
 //    List<NovelClassificationDto> getNovelsByProgressStatus();
-//
-//    // Interaction Statistics
-//    @Query("SELECT SUM(n.totalBookmarks) FROM Novel n WHERE n.isDeleted = false")
-//    Long getTotalBookmarks();
-//
-//    @Query("SELECT SUM(n.totalViews) FROM Novel n WHERE n.isDeleted = false")
-//    Long getTotalViews();
-//
-//    @Query("SELECT SUM(n.totalRates) FROM Novel n WHERE n.isDeleted = false")
-//    Long getTotalRatings();
-//
-//    @Query("SELECT SUM(n.totalComments) FROM Novel n WHERE n.isDeleted = false")
-//    Long getTotalComments();
-//
-//    // Top novels by bookmarks
-//    @Query("SELECT new com.example.dto.TopNovelDto(n.id, n.name, n.slug, CAST(n.totalBookmarks AS long), " +
-//           "CAST(n.totalViews AS long), n.avgRate, ROW_NUMBER() OVER (ORDER BY n.totalBookmarks DESC)) " +
-//           "FROM Novel n WHERE n.isDeleted = false ORDER BY n.totalBookmarks DESC")
+    @Query("SELECT new com.sidn.metruyenchu.novelservice.dto.request.statistic.NovelClassificationDto(" +
+            "CAST(n.progressStatus AS string), CAST(n.progressStatus AS string), COUNT(n), 'PROGRESS_STATUS') " +
+            "FROM Novel n " +
+            "GROUP BY n.progressStatus")
+    List<NovelClassificationDto> getNovelsByProgressStatus();
+
+    // Interaction Statistics
+    @Query("SELECT SUM(n.totalBookmarks) FROM Novel n WHERE n.isDeleted = false")
+    Long getTotalBookmarks();
+
+    @Query("SELECT SUM(n.totalViews) FROM Novel n WHERE n.isDeleted = false")
+    Long getTotalViews();
+
+    @Query("SELECT SUM(n.totalRates) FROM Novel n WHERE n.isDeleted = false")
+    Long getTotalRatings();
+
+    @Query("SELECT SUM(n.totalComments) FROM Novel n WHERE n.isDeleted = false")
+    Long getTotalComments();
+
+    // Top novels by bookmarks
+//    @Query("SELECT new com.sidn.metruyenchu.novelservice.dto.request.statistic.TopNovelDto(" +
+//            "n.id, n.name, n.slug, n.totalBookmarks, n.totalViews, n.avgRate) " +
+//            "FROM Novel n WHERE n.isDeleted = false ORDER BY n.totalBookmarks DESC")
 //    List<TopNovelDto> getTopNovelsByBookmarks(Pageable pageable);
-//
-//    // Word count statistics
-//    @Query("SELECT SUM(n.wordCount) FROM Novel n WHERE n.isDeleted = false")
-//    Long getTotalWordCount();
-//
-//    // Word count by time range (assuming word count is updated when chapters are added)
-//    @Query("SELECT SUM(c.content.length) FROM Chapter c WHERE c.createdAt BETWEEN :startTime AND :endTime AND c.isDeleted = false")
-//    Long getWordCountBetween(@Param("startTime") LocalDateTime startTime,
-//                            @Param("endTime") LocalDateTime endTime);
-//
-//    // Novel completion statistics
+
+    @Query(value = """
+    SELECT n.id, n.name, n.slug, n.total_bookmarks, n.total_views, n.avg_rate,
+           ROW_NUMBER() OVER (ORDER BY n.total_bookmarks DESC) AS rank
+    FROM novel n
+    WHERE n.is_deleted = false
+    ORDER BY n.total_bookmarks DESC
+    LIMIT :limit
+    """, nativeQuery = true)
+    List<Object[]> getTopNovelsWithRank(@Param("limit") int limit);
+
+    // Word count statistics
+    @Query("SELECT SUM(n.wordCount) FROM Novel n WHERE n.isDeleted = false")
+    Long getTotalWordCount();
+
+    // Word count by time range (assuming word count is updated when chapters are added)
+    @Query("SELECT SUM(c.wordCount) FROM Chapter c WHERE c.createdAt BETWEEN :startTime AND :endTime AND c.isDeleted = false")
+    Long getWordCountBetween(@Param("startTime") LocalDateTime startTime,
+                             @Param("endTime") LocalDateTime endTime);
+
+    // Novel completion statistics
 //    @Query("SELECT new com.example.dto.NovelCompletionDto(n.id, n.name, " +
 //           "CAST(COUNT(DISTINCT ur.userId) AS long), " +
 //           "CAST(COUNT(DISTINCT CASE WHEN ur.completionRate >= 0.95 THEN ur.userId END) AS long), " +
