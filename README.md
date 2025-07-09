@@ -31,6 +31,9 @@ Hệ thống được xây dựng theo kiến trúc **Microservices**, chia thà
 - **Storage**: Cloud (mã hoá nội dung .txt)
 - **Message Queue**: Kafka(cho log)
 
+Cấu trúc thư mục service:
+
+
 ## ⚙️ Các chức năng chính
 
 ### 🧑‍💻 Người dùng
