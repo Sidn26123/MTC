@@ -19,7 +19,8 @@ Trang web gồm các chức năng chính như sau:
 
 Hệ thống được xây dựng theo kiến trúc **Microservices**, chia thành các module chính:
 
-![image](https://github.com/user-attachments/assets/db616c75-5f31-440e-9e31-13398185b99b)
+![image](https://github.com/user-attachments/assets/be067d02-547d-46c7-bbdb-26ed4f80bb19)
+
 
 
 - **Frontend**: React + Zustand + TailwindCSS
