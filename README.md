@@ -19,6 +19,9 @@ Trang web gồm các chức năng chính như sau:
 
 Hệ thống được xây dựng theo kiến trúc **Microservices**, chia thành các module chính:
 
+![Uploading image.png…]()
+
+
 - **Frontend**: React + Zustand + TailwindCSS
 - **Backend**: Spring Boot
 - **AI module** : Django 
