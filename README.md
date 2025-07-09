@@ -2,15 +2,17 @@
 
 ## 🔍 Giới thiệu
 
-Đây là một nền tảng đọc truyện chữ trực tuyến, được thiết kế theo hướng **dễ mở rộng**, và **thân thiện với người dùng**, lấy cảm hứng từ nền tảng như Metruyenchu, TruyenCV.
+Đây là một nền tảng đọc truyện chữ trực tuyến, được thiết kế theo hướng **dễ mở rộng**, và **thân thiện với người dùng**, lấy cảm hứng từ nền tảng như Metruyenchu, TruyenCV. Thiết kế cho 3 nhóm người dùng: staff, normal user và publisher
 
-Trang web cho phép người dùng:
+Trang web gồm các chức năng chính như sau:
 - Đọc truyện chữ theo chương
 - Tìm kiếm, lọc, sắp xếp truyện
-- Theo dõi truyện, đánh giá, bình luận, yêu thích, đánh dấu
-- Tương tác xã hội (thích, báo cáo)
+- Theo dõi truyện, đánh giá, bình luận, yêu thích, đánh dấu, báo cáo vi phạm.
 - Mua chương / truyện
-- Chat với chatbot để tìm truyện / thông tin về web, term of service
+- Chat với chatbot để tìm truyện / thông tin về web, term of service dựa trên ngôn ngữ tự nhiên
+- Đăng truyện, quản lý truyện
+- Quản lý tổng quát
+- Thống kê
 
 
 ## 🏗️ Kiến trúc hệ thống
@@ -19,7 +21,7 @@ Hệ thống được xây dựng theo kiến trúc **Microservices**, chia thà
 
 - **Frontend**: React + Zustand + TailwindCSS
 - **Backend**: Spring Boot
-- **AI module** (tuỳ chọn): Django 
+- **AI module** : Django 
 - **Database**:
   - PostgreSQL cho dữ liệu chính
   - MongoDB cho log, thống kê
@@ -47,7 +49,7 @@ Hệ thống được xây dựng theo kiến trúc **Microservices**, chia thà
 
 - Duyệt truyện/chương
 - Quản lý người dùng, báo cáo
-- Quản lý thể loại, tag, đặc điểm nhân vật
+- Quản lý thể loại, tag, đặc điểm nhân vật ...
 - Thống kê theo ngày/tuần/tháng
 
 ## 📊 Thống kê
@@ -57,10 +59,4 @@ Hệ thống được xây dựng theo kiến trúc **Microservices**, chia thà
 - Biểu đồ lượt xem, đánh giá, comment
 - Truy vấn tùy chọn theo thời gian
 
-## 📦 Cài đặt
 
-### Backend
-
-```bash
-cd backend/
-./mvnw spring-boot:run
