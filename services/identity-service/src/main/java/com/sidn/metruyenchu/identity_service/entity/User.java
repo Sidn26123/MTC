@@ -24,11 +24,13 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     String id;
-    @Column(name = "username", unique = true)
+    @Column(name = "username")
     String username;
-    @Size(min = 8, message = "Password must be at least 8 characters long")
+
+    //@Size(min = 8, message = "Password must be at least 8 characters long")
     String password;
 
+    @Column(name = "email", unique = true)
     String email;
 
     @Column(updatable = false, nullable = false) //không cho phép cập nhật thủ công
@@ -43,6 +45,9 @@ public class User {
     boolean isDeleted = false;
     boolean isEnabled = false;
     boolean isLocked = false;
+
+    @Column(name = "google_id", unique = true)
+    String googleId;
 
     @ManyToMany
     Set<Role> roles;

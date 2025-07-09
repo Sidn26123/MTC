@@ -11,6 +11,7 @@ import java.util.Date;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserProfileCreationRequest {
+    String userId; // ID của người dùng từ dịch vụ xác thực
     String username;
     String email;
     String avatarPath;

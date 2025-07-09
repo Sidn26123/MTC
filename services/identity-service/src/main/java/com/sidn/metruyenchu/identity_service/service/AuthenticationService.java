@@ -1,40 +1,55 @@
 package com.sidn.metruyenchu.identity_service.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.api.client.auth.oauth2.TokenResponseException;
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeRequestUrl;
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
+import com.google.api.client.http.HttpHeaders;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.gson.GsonFactory;
 import com.nimbusds.jose.*;
 import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import com.sidn.metruyenchu.identity_service.dto.request.AuthenticationRequest;
-import com.sidn.metruyenchu.identity_service.dto.request.IntrospectRequest;
-import com.sidn.metruyenchu.identity_service.dto.request.LogoutRequest;
-import com.sidn.metruyenchu.identity_service.dto.request.RefreshRequest;
+import com.sidn.metruyenchu.identity_service.dto.request.*;
+import com.sidn.metruyenchu.identity_service.dto.request.feignclient.UserProfileCreationRequest;
 import com.sidn.metruyenchu.identity_service.dto.response.AuthenticationResponse;
 import com.sidn.metruyenchu.identity_service.dto.response.IntrospectResponse;
 import com.sidn.metruyenchu.identity_service.entity.InvalidatedToken;
+import com.sidn.metruyenchu.identity_service.entity.Role;
 import com.sidn.metruyenchu.identity_service.entity.User;
 import com.sidn.metruyenchu.identity_service.exception.AppException;
 import com.sidn.metruyenchu.identity_service.exception.ErrorCode;
 import com.sidn.metruyenchu.identity_service.repository.InvalidatedRepository;
 import com.sidn.metruyenchu.identity_service.repository.UserRepository;
+import com.sidn.metruyenchu.identity_service.repository.httpclient.UserClient;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.Date;
-import java.util.StringJoiner;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -44,6 +59,10 @@ import java.util.UUID;
 public class AuthenticationService {
     UserRepository userRepository;
     InvalidatedRepository invalidatedRepository;
+
+    @NonFinal
+    @Value("${file.default-avatar-file-name}")
+    String defaultAvatarFileName;
 
     @NonFinal
     @Value("${jwt.signerKey}")
@@ -56,6 +75,146 @@ public class AuthenticationService {
     @NonFinal
     @Value("${jwt.refreshable-duration}")
     protected long REFRESHABLE_DURATION;
+
+    @NonFinal
+    @Value("${spring.security.oauth2.client.registration.google.client-id}")
+//    @Value("${google.client-id}")
+    private String googleClientId;
+
+    @NonFinal
+    @Value("${spring.security.oauth2.client.registration.google.client-secret}")
+    private String googleClientSecret;
+
+    @NonFinal
+    @Value("${spring.security.oauth2.client.registration.google.redirect-uri}")
+    private String googleRedirectUri;
+
+    @NonFinal
+    @Value("${spring.security.oauth2.client.provider.google.user-info-uri}")
+    private String googleUserInfoUri;
+
+    UserClient userClient;
+
+
+    public String generateAuthUrl() {
+        String url = "";
+
+        GoogleAuthorizationCodeRequestUrl urlBuilder = new GoogleAuthorizationCodeRequestUrl(
+                googleClientId,
+                googleRedirectUri,
+                Arrays.asList("email", "profile", "openid"));
+        url = urlBuilder.build();
+        return url;
+    }
+
+
+
+    public Map<String, Object> authenticateAndFetchProfile(String code) throws IOException {
+        RestTemplate restTemplate = new RestTemplate();
+        restTemplate.setRequestFactory(new HttpComponentsClientHttpRequestFactory());
+        String accessToken;
+        //Gson gson = new Gson();
+        try {
+            accessToken = new GoogleAuthorizationCodeTokenRequest(
+                    new NetHttpTransport(), new GsonFactory(),
+                    googleClientId,
+                    googleClientSecret,
+                    code,
+                    googleRedirectUri
+            ).execute().getAccessToken();
+        } catch (TokenResponseException e) {
+            System.err.println("Google OAuth token error: " + e.getMessage());
+            if (e.getDetails() != null) {
+                System.err.println("Error: " + e.getDetails().getError());
+                System.err.println("Description: " + e.getDetails().getErrorDescription());
+                System.err.println("URI: " + e.getDetails().getErrorUri());
+            }
+            throw e;
+        }
+
+
+        // Configure RestTemplate to include the access token in the Authorization header
+        restTemplate.getInterceptors().add((req, body, executionContext) -> {
+            req.getHeaders().set("Authorization", "Bearer " + accessToken);
+            return executionContext.execute(req, body);
+        });
+
+        // Make a GET request to fetch user information
+        return new ObjectMapper().readValue(
+                restTemplate.getForEntity(googleUserInfoUri, String.class).getBody(),
+                new TypeReference<>() {
+                });
+        //break;
+    }
+
+    public AuthenticationResponse loginSocial(GoogleLoginRequest googleLoginRequest) throws Exception {
+        Optional<User> optionalUser = Optional.empty();
+        //  Role roleUser = com.sidn.metruyenchu.identity_service.enums.Role.USER.toString();
+        // Kiểm tra Google Account ID
+        if (googleLoginRequest.isGoogleAccountIdValid()) {
+            optionalUser = userRepository.findByGoogleId(googleLoginRequest.getGoogleId());
+
+            // Tạo người dùng mới nếu không tìm thấy
+            if (optionalUser.isEmpty()) {
+
+                User newUser = User.builder()
+                        .username(Optional.ofNullable(googleLoginRequest.getUsername()).orElse("") )
+                        .email(Optional.ofNullable(googleLoginRequest.getEmail()).orElse(""))
+//                        .role(roleUser)
+                        .googleId(googleLoginRequest.getGoogleId())
+                        .password("") // Mật khẩu trống cho đăng nhập mạng xã hội
+//                        .active(true)
+                        .build();
+
+                // Lưu người dùng mới
+
+
+                newUser = userRepository.save(newUser);
+                optionalUser = Optional.of(newUser);
+
+                LocalDate localDate = LocalDate.of(1999, 10, 15);
+                Date dateOfBirth = java.sql.Date.valueOf(localDate);
+
+                UserProfileCreationRequest userProfileCreationRequest = UserProfileCreationRequest
+                        .builder()
+                        .username(newUser.getUsername())
+                        .email(newUser.getEmail())
+                        .avatarPath(googleLoginRequest.getAvatarPath())
+                        .status("ACTIVE")
+                        .gender("MALE") // M
+                        .firstName("")
+                        .lastName("")
+                        .userId(newUser.getId())
+                        .dateOfBirth(dateOfBirth)
+                        .build();
+                if (userProfileCreationRequest.getAvatarPath() == null){
+                    userProfileCreationRequest.setAvatarPath(defaultAvatarFileName);
+                }
+                userClient.createUserProfile(userProfileCreationRequest);
+
+
+
+            }
+        }
+
+
+        User user = optionalUser.get();
+
+//        // Kiểm tra nếu tài khoản bị khóa
+//        if (!user.isActive()) {
+//            throw new DataNotFoundException(localizationUtils.getLocalizedMessage(MessageKeys.USER_IS_LOCKED));
+//        }
+
+        var token = generateToken(user);
+        var refreshToken = generateRefreshToken(user);
+        return AuthenticationResponse.builder()
+                .token(token)
+                .authenticated(true)
+                .refreshToken(refreshToken)
+                .build();
+
+    }
+
 
     public IntrospectResponse introspect(IntrospectRequest request) throws JOSEException, ParseException {
         var token = request.getToken();
@@ -244,6 +403,7 @@ public class AuthenticationService {
                 .claim("scope", buildScope(user))
                 .claim("user_id", user.getId())
                 .claim("token_type", "access") // Thêm claim token_type
+                .claim("email", user.getEmail())
                 .build();
 
         Payload payload = new Payload(jwtClaimsSet.toJSONObject());
@@ -298,4 +458,7 @@ public class AuthenticationService {
 
         return stringJoiner.toString();
     }
+
+
+
 }
