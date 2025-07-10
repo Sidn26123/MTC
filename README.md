@@ -25,13 +25,13 @@ Hệ thống được xây dựng theo kiến trúc **Microservices**, chia thà
 
 
 - **Frontend**: React + Zustand + TailwindCSS
-- **Backend**: Spring Boot
+- **Backend**: Spring Framework
 - **AI module** : Django 
 - **Database**:
-  - PostgreSQL cho dữ liệu chính
-  - MongoDB cho log, thống kê
-- **Storage**: Cloud (mã hoá nội dung .txt)
-- **Message Queue**: Kafka(cho log)
+  - PostgreSQL 
+- **Storage**: Cloudinary (mã hoá nội dung .txt)
+- **Message**: Kafka, OpenFeign (giao tiếp giữa các service cần kết quả ngay)
+
 
 Cấu trúc thư mục service:
 
