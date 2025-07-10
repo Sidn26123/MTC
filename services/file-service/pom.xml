@@ -133,6 +133,11 @@
 			<artifactId>spring-boot-starter-oauth2-resource-server</artifactId>
 			<version>3.4.1</version>
 		</dependency>
+		<dependency>
+			<groupId>com.sidn.metruyenchu</groupId>
+			<artifactId>shared-library</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 <!--        <dependency>-->
 <!--            <groupId>com.sidn.metruyenchu</groupId>-->
 <!--            <artifactId>common</artifactId>-->
