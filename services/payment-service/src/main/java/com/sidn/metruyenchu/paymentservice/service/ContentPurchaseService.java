@@ -2,6 +2,7 @@ package com.sidn.metruyenchu.paymentservice.service;
 
 import com.sidn.metruyenchu.paymentservice.dto.BaseFilterRequest;
 import com.sidn.metruyenchu.paymentservice.dto.PageResponse;
+import com.sidn.metruyenchu.paymentservice.dto.request.contentPurchase.CheckUserCanReadContentRequest;
 import com.sidn.metruyenchu.paymentservice.dto.request.contentPurchase.CheckUserPurchaseContentRequest;
 import com.sidn.metruyenchu.paymentservice.dto.request.contentPurchase.ContentPurchaseCreateRequest;
 import com.sidn.metruyenchu.paymentservice.dto.request.contentPurchase.ContentPurchaseRequest;
@@ -175,13 +176,42 @@ public class ContentPurchaseService {
 
     public boolean hasPurchasedContent(String userId, String itemId, ContentType itemType) {
         // Kiểm tra xem người dùng đã mua nội dung này chưa
+
         return contentPurchaseRepository.existsByTransactionUserIdAndItemIdAndItemType(
                 userId, itemId, itemType);
 
     }
 
     public boolean hasPurchasedContent(CheckUserPurchaseContentRequest request) {
+        if (request.getUserId() == null){
+            request.setUserId(TokenUtils.getUserIdFromContext());
+        }
         return contentPurchaseRepository.existsByTransactionUserIdAndItemIdAndItemType(
                 request.getUserId(), request.getItemId(), request.getItemType());
     }
+
+    public boolean hasPurchasedNovelOrChapter(CheckUserCanReadContentRequest request) {
+        if (request.getUserId() == null) {
+            request.setUserId(TokenUtils.getUserIdFromContext());
+        }
+        log.info("Checking if user {} has purchased novel {} or chapter {}",
+                request.getUserId(), request.getNovelId(), request.getChapterId());
+        // Kiểm tra xem người dùng đã mua truyện này chưa
+        boolean hasPurchasedNovel = contentPurchaseRepository.existsByTransactionUserIdAndItemIdAndItemType(
+                request.getUserId(), request.getNovelId(), ContentType.NOVEL);
+
+        if (hasPurchasedNovel) {
+            return true;
+        }
+
+        boolean hasPurchasedChapter = contentPurchaseRepository.existsByTransactionUserIdAndItemIdAndItemType(
+                request.getUserId(), request.getChapterId(), ContentType.CHAPTER);
+
+        if (hasPurchasedChapter) {
+            return true;
+        }
+
+        return false;
+    }
+
 }
