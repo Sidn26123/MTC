@@ -44,5 +44,5 @@ public class PolicyDocument {
     LocalDateTime createdAt;
 
     @Builder.Default
-    boolean isDeleted = false;
+    Boolean isDeleted = false;
 }
