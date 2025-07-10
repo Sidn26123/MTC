@@ -21,6 +21,7 @@ Hệ thống được xây dựng theo kiến trúc **Microservices**, chia thà
 
 ![image](https://github.com/user-attachments/assets/be067d02-547d-46c7-bbdb-26ed4f80bb19)
 
+<img width="663" height="908" alt="image" src="https://github.com/user-attachments/assets/00d772f1-3a7a-45b9-8d30-8eeebf87e95f" />
 
 
 - **Frontend**: React + Zustand + TailwindCSS
