@@ -12,6 +12,7 @@ import java.util.Date;
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class UserProfileCreationRequest {
     String username;
+
     String email;
     String avatarPath;
     String status;

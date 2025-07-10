@@ -107,16 +107,18 @@ const CategoryDropdown = ({ dropdown }) => {
     };
 
     return (
-        <div ref={dropdownRef} className="w-full relative">
+        <div ref={dropdownRef} className="relative inline-block">
             <button
                 id="dropdownRadioButton"
                 onClick={() => setIsOpen(!isOpen)}
-                className="inline-flex w-full justify-between items-center text-gray-500 border border-gray-500 font-medium rounded-lg text-sm px-3 py-1.5 focus:outline-none hover:ring-1 focus:ring-1 focus:ring-gray-500"
+                className="inline-flex items-center justify-between text-gray-500 border border-gray-500 font-medium rounded-lg text-sm px-3 py-1.5 focus:outline-none hover:ring-1 focus:ring-1 focus:ring-gray-500 w-fit max-w-full"
                 type="button"
             >
-                <span>{selectedItem ? selectedItem.name : "Chọn thể loại"}</span>
+        <span className="truncate max-w-[calc(100%-1rem)]">
+            {selectedItem ? selectedItem.name : 'Chọn thể loại'}
+        </span>
                 <svg
-                    className="w-2.5 h-2.5 ms-2.5"
+                    className="w-2.5 h-2.5 ml-2 shrink-0"
                     aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
@@ -131,6 +133,7 @@ const CategoryDropdown = ({ dropdown }) => {
                     />
                 </svg>
             </button>
+
 
             {isOpen && (
                 <div className="w-full ">
@@ -151,7 +154,8 @@ const CategoryDropdown = ({ dropdown }) => {
                                             readOnly
                                             className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 hidden"
                                         />
-                                        <label className="w-full ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 mr-4">
+                                        <label
+                                            className="w-full ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 mr-4">
                                             {item.name}
                                         </label>
                                     </div>
@@ -168,11 +172,11 @@ const CategoryDropdown = ({ dropdown }) => {
 
 const BorderedBox = ({ children }) => {
     return (
-        <div className={"border border-gray-300 rounded-lg p-4"}>
+        <div className={'border border-gray-300 rounded-lg p-4'}>
             {children}
         </div>
-    )
-}
+    );
+};
 
 const useOutsideClick = (callback) => {
     const ref = useRef();
@@ -183,9 +187,9 @@ const useOutsideClick = (callback) => {
                 callback();
             }
         };
-        document.addEventListener("mousedown", handleClickOutside);
+        document.addEventListener('mousedown', handleClickOutside);
         return () => {
-            document.removeEventListener("mousedown", handleClickOutside);
+            document.removeEventListener('mousedown', handleClickOutside);
         };
     }, [callback]);
 
@@ -197,7 +201,7 @@ const DateTimePicker1 = () => {
     return (
         <>
             <div>
-                <div className={""}>
+                <div className={''}>
                     <form className="max-w-[8rem] mx-auto">
                         <label htmlFor="time" className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select
                             time:</label>
