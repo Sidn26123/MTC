@@ -26,7 +26,7 @@ Hệ thống được xây dựng theo kiến trúc **Microservices**, chia thà
 
 - **Frontend**: React + Zustand + TailwindCSS
 - **Backend**: Spring Framework
-- **AI module** : Django 
+- **AI module** : Django, Ollama, ChromaDB, Quadrant 
 - **Database**:
   - PostgreSQL 
 - **Storage**: Cloudinary (mã hoá nội dung .txt)
