@@ -2,10 +2,12 @@ import { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { parseJwt, getScopeArray } from '../../utils/JWTUtils.js';
-import useUserStore from '../../stores/authStore.js';
 import {showSuccess} from '../../utils/ToastUtils.js';
+import useUserStore from '../../stores/userStores.js';
+
 import { API } from '../../configurations/configuration.js';
 import api from '../../middlewares/axios.js';
+import { useAuthActions } from '../../stores/authStore.js';
 // import { showSuccess } from '../../utils/NotificationUtil.js'; // Đừng quên bật lại
 
 function GoogleCallback() {
@@ -14,6 +16,8 @@ function GoogleCallback() {
   const location = useLocation();
   const setUser = useUserStore((state) => state.setUser);
   const calledRef = useRef(false); // ✅ Đảm bảo chỉ gọi 1 lần
+  const login = useAuthActions().login;
+
   debugger;
 
   useEffect(() => {
@@ -36,6 +40,7 @@ function GoogleCallback() {
         debugger;
         const response = await axios.get(`http://localhost:8100/identity/auth/social/callback?code=${code}`);
         const { token, refreshToken, authenticated } = response.data.data;
+        console.log("token: ", token);
         debugger;
         if (!authenticated || !token) {
           console.error('Xác thực thất bại!');
@@ -61,7 +66,7 @@ function GoogleCallback() {
         // const profileResponse = await api.get(`${API.MY_INFO}?username=${encodeURIComponent(email)}`);
         // const profileResponse = await axios.get(`http://localhost:8089/user-profiles/byId?userId=${encodeURIComponent(userId)}`);
         const profileResponse = await axios.get(
-          `http://localhost:8089/user-profiles/byId?userId=${encodeURIComponent(userId)}`,
+          `http://localhost:8889/api/v1/user/user-profiles/byId?userId=${encodeURIComponent(userId)}`,
           {
             headers: {
               Authorization: `Bearer ${token}`
@@ -70,20 +75,21 @@ function GoogleCallback() {
         );
         debugger;
         const user = profileResponse.data?.result;
+        console.log('user', user);
+        console.log(profileResponse);
         debugger;
-        // if (user) {
-        //   setUser(user);
-        //   const roles = getScopeArray(token);
-        //   debugger;
-        //   const { login: loginAccount } = require('../../stores/authStore.js').useAuthActions();
-        //   debugger;
-        //   loginAccount({
-        //     token,
-        //     refreshToken,
-        //     roles,
-        //     userId,
-        //   });
-        // }
+        setUser(user);
+
+        const jwtData = parseJwt(token);
+        const scope = getScopeArray(token);
+        console.log('scope', scope);
+        // login({
+        //   token: response.data.token,
+        //   refreshToken: null,
+        //   roles: scope,
+        //   userId: jwtData.userId,
+        // })
+
 
         showSuccess('Đăng nhập thành công!');
         debugger;
@@ -96,7 +102,7 @@ function GoogleCallback() {
       }
     };
 
-    handleGoogleCallback();
+    handleGoogleCallback().then(r => {});
   }, [location, navigate]);
 
   return <div>Đang xử lý đăng nhập...</div>;
