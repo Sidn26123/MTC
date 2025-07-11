@@ -140,9 +140,9 @@ const DefaultNavigator = () => {
 //         }
 //     };
 const PageNavigator = ({
-                           page = 1,
+                           page = 0,
                            pageSize = 10,
-                           totalPages = 0,
+                           totalPages = 1,
                            totalElements = 0,
                            onPageChange,
                            onPageSizeChange

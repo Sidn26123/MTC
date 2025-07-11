@@ -13,6 +13,7 @@ import { getFilteredNovels } from '../../services/novelService.js';
 import { extractFiltersFromStore } from '../../services/novelFilterService.js';
 import { useCurrentNovelPublisher, useUser } from '../../stores/userStores.js';
 import { usePublishedByPublisher, useSetPublishedByPublisher } from '../../stores/novelStore.js';
+import { DefaultNavigator, PageNavigator } from '../../components/global/Navigators.jsx';
 
 function PublishedNovelPage() {
     const user = useUser();
@@ -220,16 +221,8 @@ const PublishedNovelTable = ({novels}) => {
 
             {/* Phân trang */}
             <div className="flex justify-end mt-4">
-                <div className="flex gap-x-2">
-                    {Array.from({ length: novels.totalPages }, (_, i) => i + 1).map((page) => (
-                        <button
-                            className={`px-3 py-1 rounded-md ${
-                                page === novels.currentPage ? 'bg-blue-500 text-white' : 'bg-gray-200'
-                            }`}
-                        >
-                            {page}
-                        </button>
-                    ))}
+                <div className={'mt-3'}>
+                    <PageNavigator />
                 </div>
             </div>
         </div>
@@ -237,7 +230,7 @@ const PublishedNovelTable = ({novels}) => {
 }
 
 
-const SpecItem = () => {
+const SpecItem = ({data}) => {
     return (
         <>
             <div>
@@ -259,7 +252,9 @@ const SpecItem = () => {
                         </Link>
                     </div>
                     <div className={"bg-gray-300 p-1 rounded-md px-2 hover:cursor-pointer hover:bg-gray-400"}>
+                        <Link to={"/bookhub/books/1/analytics"}>
                         <FontAwesomeIcon icon={faChartLine} />
+                        </Link>
 
                     </div>
                     <div className={"bg-gray-300 p-1 rounded-md px-2 hover:cursor-pointer hover:bg-gray-400"}>

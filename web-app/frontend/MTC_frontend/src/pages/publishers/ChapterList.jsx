@@ -1,12 +1,33 @@
-import React from "react";
+import React, { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faDeleteLeft, faPlus } from '@fortawesome/free-solid-svg-icons';
 import {faPenToSquare, faTrashCan} from '@fortawesome/free-regular-svg-icons';
 import { SimpleDropdown } from '../../common/CommonComponents.jsx';
 import { DefaultNavigator } from '../../components/global/Navigators.jsx';
 import { Link } from 'react-router';
-
+import { useCurrentNovelPublisher } from '../../stores/userStores.js';
+import { usePublisherStore } from '../../stores/publisherStore.js';
+import { getFilteredNovels } from '../../services/novelService.js';
+import { getFilteredChapters } from '../../services/chapterService.js';
 const ChapterList = () => {
+    const currentPublishedNovelChosen = usePublisherStore().currentChosenPublishedNovel;
+    const chapterList = usePublisherStore((state) =>state.currentNovelChapterList);
+    const setCurrentChapterList = usePublisherStore((state) => state.setCurrentNovelChapterList);
+    useEffect(() => {
+        const fetchNovels = async () => {
+            try {
+                const filter = { novelId: "0da33320-83fa-42ca-bc8c-b2b31eba8918" };
+                const response = await getFilteredChapters(filter);
+                console.log("Res: ", response.data.result);
+                setCurrentChapterList(response.data.result);
+            } catch (err) {
+            }
+        };
+
+        fetchNovels().then(r => {console.log(r)});
+    }, [currentPublishedNovelChosen]);
+
+
     return (
         <>
             <div>
@@ -98,26 +119,43 @@ const ChapterList = () => {
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr className=" border-b border-gray-500 hover:bg-gray-500/10 ">
-
-                                    <th scope="row"
-                                        className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        Apple MacBook Pro 17"
-                                    </th>
-                                    <td className="px-6 py-4">
-                                        Silver
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        Laptop
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <SpecItem />
-                                    </td>
-                                </tr>
-
+                                {chapterList.data && chapterList.data.length > 0 ? (
+                                    chapterList.data.map((chapter, index) => (
+                                        <tr
+                                            key={chapter.id}
+                                            className="border-b border-gray-500 hover:bg-gray-500/10"
+                                        >
+                                            <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                                {index + 1 + (chapterList.currentPage - 1) * chapterList.pageSize}
+                                            </td>
+                                            <td className="px-6 py-4">{chapter.name}</td>
+                                            <td className="px-6 py-4">
+                                                {chapter.publishedAt
+                                                    ? new Date(chapter.publishedAt).toLocaleString()
+                                                    : 'Chưa xuất bản'}
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                {chapter.wordCount ?? '—'}
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                {chapter.viewCount ?? 0}
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <SpecItem />
+                                            </td>
+                                        </tr>
+                                    ))
+                                ) : (
+                                    <tr>
+                                        <td colSpan={6} className="px-6 py-4 text-center text-gray-500">
+                                            Không có chương nào
+                                        </td>
+                                    </tr>
+                                )}
                                 </tbody>
+
                             </table>
-                            <div className={"mt-3"}>
+                            <div className={'mt-3'}>
                                 <DefaultNavigator />
                             </div>
                         </div>
@@ -137,14 +175,15 @@ const SpecItem = () => {
     return (
         <>
             <div>
-                <div className={"flex flex-row justify-end items-center gap-x-1"}>
-                    <div className={"bg-gray-300 p-1 rounded-md px-2 ml-3 pl-[10px] hover:cursor-pointer hover:bg-gray-400"}>
-                        <Link to={"/bookhub/chapters/1/edit"}>
+                <div className={'flex flex-row justify-end items-center gap-x-1'}>
+                    <div
+                        className={'bg-gray-300 p-1 rounded-md px-2 ml-3 pl-[10px] hover:cursor-pointer hover:bg-gray-400'}>
+                        <Link to={'/bookhub/chapters/1/edit'}>
                             <FontAwesomeIcon icon={faPenToSquare} />
                         </Link>
                     </div>
-                    <div className={"bg-red-500 p-1 rounded-md px-2 ml-3 hover:cursor-pointer hover:bg-red-600"}>
-                        <Link to={"/bookhub/books/1/upload-chapters"}>
+                    <div className={'bg-red-500 p-1 rounded-md px-2 ml-3 hover:cursor-pointer hover:bg-red-600'}>
+                        <Link to={'/bookhub/books/1/upload-chapters'}>
                             <FontAwesomeIcon icon={faTrashCan} />
                         </Link>
                     </div>
