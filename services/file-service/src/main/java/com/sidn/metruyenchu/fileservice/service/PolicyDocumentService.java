@@ -74,7 +74,7 @@ public class PolicyDocumentService {
     public Void delete(String id){
         PolicyDocument document = repository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.POLICY_NOT_FOUND));
-        document.setDeleted(true);
+        document.setIsDeleted(true);
         return null;
     }
 }
