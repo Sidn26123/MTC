@@ -17,7 +17,11 @@ import {
 import { getObjectFromList } from '../../utils/Utils.js';
 import { useCurrentNovelPublisher } from '../../stores/userStores.js';
 import { usePublishedByPublisher } from '../../stores/novelStore.js';
-import { usePublisherStore } from '../../stores/publisherStore.js';
+import {
+    useCurrentChosenPublishedNovel,
+    useCurrentPublishedNovel,
+    usePublisherStore,
+} from '../../stores/publisherStore.js';
 
 
 const AddChapterPage = () => {
@@ -33,7 +37,10 @@ const AddChapterPage = () => {
     const novelTypes = useNovelType();
     const changePage = useSetPage();
     const setNovelProgressStatus = useSetNovelStatus();
-    const currentPublishedNovel = usePublishedByPublisher();
+
+
+    const currentPublishedNovel = useCurrentPublishedNovel();
+    console.log("Current Published Novel:", currentPublishedNovel);
     // const currentNovel = useNovelState();
     const [showDateTimePicker, setShowDateTimePicker] = React.useState(false);
     const [value, setValue] = useState(new Date());
@@ -55,10 +62,9 @@ const AddChapterPage = () => {
     }, [value]);
 
 
-    function handleSelectField(data, selected) {
-        getObjectFromList(selected, "id", data).then((result) => {
-            console.log("Selected result:", result);
-        });
+    function handleSelectField(selected) {
+        console.log("Selected Type ID:", selected);
+        setCurrentType(getObjectFromList(typeAdd, "id", selected.id));
     }
 
     return (
@@ -75,7 +81,8 @@ const AddChapterPage = () => {
                             <CategoryDropdown
                                 dropdown={typeAdd}
                                 placeholder={'Chọn thể loại'}
-                                onSelect={(selected) => handleSelectField('genreIds', selected)}
+                                onSelect={(selected) => handleSelectField( selected)}
+                                defaultValue={currentType}
                             />
 
                         </div>
@@ -83,8 +90,8 @@ const AddChapterPage = () => {
                             <span>STT</span>
                             <input
                                 className={'w-full border border-gray-500 rounded-md p-1  hover:border-gray-400 focus:border-gray-400 focus:outline-none focus:ring-0'}
-                                disabled={currentType.id === "insert"}
-                                value={currentPublishedNovel.totalChapters}
+                                disabled={currentType.id === "normal"}
+                                value={currentPublishedNovel.totalChapters + 1}
                             />
                         </div>
                     </div>

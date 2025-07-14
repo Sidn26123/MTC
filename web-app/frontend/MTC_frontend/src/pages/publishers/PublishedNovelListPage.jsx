@@ -14,7 +14,12 @@ import { extractFiltersFromStore } from '../../services/novelFilterService.js';
 import { useCurrentNovelPublisher, useUser } from '../../stores/userStores.js';
 import { usePublishedByPublisher, useSetPublishedByPublisher } from '../../stores/novelStore.js';
 import { DefaultNavigator, PageNavigator } from '../../components/global/Navigators.jsx';
-import { useMyPublishedNovels, usePublisherStore, useSetMyPublishedNovels } from '../../stores/publisherStore.js';
+import {
+    useMyPublishedNovels,
+    usePublisherStore,
+    useSetCurrentPublishedNovel,
+    useSetMyPublishedNovels,
+} from '../../stores/publisherStore.js';
 
 function PublishedNovelPage() {
     const user = useUser();
@@ -30,7 +35,6 @@ function PublishedNovelPage() {
             try {
                 const filter = { currentPublisher: "a3651d8d-f9e0-4a57-930f-5bbf9ff21a6d" };
                 const response = await getFilteredNovels(filter);
-                console.log("Fetched Published Novels: ", response.data.result);
                 // setCurrentPublishedNovel(response.data.result);
                 setMyPublishedNovels(response.data.result);
             } catch (err) {
@@ -56,7 +60,6 @@ export default PublishedNovelPage;
 
 const PublishedNovelTable = ({novels}) => {
     const myPublishedNovels = useMyPublishedNovels();
-    console.log("My Published Novels: ", myPublishedNovels);
 
     const novelProgressStatus = useNovelProgressStatus();
 
@@ -239,9 +242,18 @@ const PublishedNovelTable = ({novels}) => {
 const SpecItem = ({data, novel}) => {
     const navigate = useNavigate();
     const setCurrentChosenPublishedNovel = useSetPublishedByPublisher();
+    const setCurrentPublishedNovel = useSetCurrentPublishedNovel();
     function handleGotoChapterList() {
         setCurrentChosenPublishedNovel(novel.id);
+        console.log("novel: ", novel);
+        setCurrentPublishedNovel(novel);
         navigate(`/bookhub/novels/${novel.slug}/chapters`);
+    }
+
+    function handleGotoUploadChapter(){
+        setCurrentChosenPublishedNovel(novel.id);
+        setCurrentPublishedNovel(novel);
+        navigate(`/bookhub/novels/${novel.slug}/upload-chapters`);
     }
 
     return (
@@ -249,9 +261,9 @@ const SpecItem = ({data, novel}) => {
             <div>
                 <div className={"flex flex-row justify-end items-center gap-x-1"}>
                     <div className={"bg-gray-300 p-1 rounded-md px-2 ml-3 hover:cursor-pointer hover:bg-gray-400"}>
-                        <Link to={`/bookhub/novels/${novel.slug}/upload-chapters`}>
+                        <span onClick={handleGotoUploadChapter}>
                             <FontAwesomeIcon icon={faPlus} />
-                        </Link>
+                        </span>
                     </div>
                     <div className={"bg-gray-300 p-1 rounded-md px-2 hover:cursor-pointer hover:bg-gray-400"}>
                         {/*<Link to={`/bookhub/novels/${novel.slug}/chapters`}>*/}
