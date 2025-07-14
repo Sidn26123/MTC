@@ -77,3 +77,9 @@ export const getFilteredChapters = async (filter) => {
     const response = await api.post(API.NOVEL + "/chapters/filter", filter);
     return response;
 };
+
+export const uploadChapter = async (data) => {
+    const response = await api.post(API.CHAPTER + "/create", data);
+
+    return response;
+}

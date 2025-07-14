@@ -7,7 +7,7 @@ import 'react-clock/dist/Clock.css';
 import { formatPublishDateTime } from '../../utils/DatetimeUtil.js';
 import { faArrowUpFromBracket, faDeleteLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Link, redirect } from 'react-router';
+import { Link, redirect, useNavigate } from 'react-router';
 import {
     useGenres, useMainCharacterTrait,
     useNovelAttribute,
@@ -22,25 +22,17 @@ import {
     useCurrentPublishedNovel,
     usePublisherStore,
 } from '../../stores/publisherStore.js';
+import { uploadChapter } from '../../services/chapterService.js';
+import { showSuccess } from '../../utils/ToastUtils.js';
 
 
 const AddChapterPage = () => {
-
-    const novelProgressStatus = useNovelProgressStatus();
-    const novelAttributes = useNovelAttribute();
-    const novelState = useNovelState();
-    const novelVisibility = useNovelVisibility();
-    const genres = useGenres();
-    const mainCharacterTraits = useMainCharacterTrait();
-    const sects = useSects();
-    const worldScenes = useWorldScene();
-    const novelTypes = useNovelType();
-    const changePage = useSetPage();
-    const setNovelProgressStatus = useSetNovelStatus();
-
+    const navigate = useNavigate();
+    const [chapterContent, setChapterContent] = useState("");
+    const [chapterList, setChapterList] = useState([]);
+    const [chapterContentError, setChapterContentError] = useState("");
 
     const currentPublishedNovel = useCurrentPublishedNovel();
-    console.log("Current Published Novel:", currentPublishedNovel);
     // const currentNovel = useNovelState();
     const [showDateTimePicker, setShowDateTimePicker] = React.useState(false);
     const [value, setValue] = useState(new Date());
@@ -53,7 +45,23 @@ const AddChapterPage = () => {
     const [currentType, setCurrentType] = useState(typeAdd[0]);
 
     const publishChapter = () => {
-        redirect("/bookhub/published-novel");
+        const updatedList = chapterList.map((ch, i) => {
+            if (ch.content.trim() === "") {
+                setChapterContentError("Nội dung chương không được để trống.");
+                return ch; // không thay đổi
+            }
+            return {
+                ...ch,
+                isInsertMode: currentType.id === "insert",
+                chapterIdx: ch.index,
+                chapterStatus: ["011ea719-cb1c-46a6-b8c6-0607127dbc6c"],
+                novelId: currentPublishedNovel.id,
+                name: ch.title,
+            };
+        });
+        uploadChapter(updatedList[0]).then(r => {console.log("A")})
+        showSuccess("Đăng chương thành công");
+        navigate("/bookhub/published-novel");
     }
 
     // Cập nhật giá trị khi component render
@@ -63,8 +71,78 @@ const AddChapterPage = () => {
 
 
     function handleSelectField(selected) {
-        console.log("Selected Type ID:", selected);
         setCurrentType(getObjectFromList(typeAdd, "id", selected.id));
+    }
+
+
+    function splitChapter(content){
+        var chapters = []; //{title: "", content: "", index: 0}
+
+        //Lap qua content, neu gap header thi bat dau 1 chap truyen
+        const lines = content.split('\n');
+        let currentChapterIndex = -1;
+        const startIndex= currentPublishedNovel.totalChapters;
+        console.log("Start index: ", startIndex);
+        var sample = {title: "", content: "", index: 0};
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim();
+            if (checkLineIsHeader(line)) {
+                // Neu la header, tao chap moi
+                currentChapterIndex++;
+                chapters.push({title: "", content: "", index: startIndex + currentChapterIndex});
+                console.log("CHAPTER ", chapters[currentChapterIndex]);
+                chapters[currentChapterIndex].title = line;
+
+            } else {
+                if (line.startsWith("#Chương")){
+                    //remove the one # character before Chuong
+                    chapters[currentChapterIndex].content = line.replace(/^#/, "").trim() + "\n";
+                }
+                else {
+                    // Neu khong phai header, them vao noi dung cua chap hien tai\
+                    console.log("Adding line to chapter ", currentChapterIndex, " content: ", chapters[currentChapterIndex]);
+                    chapters[currentChapterIndex].content += line + "\n";
+                }
+
+            }
+        }
+        return chapters;
+    }
+
+    function checkLineIsHeader(line) {
+        // Loại bỏ khoảng trắng đầu cuối dòng
+        const trimmedLine = line.trim();
+
+        // Regex kiểm tra các định dạng tiêu đề chương
+        const headerRegex = /^Chương\s+\d+(:|$)/i;
+
+        const isValid = headerRegex.test(trimmedLine);
+        return isValid;
+    }
+
+    function checkHasValidHeader(content) {
+        const lines = content.split('\n');
+        if (checkLineIsHeader(lines[0])) {
+            return true;
+        }
+        return false; // Không tìm thấy tiêu đề chương hợp lệ ở line đầu tiên
+    }
+
+    function handleSplitChapter() {
+        console.log(splitChapter(chapterContent));
+    }
+
+    function handleFinishAddContent() {
+        if (!checkHasValidHeader(chapterContent)){
+            setChapterContentError("Tên chương không hợp lệ.")
+            return;
+        }
+
+        setChapterContentError("");
+        var chapters = splitChapter(chapterContent);
+        console.log("Chapters after split:", chapters);
+        setChapterList(chapters);
+        setMode("confirm");
     }
 
     return (
@@ -95,10 +173,18 @@ const AddChapterPage = () => {
                             />
                         </div>
                     </div>
-                    <div className={'mt-10 p-3'}>
+                    <div className={'flex flex-col mt-10 p-3'}>
                         <span>Nội dung các chương</span>
                         <textarea
-                            className={"w-full min-h-48 border border-gray-500 rounded-md p-2 mt-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none focus:ring-0"} />
+                            className={"w-full min-h-48 border border-gray-500 rounded-md p-2 mt-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none focus:ring-0"}
+                            onChange={(e) => setChapterContent(e.target.value)}
+                            value={chapterContent}
+                        />
+                        {chapterContentError && (
+                            <span className={'text-xs text-red-500 mt-3'}>{chapterContentError}</span>
+                        )}
+                        <span className={'text-xs text-gray-500 mt-3'}>Số từ: {chapterContent.length}</span>
+
                     </div>
                     <div className={'flex flex-row justify-between items-center gap-x-5 mt-10'}>
                         <div className={'flex flex-col gap-y-2 w-1/2 ml-2 relative'}>
@@ -132,7 +218,7 @@ const AddChapterPage = () => {
                     <div className={'flex flex-row justify-center items-center gap-x-5 mt-10'}>
                         <button
                             className={"bg-yellow-primary w-48 text-white rounded-md p-2 mt-10 hover:bg-yellow-500 focus:outline-none focus:ring-0 hover:cursor-pointer"}
-                            onClick={() => setMode("confirm")}
+                            onClick={() => {handleFinishAddContent()}}
                         >
                             Thêm
                         </button>
@@ -141,7 +227,7 @@ const AddChapterPage = () => {
 
             ) :
             (
-                <ConfirmAddNovel onBack={() => setMode("writing")} onNext={() => publishChapter()}/>
+                <ConfirmAddNovel chapter={splitChapter(chapterContent)} onBack={() => setMode("writing")} onNext={() => publishChapter()}/>
             )}
         </div>
     )
@@ -152,42 +238,85 @@ const NormalAddChapterMode = () => {
 }
 
 
-const ConfirmAddNovel = ({onBack, onNext}) => {
+const ConfirmAddNovel = ({chapter, onBack, onNext}) => {
+
+
     return (
         <>
             <div>
                 <div className={"flex flex-col"}>
                     <div className={"flex flex-col bg-background-light rounded-md p-5 mt-2"}>
                         <span className={"text-md"}>
-                            Truyen Dau Tien
+                            Truyện Mới
                         </span>
-                            <span>
-                            Đã tách 1 chương
+                        <span>
+                            Đã tách {chapter.length} chương
                         </span>
                     </div>
-                    <div className={"bg-background-light rounded-md mt-5 p-5"}>
-                        <div className={'flex flex-col'}>
-                            <span className={"text-sm"}>Thu phí</span>
-                            <input
-                                className={'w-full border border-gray-500 rounded-md p-2 mt-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none focus:ring-0'}
-                                readOnly={true}
-                            />
+                    {
+                        chapter.map((item, index) => (
+                            <div className={'bg-background-light rounded-md mt-5 p-5'} key={index}>
+                                {/*<div className={'flex flex-col'}>*/}
+                                {/*    <span className={'text-sm'}>Thu phí</span>*/}
+                                {/*    <input*/}
+                                {/*        className={'w-full border border-gray-500 rounded-md p-2 mt-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none focus:ring-0'}*/}
+                                {/*        readOnly={true}*/}
+                                {/*    />*/}
 
-                        </div>
-                        <div className={'flex flex-col mt-8'}>
-                            <span className={"text-sm"}>Tên chương</span>
-                            <input
-                                className={'w-full border border-gray-500 rounded-md p-2 mt-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none focus:ring-0'}
-                            />
+                                {/*</div>*/}
+                                <div className={'flex flex-col'}>
+                                    <span className={'text-sm'}>STT</span>
+                                    <input
+                                        className={'w-full border border-gray-500 rounded-md p-2 mt-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none focus:ring-0'}
+                                        value={item.index + 1}
+                                        readOnly={true}
+                                    />
 
-                        </div>
-                        <div className={'flex flex-col mt-8'}>
-                            <span className={"text-sm"}>Nội dung</span>
-                            <textarea
-                                className={'w-full min-h-48 border border-gray-500 rounded-md p-2 mt-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none focus:ring-0'} />
-                            <span className={'text-xs text-gray-500 mt-3'}>Số từ: 0</span>
-                        </div>
-                    </div>
+                                </div>
+                                <div className={'flex flex-col mt-8'}>
+                                    <span className={'text-sm'}>Tên chương</span>
+                                    <input
+                                        className={'w-full border border-gray-500 rounded-md p-2 mt-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none focus:ring-0'}
+                                        value={item.title}
+                                    />
+
+                                </div>
+                                <div className={'flex flex-col mt-8'}>
+                                    <span className={'text-sm'}>Nội dung chương</span>
+                                    <textarea
+                                        className={'w-full min-h-48 border border-gray-500 rounded-md p-2 mt-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none focus:ring-0'}
+                                        value = {item.content}
+                                    />
+
+                                    <span className={'text-xs text-gray-500 mt-3'}>Số từ: {item.content.length}</span>
+                                </div>
+                            </div>
+                        ))
+                    }
+
+                    {/*<div className={"bg-background-light rounded-md mt-5 p-5"}>*/}
+                    {/*    <div className={'flex flex-col'}>*/}
+                    {/*        <span className={"text-sm"}>Thu phí</span>*/}
+                    {/*        <input*/}
+                    {/*            className={'w-full border border-gray-500 rounded-md p-2 mt-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none focus:ring-0'}*/}
+                    {/*            readOnly={true}*/}
+                    {/*        />*/}
+
+                    {/*    </div>*/}
+                    {/*    <div className={'flex flex-col mt-8'}>*/}
+                    {/*        <span className={"text-sm"}>Tên chương</span>*/}
+                    {/*        <input*/}
+                    {/*            className={'w-full border border-gray-500 rounded-md p-2 mt-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none focus:ring-0'}*/}
+                    {/*        />*/}
+
+                    {/*    </div>*/}
+                    {/*    <div className={'flex flex-col mt-8'}>*/}
+                    {/*        <span className={"text-sm"}>Nội dung</span>*/}
+                    {/*        <textarea*/}
+                    {/*            className={'w-full min-h-48 border border-gray-500 rounded-md p-2 mt-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none focus:ring-0'} />*/}
+                    {/*        <span className={'text-xs text-gray-500 mt-3'}>Số từ: 0</span>*/}
+                    {/*    </div>*/}
+                    {/*</div>*/}
                 </div>
                 <div className={"flex flex-row justify-center items-center gap-x-5 w-full"}>
                     <div className={"w-1/2"}>
@@ -208,12 +337,12 @@ const ConfirmAddNovel = ({onBack, onNext}) => {
                             onClick={onNext}
 
                         >
-                            <Link to={"/bookhub/published"}>
+                            <span onClick={onNext}>
                                 <div className={"flex justify-center items-center gap-x-2"}>
                                     <span className={"ml-2"}>Đăng Chương</span>
                                     <FontAwesomeIcon icon={faArrowUpFromBracket} />
                                 </div>
-                            </Link>
+                            </span>
 
                         </button>
                     </div>

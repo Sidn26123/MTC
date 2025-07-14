@@ -26,7 +26,7 @@ const AdminRoutes = ({ user }) => {
                 <Route path={`${publisherRoutesPrefix}/ho-tro`} element={<AnalyticsNovelPage />} />
                 <Route path={`${publisherRoutesPrefix}/novels/:novelSlug/upload-chapters`} element={<AddChapterPage />} />
                 <Route path={`${publisherRoutesPrefix}/novels/:novelSlug/update`} element={<UpdateNovelInfoPage />} />
-                <Route path={`${publisherRoutesPrefix}/novel/:novelSlug/chapters`} element={<ChapterList />} />
+                <Route path={`${publisherRoutesPrefix}/novels/:novelSlug/chapters`} element={<ChapterList />} />
                 <Route path={`${publisherRoutesPrefix}/chapters/:chapterId/edit`} element={<ChapterEditPage />} />
             </Route>
         // </Route>

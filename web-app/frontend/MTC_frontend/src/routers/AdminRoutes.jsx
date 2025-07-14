@@ -8,6 +8,8 @@ import { hasScope } from '../services/authoriazationService.js';
 const adminRoutesPrefix = "/admin";
 
 const AdminRoutes = ({ user, userRoles}) => {
+    console.log("AdminRoutes user: ", user);
+    console.log("AdminRoutes userRoles: ", userRoles);
     const isAdmin = hasScope(userRoles, "ROLE_ADMIN");
 
     return (

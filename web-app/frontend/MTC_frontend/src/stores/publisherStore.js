@@ -165,7 +165,9 @@ export const usePublisherStore = create((set) => ({
     // --- State ---
     general: {},
     currentChosenPublishedNovel: "",
+    currentPublishedNovel: {},
     myPublishedNovels: [],
+    chapterPrepareForPublish: [],
     actions: {
         setMyPublishedNovels: (paginationData) => set((state) => ({
             myPublishedNovels: paginationData
@@ -173,6 +175,12 @@ export const usePublisherStore = create((set) => ({
         setCurrentChosenPublishedNovel: (novelId) => set(() => ({
             currentChosenPublishedNovel: novelId
         })),
+        setCurrentPublishedNovel: (novelData) => set((state) => ({
+            currentPublishedNovel: novelData
+        })),
+        setChapterPrepareForPublish: (chapters) => set(() => ({
+            chapterPrepareForPublish: chapters
+        }))
     },
     // --- Pagination States ---
     ...Object.fromEntries([...paginatedKeys, ...dynamicPaginationKeys].map(key => [key, { ...defaultPagination }])),
@@ -190,6 +198,10 @@ export const usePublisherGeneral = () => usePublisherStore((state) => state.gene
 export const useMyPublishedNovels = () => usePublisherStore((state) => state.myPublishedNovels);
 export const useNovelStatistics = () => usePublisherStore((state) => state.novelStatistics);
 export const useCurrentChosenPublishedNovel = () => usePublisherStore((state) => state.currentChosenPublishedNovel);
+export const useCurrentPublishedNovel = () => usePublisherStore((state) => state.currentPublishedNovel);
+export const useChapterPrepareForPublish = () => usePublisherStore((state) => state.chapterPrepareForPublish);
 
 export const useSetMyPublishedNovels = () => usePublisherStore((state) => state.actions.setMyPublishedNovels);
 export const useSetCurrentChosenPublishedNovel = () => usePublisherStore((state) => state.actions.setCurrentChosenPublishedNovel);
+export const useSetCurrentPublishedNovel = () => usePublisherStore((state) => state.actions.setCurrentPublishedNovel);
+export const useSetChapterPrepareForPublish = () => usePublisherStore((state) => state.actions.setChapterPrepareForPublish);
