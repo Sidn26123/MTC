@@ -83,3 +83,9 @@ export const uploadChapter = async (data) => {
 
     return response;
 }
+
+export const uploadChapters = async (data) => {
+    const response = await api.post(API.CHAPTER + "/createMany", data);
+
+    return response;
+}

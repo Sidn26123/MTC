@@ -22,7 +22,7 @@ import {
     useCurrentPublishedNovel,
     usePublisherStore,
 } from '../../stores/publisherStore.js';
-import { uploadChapter } from '../../services/chapterService.js';
+import { uploadChapter, uploadChapters } from '../../services/chapterService.js';
 import { showSuccess } from '../../utils/ToastUtils.js';
 
 
@@ -59,9 +59,9 @@ const AddChapterPage = () => {
                 name: ch.title,
             };
         });
-        uploadChapter(updatedList[0]).then(r => {console.log("A")})
+        uploadChapters(updatedList).then(r => {})
         showSuccess("Đăng chương thành công");
-        navigate("/bookhub/published-novel");
+        navigate("/bookhub/published");
     }
 
     // Cập nhật giá trị khi component render
