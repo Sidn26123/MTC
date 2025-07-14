@@ -96,26 +96,101 @@ const SimpleDropdown = ({ dropdown }) => {
 };
 
 
-const CategoryDropdown = ({ dropdown }) => {
+// const CategoryDropdown = ({ dropdown }) => {
+//     const [isOpen, setIsOpen] = useState(false);
+//     const [selectedItem, setSelectedItem] = useState(null); // Thêm state cho item được chọn
+//     const dropdownRef = useOutsideClick(() => setIsOpen(false));
+//
+//     const handleSelect = (item) => {
+//         setSelectedItem(item);
+//         setIsOpen(false);
+//     };
+//
+//     return (
+//         <div ref={dropdownRef} className="relative inline-block">
+//             <button
+//                 id="dropdownRadioButton"
+//                 onClick={() => setIsOpen(!isOpen)}
+//                 className="inline-flex items-center justify-between text-gray-500 border border-gray-500 font-medium rounded-lg text-sm px-3 py-1.5 focus:outline-none hover:ring-1 focus:ring-1 focus:ring-gray-500 w-fit max-w-full"
+//                 type="button"
+//             >
+//         <span className="truncate max-w-[calc(100%-1rem)]">
+//             {selectedItem ? selectedItem.name : 'Chọn thể loại'}
+//         </span>
+//                 <svg
+//                     className="w-2.5 h-2.5 ml-2 shrink-0"
+//                     aria-hidden="true"
+//                     xmlns="http://www.w3.org/2000/svg"
+//                     fill="none"
+//                     viewBox="0 0 10 6"
+//                 >
+//                     <path
+//                         stroke="currentColor"
+//                         strokeLinecap="round"
+//                         strokeLinejoin="round"
+//                         strokeWidth="2"
+//                         d="m1 1 4 4 4-4"
+//                     />
+//                 </svg>
+//             </button>
+//
+//
+//             {isOpen && (
+//                 <div className="w-full ">
+//                     <div
+//                         id="dropdownRadio"
+//                         className="z-10 absolute divide-y rounded-lg shadow-sm bg-cus-gray mt-2 "
+//                     >
+//                         <ul className="space-y-1 text-sm text-gray-700" aria-labelledby="dropdownRadioButton">
+//                             {dropdown.map((item) => (
+//                                 <li key={item.id}>
+//                                     <div
+//                                         className="flex items-center p-2 rounded-sm hover:bg-gray-600 cursor-pointer"
+//                                         onClick={() => handleSelect(item)}
+//                                     >
+//                                         <input
+//                                             type="radio"
+//                                             checked={selectedItem?.id === item.id}
+//                                             readOnly
+//                                             className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 hidden"
+//                                         />
+//                                         <label
+//                                             className="w-full ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 mr-4">
+//                                             {item.name}
+//                                         </label>
+//                                     </div>
+//                                 </li>
+//                             ))}
+//                         </ul>
+//                     </div>
+//                 </div>
+//             )}
+//         </div>
+//     );
+// };
+
+const CategoryDropdown = ({ dropdown = [], onSelect, placeholder = "Chọn mục" }) => {
     const [isOpen, setIsOpen] = useState(false);
-    const [selectedItem, setSelectedItem] = useState(null); // Thêm state cho item được chọn
+    const [selectedItem, setSelectedItem] = useState(null);
     const dropdownRef = useOutsideClick(() => setIsOpen(false));
 
     const handleSelect = (item) => {
         setSelectedItem(item);
         setIsOpen(false);
+        if (onSelect) {
+            onSelect(item);
+        }
     };
 
     return (
-        <div ref={dropdownRef} className="relative inline-block">
+        <div ref={dropdownRef} className="relative inline-block w-full">
             <button
-                id="dropdownRadioButton"
                 onClick={() => setIsOpen(!isOpen)}
-                className="inline-flex items-center justify-between text-gray-500 border border-gray-500 font-medium rounded-lg text-sm px-3 py-1.5 focus:outline-none hover:ring-1 focus:ring-1 focus:ring-gray-500 w-fit max-w-full"
+                className="inline-flex items-center justify-between w-full text-gray-500 border border-gray-500 font-medium rounded-lg text-sm px-3 py-1.5 focus:outline-none hover:ring-1 focus:ring-1 focus:ring-gray-500"
                 type="button"
             >
         <span className="truncate max-w-[calc(100%-1rem)]">
-            {selectedItem ? selectedItem.name : 'Chọn thể loại'}
+          {selectedItem ? selectedItem.name : placeholder}
         </span>
                 <svg
                     className="w-2.5 h-2.5 ml-2 shrink-0"
@@ -134,35 +209,22 @@ const CategoryDropdown = ({ dropdown }) => {
                 </svg>
             </button>
 
-
             {isOpen && (
-                <div className="w-full ">
-                    <div
-                        id="dropdownRadio"
-                        className="z-10 absolute divide-y rounded-lg shadow-sm bg-cus-gray mt-2 "
-                    >
-                        <ul className="space-y-1 text-sm text-gray-700" aria-labelledby="dropdownRadioButton">
-                            {dropdown.map((item) => (
-                                <li key={item.id}>
-                                    <div
-                                        className="flex items-center p-2 rounded-sm hover:bg-gray-600 cursor-pointer"
-                                        onClick={() => handleSelect(item)}
-                                    >
-                                        <input
-                                            type="radio"
-                                            checked={selectedItem?.id === item.id}
-                                            readOnly
-                                            className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 hidden"
-                                        />
-                                        <label
-                                            className="w-full ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 mr-4">
-                                            {item.name}
-                                        </label>
-                                    </div>
-                                </li>
-                            ))}
-                        </ul>
-                    </div>
+                <div className="w-full z-10 absolute mt-2 bg-cus-gray rounded-lg shadow-sm">
+                    <ul className="space-y-1 text-sm text-gray-700 max-h-64 overflow-y-auto px-1 py-2">
+                        {dropdown.map((item) => (
+                            <li key={item.id}>
+                                <div
+                                    className="flex items-center p-2 rounded-sm hover:bg-gray-600 cursor-pointer"
+                                    onClick={() => handleSelect(item)}
+                                >
+                                    <label className="w-full text-sm font-medium text-white truncate">
+                                        {item.name}
+                                    </label>
+                                </div>
+                            </li>
+                        ))}
+                    </ul>
                 </div>
             )}
         </div>

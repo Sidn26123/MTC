@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { faChartLine, faFeather, faListUl, faLocationArrow, faPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { CategoryDropdown, SimpleDropdown } from '../../common/CommonComponents.jsx';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import {
     useGenres, useMainCharacterTrait,
     useNovelAttribute,
@@ -14,14 +14,15 @@ import { extractFiltersFromStore } from '../../services/novelFilterService.js';
 import { useCurrentNovelPublisher, useUser } from '../../stores/userStores.js';
 import { usePublishedByPublisher, useSetPublishedByPublisher } from '../../stores/novelStore.js';
 import { DefaultNavigator, PageNavigator } from '../../components/global/Navigators.jsx';
+import { useMyPublishedNovels, usePublisherStore, useSetMyPublishedNovels } from '../../stores/publisherStore.js';
 
 function PublishedNovelPage() {
     const user = useUser();
-    const currentPublishedNovel = usePublishedByPublisher();
+    // const currentPublishedNovel = usePublishedByPublisher();
     const setCurrentPublishedNovel = useSetPublishedByPublisher();
-    // var filter = {
-    //     "currentPublisher": user.id
-    // }
+    const setMyPublishedNovels = useSetMyPublishedNovels();
+    const myPublishedNovels = useMyPublishedNovels();
+    // const setMyPublishedNovel = usePublisherStore().setMyPublishedNovels;
     useEffect(() => {
         if (!user?.id) return;
 
@@ -29,20 +30,22 @@ function PublishedNovelPage() {
             try {
                 const filter = { currentPublisher: "a3651d8d-f9e0-4a57-930f-5bbf9ff21a6d" };
                 const response = await getFilteredNovels(filter);
-                setCurrentPublishedNovel(response.data.result);
+                console.log("Fetched Published Novels: ", response.data.result);
+                // setCurrentPublishedNovel(response.data.result);
+                setMyPublishedNovels(response.data.result);
             } catch (err) {
             }
         };
 
         fetchNovels().then(r => {console.log(r)});
-    }, [user?.id, setCurrentPublishedNovel]);
+    }, [user?.id, setMyPublishedNovels]);
 
 
         return (
         <>
             <div>
 
-                <PublishedNovelTable novels={currentPublishedNovel} />
+                <PublishedNovelTable novels={myPublishedNovels} />
             </div>
         </>
     );
@@ -52,8 +55,11 @@ export default PublishedNovelPage;
 
 
 const PublishedNovelTable = ({novels}) => {
-    console.log("novels", novels);
+    const myPublishedNovels = useMyPublishedNovels();
+    console.log("My Published Novels: ", myPublishedNovels);
+
     const novelProgressStatus = useNovelProgressStatus();
+
     const novelAttributes = useNovelAttribute();
     const novelState = useNovelState();
     const novelVisibility = useNovelVisibility();
@@ -212,7 +218,7 @@ const PublishedNovelTable = ({novels}) => {
                         <td className="px-6 py-4">{novel.description}</td>
                         <td className="px-6 py-4">{novel.slug}</td>
                         <td className="px-6 py-4">
-                            <SpecItem novelId={novel.id} />
+                            <SpecItem novelId={novel.id} novel = {novel} />
                         </td>
                     </tr>
                 ))}
@@ -230,29 +236,38 @@ const PublishedNovelTable = ({novels}) => {
 }
 
 
-const SpecItem = ({data}) => {
+const SpecItem = ({data, novel}) => {
+    const navigate = useNavigate();
+    const setCurrentChosenPublishedNovel = useSetPublishedByPublisher();
+    function handleGotoChapterList() {
+        setCurrentChosenPublishedNovel(novel.id);
+        navigate(`/bookhub/novels/${novel.slug}/chapters`);
+    }
+
     return (
         <>
             <div>
                 <div className={"flex flex-row justify-end items-center gap-x-1"}>
                     <div className={"bg-gray-300 p-1 rounded-md px-2 ml-3 hover:cursor-pointer hover:bg-gray-400"}>
-                        <Link to={"/bookhub/books/1/upload-chapters"}>
+                        <Link to={`/bookhub/novels/${novel.slug}/upload-chapters`}>
                             <FontAwesomeIcon icon={faPlus} />
                         </Link>
                     </div>
                     <div className={"bg-gray-300 p-1 rounded-md px-2 hover:cursor-pointer hover:bg-gray-400"}>
-                        <Link to={"/bookhub/books/1/chapters"}>
+                        {/*<Link to={`/bookhub/novels/${novel.slug}/chapters`}>*/}
+                        {/*    <FontAwesomeIcon icon={faListUl} />*/}
+                        {/*</Link>*/}
+                        <span onClick={handleGotoChapterList}>
                             <FontAwesomeIcon icon={faListUl} />
-                        </Link>
-
+                        </span>
                     </div>
                     <div className={"bg-gray-300 p-1 rounded-md px-2 hover:cursor-pointer hover:bg-gray-400"}>
-                        <Link to={"/bookhub/books/1/update"}>
+                        <Link to={`/bookhub/novels/${novel.slug}/update`}>
                             <FontAwesomeIcon icon={faFeather} />
                         </Link>
                     </div>
                     <div className={"bg-gray-300 p-1 rounded-md px-2 hover:cursor-pointer hover:bg-gray-400"}>
-                        <Link to={"/bookhub/books/1/analytics"}>
+                        <Link to={`/bookhub/novels/${novel.slug}/analytics`}>
                         <FontAwesomeIcon icon={faChartLine} />
                         </Link>
 

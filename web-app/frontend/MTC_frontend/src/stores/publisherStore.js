@@ -165,7 +165,15 @@ export const usePublisherStore = create((set) => ({
     // --- State ---
     general: {},
     currentChosenPublishedNovel: "",
-
+    myPublishedNovels: [],
+    actions: {
+        setMyPublishedNovels: (paginationData) => set((state) => ({
+            myPublishedNovels: paginationData
+        })),
+        setCurrentChosenPublishedNovel: (novelId) => set(() => ({
+            currentChosenPublishedNovel: novelId
+        })),
+    },
     // --- Pagination States ---
     ...Object.fromEntries([...paginatedKeys, ...dynamicPaginationKeys].map(key => [key, { ...defaultPagination }])),
 
@@ -177,3 +185,11 @@ export const usePublisherStore = create((set) => ({
     ...generatePaginationSetters(set),
     ...generateDynamicSetters(set, dynamicPaginationKeys)
 }));
+
+export const usePublisherGeneral = () => usePublisherStore((state) => state.general);
+export const useMyPublishedNovels = () => usePublisherStore((state) => state.myPublishedNovels);
+export const useNovelStatistics = () => usePublisherStore((state) => state.novelStatistics);
+export const useCurrentChosenPublishedNovel = () => usePublisherStore((state) => state.currentChosenPublishedNovel);
+
+export const useSetMyPublishedNovels = () => usePublisherStore((state) => state.actions.setMyPublishedNovels);
+export const useSetCurrentChosenPublishedNovel = () => usePublisherStore((state) => state.actions.setCurrentChosenPublishedNovel);

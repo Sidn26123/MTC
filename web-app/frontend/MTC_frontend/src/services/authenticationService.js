@@ -1,6 +1,7 @@
 import { getToken, removeToken, setToken } from "./localStorageService";
 import httpClient from "../configurations/httpClient";
 import { API } from "../configurations/configuration";
+import { parseJwt } from '../utils/JWTUtils.js';
 
 export const logIn = async (username, password) => {
 
@@ -24,4 +25,12 @@ export const isAuthenticated = () => {
 
 export const getTokenFromLocalStorage = () => {
     return getToken();
+}
+
+export const getUserIdFromContext = () => {
+    const token = getToken();
+    if (!token) return null;
+
+    const payload = parseJwt(token);
+    return payload ? payload.userId : null;
 }

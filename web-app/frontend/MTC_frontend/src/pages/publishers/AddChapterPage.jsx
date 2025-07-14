@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { CustomDatePicker, SimpleDropdown } from '../../common/CommonComponents.jsx';
+import { CategoryDropdown, CustomDatePicker, SimpleDropdown } from '../../common/CommonComponents.jsx';
 import DateTimePicker from 'react-datetime-picker';
 import 'react-datetime-picker/dist/DateTimePicker.css';
 import 'react-calendar/dist/Calendar.css';
@@ -14,9 +14,13 @@ import {
     useNovelProgressStatus,
     useNovelState, useNovelType, useNovelVisibility, useSects, useSetNovelStatus, useSetPage, useWorldScene,
 } from '../../stores/selectors/novelFilterSelector.js';
+import { getObjectFromList } from '../../utils/Utils.js';
+import { useCurrentNovelPublisher } from '../../stores/userStores.js';
+import { usePublishedByPublisher } from '../../stores/novelStore.js';
+import { usePublisherStore } from '../../stores/publisherStore.js';
 
 
-const AddNovelPage = () => {
+const AddChapterPage = () => {
 
     const novelProgressStatus = useNovelProgressStatus();
     const novelAttributes = useNovelAttribute();
@@ -29,7 +33,8 @@ const AddNovelPage = () => {
     const novelTypes = useNovelType();
     const changePage = useSetPage();
     const setNovelProgressStatus = useSetNovelStatus();
-
+    const currentPublishedNovel = usePublishedByPublisher();
+    // const currentNovel = useNovelState();
     const [showDateTimePicker, setShowDateTimePicker] = React.useState(false);
     const [value, setValue] = useState(new Date());
     const [formattedDate, setFormattedDate] = useState("");
@@ -37,7 +42,8 @@ const AddNovelPage = () => {
     const getFormattedDate = (date) => {
         return formatPublishDateTime(date, "dd/MM/yyyy HH:mm");
     };
-
+    const typeAdd = [{id: "normal", name: "Đăng thường"}, {id: "insert", name: "Chèn chương"}];
+    const [currentType, setCurrentType] = useState(typeAdd[0]);
 
     const publishChapter = () => {
         redirect("/bookhub/published-novel");
@@ -49,29 +55,41 @@ const AddNovelPage = () => {
     }, [value]);
 
 
+    function handleSelectField(data, selected) {
+        getObjectFromList(selected, "id", data).then((result) => {
+            console.log("Selected result:", result);
+        });
+    }
+
     return (
         <div>
             {mode === "writing" ? (
                 <div className={"flex flex-col bg-background-light rounded-md p-5"}>
                     <div className={""}>
-                        <h2>Them chuong</h2>
-                        <span>Truyen dau tien</span>
+                        <h1>Thêm chương</h1>
+                        <span>Truyện đầu tiên</span>
                     </div>
                     <div className={"flex flex-row justify-between items-center mt-10"}>
                         <div className={"flex flex-col gap-y-2 w-1/2 p-2 pl-3"}>
-                            <span>Loai</span>
-                            <SimpleDropdown />
+                            <span className={'text-sm'}>Loại</span>
+                            <CategoryDropdown
+                                dropdown={typeAdd}
+                                placeholder={'Chọn thể loại'}
+                                onSelect={(selected) => handleSelectField('genreIds', selected)}
+                            />
 
                         </div>
-                        <div className={"flex flex-col gap-y-2 w-1/2 p-2"}>
+                        <div className={'flex flex-col gap-y-1 w-1/2'}>
                             <span>STT</span>
                             <input
                                 className={'w-full border border-gray-500 rounded-md p-1  hover:border-gray-400 focus:border-gray-400 focus:outline-none focus:ring-0'}
+                                disabled={currentType.id === "insert"}
+                                value={currentPublishedNovel.totalChapters}
                             />
                         </div>
                     </div>
-                    <div className={'mt-10'}>
-                        <span>Noi dung cac chuong</span>
+                    <div className={'mt-10 p-3'}>
+                        <span>Nội dung các chương</span>
                         <textarea
                             className={"w-full min-h-48 border border-gray-500 rounded-md p-2 mt-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none focus:ring-0"} />
                     </div>
@@ -120,6 +138,10 @@ const AddNovelPage = () => {
             )}
         </div>
     )
+}
+
+const NormalAddChapterMode = () => {
+
 }
 
 
@@ -194,5 +216,5 @@ const ConfirmAddNovel = ({onBack, onNext}) => {
     )
 }
 
-export default AddNovelPage;
+export default AddChapterPage;
 
