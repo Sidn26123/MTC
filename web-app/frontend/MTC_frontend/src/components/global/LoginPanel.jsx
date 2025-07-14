@@ -1,6 +1,6 @@
 import React from "react";
 import axios from 'axios';
-import { logIn } from '../../services/authenticationService.js';
+import { logIn, logInWithGoogle } from '../../services/authenticationService.js';
 import api from '../../middlewares/axios.js';
 import { API } from '../../configurations/configuration.js';
 import useUserStore from '../../stores/userStores.js';
@@ -10,7 +10,7 @@ import {showSuccess} from '../../utils/ToastUtils.js';
 import { getScopeArray, parseJwt } from '../../utils/JWTUtils.js';
 // import {login} from '../../stores/authStore.js';
 const LoginPanel = ({ onClose }) => {
-    const GOOGLE_AUTH_URL = "http://localhost:8100/identity/oauth2/authorization/google";
+    // const GOOGLE_AUTH_URL = "http://localhost:8100/identity/oauth2/authorization/google";
     const navigate = useNavigate();
     const setUser = useUserStore((state) => state.setUser);
     const getUser = useUserStore((state) => state.user);
@@ -28,9 +28,12 @@ const LoginPanel = ({ onClose }) => {
             const profile = await fetchUserInfo();
             setUser(profile.result);
             const token = response.data.result.token;
-
+            // console.log("Login response:", response.);
+            console.log("Token:", token);
             const jwtData = parseJwt(token);
             const scope = getScopeArray(token);
+            console.log("jwtData: ", jwtData);
+            console.log("scope: ", scope);
             loginAccount({
                 token: response.data.token,
                 refreshToken: null,
@@ -48,8 +51,10 @@ const LoginPanel = ({ onClose }) => {
     const onGoogleLogin = async () => {
     try {
       // Gọi endpoint /social-login để lấy URL đăng nhập
-      const response = await axios.get('http://localhost:8100/identity/auth/social-login');
-      const authUrl = response.data;
+    //   const response = await axios.get('http://localhost:8100/identity/auth/social-login');
+    const response = await logInWithGoogle();
+      console.log('Google auth URL:', response.data);
+    const authUrl = response.data;
 
       // Chuyển hướng đến URL đăng nhập Google
       window.location.href = authUrl;

@@ -23,6 +23,7 @@ function parseJwt(token) {
 const getScopeArray = (token) => {
     const payload = parseJwt(token);
     if (!payload || !payload.scope) return [];
+    log("payload.scope: ", payload.scope);
 
     return payload.scope.split(' ');
 };

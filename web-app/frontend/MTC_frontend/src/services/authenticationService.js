@@ -14,6 +14,18 @@ export const logIn = async (username, password) => {
     return response;
 };
 
+export const logInWithGoogle = async () => {
+    const response = await httpClient.get(API.LOGIN_GOOGLE);
+    setToken(response.data?.result?.token);
+    return response;
+};
+
+export const googleCallback = async (code) => {
+    const response = await httpClient.get(API.LOGIN_GOOGLE + `?code=${code}`);
+    // setToken(response.data?.result?.token);
+    return response;
+};
+
 export const logOut = () => {
     removeToken();
 };

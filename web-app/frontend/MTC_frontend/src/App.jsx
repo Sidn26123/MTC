@@ -17,7 +17,7 @@ import RegisterPage from './pages/users/RegisterPage.jsx';
 import { useAuthRoles } from './stores/authStore.js';
 import ContentModRoutes from './routers/ContentModRoutes.jsx';
 import { useNavigate } from 'react-router';
-import GoogleCallback from './components/global/GoogleCallback.jsx';
+import GoogleCallbackComponent from './components/global/GoogleCallbackComponent.jsx';
 
 
 const App = () => {
@@ -52,7 +52,7 @@ const App = () => {
                     <Routes>
                         <Route path="/login" element={<Login />} />
                         <Route path="/register" element={<RegisterPage />} />
-                        <Route path="/auth/google/callback" element={<GoogleCallback />} />
+                        <Route path="/auth/google/callback" element={<GoogleCallbackComponent />} />
                         {AdminRoutes({ user, userRoles })}
                         {UserRoutes({user})}
                         {PublisherRoutes({ user })}
