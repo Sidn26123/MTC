@@ -1,5 +1,6 @@
 package com.sidn.metruyenchu.identity_service.service;
 
+import com.sidn.metruyenchu.identity_service.dto.request.GoogleLoginRequest;
 import com.sidn.metruyenchu.identity_service.dto.request.UserCreationRequest;
 import com.sidn.metruyenchu.identity_service.dto.request.UserUpdateRequest;
 import com.sidn.metruyenchu.identity_service.dto.request.feignclient.UserProfileCreationRequest;
@@ -138,6 +139,44 @@ public class UserService {
         return userMapper.toUserResponse(
                 userRepository.findByUsername(username).orElseThrow(() -> new AppException(ErrorCode.USER_NOT_EXISTED))
         );
+    }
+
+    public User loginSocial(GoogleLoginRequest googleLoginRequest) throws Exception {
+        Optional<User> optionalUser = Optional.empty();
+      //  Role roleUser = com.sidn.metruyenchu.identity_service.enums.Role.USER.toString();
+        // Kiểm tra Google Account ID
+        if (googleLoginRequest.isGoogleAccountIdValid()) {
+            optionalUser = userRepository.findByGoogleId(googleLoginRequest.getGoogleId());
+
+            // Tạo người dùng mới nếu không tìm thấy
+            if (optionalUser.isEmpty()) {
+
+                User newUser = User.builder()
+                        .username(Optional.ofNullable(googleLoginRequest.getUsername()).orElse("") )
+                        .email(Optional.ofNullable(googleLoginRequest.getEmail()).orElse(""))
+//                        .role(roleUser)
+                        .googleId(googleLoginRequest.getGoogleId())
+                        .password("") // Mật khẩu trống cho đăng nhập mạng xã hội
+//                        .active(true)
+                        .build();
+
+                // Lưu người dùng mới
+                newUser = userRepository.save(newUser);
+                optionalUser = Optional.of(newUser);
+            }
+        }
+
+
+        User user = optionalUser.get();
+
+//        // Kiểm tra nếu tài khoản bị khóa
+//        if (!user.isActive()) {
+//            throw new DataNotFoundException(localizationUtils.getLocalizedMessage(MessageKeys.USER_IS_LOCKED));
+//        }
+
+        return user;
+        // Tạo JWT token cho người dùng
+//        return jwtTokenUtil.generateToken(user);
     }
 
 
