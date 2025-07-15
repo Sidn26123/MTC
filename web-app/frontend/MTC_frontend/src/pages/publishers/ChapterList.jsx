@@ -16,7 +16,7 @@ const ChapterList = () => {
     useEffect(() => {
         const fetchNovels = async () => {
             try {
-                const filter = { novelId: "0da33320-83fa-42ca-bc8c-b2b31eba8918" };
+                const filter = { novelId: currentPublishedNovelChosen.id };
                 const response = await getFilteredChapters(filter);
                 console.log("Res: ", response.data.result);
                 setCurrentChapterList(response.data.result);
@@ -156,7 +156,11 @@ const ChapterList = () => {
 
                             </table>
                             <div className={'mt-3'}>
-                                <DefaultNavigator />
+                                {/*<DefaultNavigator*/}
+                                {/*    data={*/}
+
+                                {/*    }*/}
+                                {/*/>*/}
                             </div>
                         </div>
 

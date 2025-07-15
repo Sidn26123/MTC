@@ -17,6 +17,7 @@ export const API = {
     LOGIN: '/identity/auth/token',
     MY_INFO: '/user/user-profiles',
     INFO_ME: '/user/user-profiles/me',
+    LOGIN_GOOGLE: '/identity/auth/social-login',
     REGISTER: IDENTITY_SERVICE + '/users/registration',
     NOVEL: NOVEL_SERVICE,
     CHAPTER: NOVEL_SERVICE + "/chapters",

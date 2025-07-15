@@ -34,3 +34,8 @@ export const getUserIdFromContext = () => {
     const payload = parseJwt(token);
     return payload ? payload.userId : null;
 }
+export const logInWithGoogle = async () => {
+    const response = await httpClient.get(API.LOGIN_GOOGLE);
+    setToken(response.data?.result?.token);
+    return response;
+};
