@@ -13,8 +13,17 @@ import api from '../../middlewares/axios.js';
 import { createNovel } from '../../services/publisherService.js';
 import { showSuccess } from '../../utils/ToastUtils.js';
 import { useSetMyPublishedNovels } from '../../stores/publisherStore.js';
+import { getPolicyBySlug } from '../../services/policyService.js';
+import { useSetTermsOfService, useTermsOfService } from '../../stores/policyStore.js';
+import parse from 'html-react-parser';
+
+
+
+
 function PublishNewNovel() {
     const navigate = useNavigate();
+    const [agreed, setAgreed] = useState(false);
+    const [isMissingAgreement, setIsMissingAgreement] = useState(false);
     const novelProgressStatus = useNovelProgressStatus();
     const novelAttributes = useNovelAttribute();
     const novelState = useNovelState();
@@ -26,6 +35,8 @@ function PublishNewNovel() {
     const novelTypes = useNovelType();
     const changePage = useSetPage();
     const setNovelProgressStatus = useSetNovelStatus();
+    const termsOfService = useTermsOfService();
+    const setTermsOfService = useSetTermsOfService();
     const [nextPart, setNextPart] = React.useState(false);
     const [novelData, setNovelData] = useState({
         name: "",
@@ -62,6 +73,12 @@ function PublishNewNovel() {
         //     // alert("Lỗi:\n" + errors.join("\n"));
         //     return;
         // }
+        if (!agreed) {
+            setIsMissingAgreement(true);
+            return;
+        } else {
+            setIsMissingAgreement(false);
+        }
         try {
             // gọi API ở đây, ví dụ:
             const res = await createNovel(novelData);
@@ -97,7 +114,9 @@ function PublishNewNovel() {
         });
     };
     useEffect(() => {
-    }, [novelData]);
+        fetchPolicy().then(r => {
+        });
+    }, []);
     const handleSelectField = (field, selected) => {
 
 
@@ -107,8 +126,26 @@ function PublishNewNovel() {
         }));
     };
 
+    async function fetchPolicy() {
+        const res =  await getPolicyBySlug('dieu-khoan-dich-vu')
+
+        if (res && res.data.result) {
+            setTermsOfService(res.data.result);
+        }
 
 
+    }
+
+
+    function handleConfirmUpload() {
+        // setNextPart(true);
+        if (!agreed) {
+            setIsMissingAgreement(true);
+            return;
+        }
+        setIsMissingAgreement(false);
+        setNextPart(true);
+    }
 
     return (
         <div>
@@ -146,7 +183,8 @@ function PublishNewNovel() {
                                             <div className={'w-1/2'}>
                                                 <button
                                                     className={'bg-cus-gray w-full text-white rounded-md p-2 mt-10 hover:bg-yellow-500 focus:outline-none focus:ring-0 hover:cursor-pointer'}
-                                                    onClick={() => handleCreateNovel()}
+                                                    // onClick={() => handleCreateNovel()}
+                                                    onClick={() => setNextPart(false)}
                                                 >
                                                     <div className={'flex justify-center items-center gap-x-2'}>
                                                         <span className={'ml-2'}>Nhập Lại</span>
@@ -155,6 +193,7 @@ function PublishNewNovel() {
                                                 </button>
                                             </div>
                                             <div className={'w-1/2'}>
+
                                                 <button
                                                     className={'bg-yellow-primary w-full text-white rounded-md p-2 mt-10 hover:bg-yellow-500 focus:outline-none focus:ring-0 hover:cursor-pointer'}
 
@@ -252,10 +291,29 @@ function PublishNewNovel() {
                                         </div>
                                     </div>
 
-                                    <div className="mt-5 flex justify-center items-center">
+                                    <div className="mt-5 flex flex-col items-center">
+                                        <div className="w-full pb-4">
+                                            <div className="flex items-center">
+                                                <input
+                                                    type="checkbox"
+                                                    id="agreeTerms"
+                                                    className="mr-2"
+                                                    checked={agreed}
+                                                    onChange={(e) => setAgreed(e.target.checked)}
+                                                />
+                                                <label htmlFor="agreeTerms" className="text-sm">
+                                                    Tôi đồng ý với các điều khoản dịch vụ
+                                                </label>
+                                            </div>
+                                            {isMissingAgreement && (
+                                                <p className="text-red-500 text-sm mt-1">
+                                                    Bạn cần đồng ý với điều khoản dịch vụ để tiếp tục.
+                                                </p>
+                                            )}
+                                        </div>
                                         <button
                                             className="bg-yellow-primary text-white rounded-md px-6 py-2 hover:bg-yellow-500 focus:outline-none"
-                                            onClick={() => setNextPart(true)}
+                                            onClick={() => handleConfirmUpload()}
                                         >
                                             <div className="flex items-center gap-x-2">
                                                 <FontAwesomeIcon icon={faArrowUpFromBracket} />
@@ -263,6 +321,7 @@ function PublishNewNovel() {
                                             </div>
                                         </button>
                                     </div>
+
                                 </div>
 
                             )
@@ -274,12 +333,16 @@ function PublishNewNovel() {
                 <div className="w-1/2">
                     <div className="flex flex-col bg-background-light rounded-md p-5">
                         {/* Có thể chèn preview truyện, ảnh bìa, hoặc tag summary ở đây */}
+                        <h2>{termsOfService.title}</h2>
+                        <div>
+                            {termsOfService.content && parse(termsOfService.content)}
+
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     );
-
 
 
     // return (
