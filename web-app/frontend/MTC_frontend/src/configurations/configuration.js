@@ -21,6 +21,7 @@ export const API = {
     NOVEL: NOVEL_SERVICE,
     CHAPTER: NOVEL_SERVICE + "/chapters",
     FILES: FILE_SERVICE + "/files",
+    POLICY: FILE_SERVICE + "/policies",
     CATEGORY: NOVEL_SERVICE + "/categories",
     USER: USER_SERVICE + "/user-profiles",
     FEEDBACK: FEEDBACK_SERVICE,
