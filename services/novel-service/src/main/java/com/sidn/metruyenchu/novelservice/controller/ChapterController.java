@@ -31,6 +31,13 @@ public class ChapterController {
                 .build();
     }
 
+    @PostMapping("/createMany")
+    ApiResponse<List<ChapterResponse>> createManyChapters(@Valid @RequestBody List<ChapterCreationRequest> requests){
+        return ApiResponse.<List<ChapterResponse>>builder()
+                .result(chapterService.createChapters(requests))
+                .build();
+    }
+
     @GetMapping
     ApiResponse<PageResponse<ChapterResponse>> getAllChapters(
             @RequestParam(value = "page", defaultValue = "1") int page,

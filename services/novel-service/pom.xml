@@ -142,6 +142,11 @@
 			<groupId>org.mongodb</groupId>
 			<artifactId>bson</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.sidn.metruyenchu</groupId>
+			<artifactId>shared-library</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 	<dependencyManagement>
 		<dependencies>

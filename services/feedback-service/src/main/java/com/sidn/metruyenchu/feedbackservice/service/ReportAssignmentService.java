@@ -3,8 +3,8 @@ package com.sidn.metruyenchu.feedbackservice.service;
 import com.sidn.metruyenchu.feedbackservice.dto.request.report.ReportAssignmentRequest;
 import com.sidn.metruyenchu.feedbackservice.entity.Report;
 import com.sidn.metruyenchu.feedbackservice.entity.ReportAssignment;
-import com.sidn.metruyenchu.feedbackservice.exception.AppException;
-import com.sidn.metruyenchu.feedbackservice.exception.ErrorCode;
+import com.sidn.metruyenchu.shared_library.exceptions.AppException;
+import com.sidn.metruyenchu.shared_library.exceptions.ErrorCode;
 import com.sidn.metruyenchu.feedbackservice.mapper.ReportAssignmentMapper;
 import com.sidn.metruyenchu.feedbackservice.repository.ReportAssignmentRepository;
 import com.sidn.metruyenchu.feedbackservice.repository.ReportRepository;
@@ -40,4 +40,26 @@ public class ReportAssignmentService {
     public List<ReportAssignment> getAssignments(String reportId) {
         return assignmentRepository.findByReportId(reportId);
     }
+
+    public List<String> getAvailableStaff(String reportId) {
+        //TODO
+
+        return "abc".lines().toList();
+    }
+
+    public String chooseAssignee(List<String> staffIds){
+        //tim kiem so luong report tung staff dang xu ly
+        //sap xep theo so luong report dang xu ly
+        //tra ve staff co so luong report dang xu ly it nhat
+        if (staffIds == null || staffIds.isEmpty()) {
+            throw new AppException(ErrorCode.NO_AVAILABLE_STAFF);
+        }
+
+
+        return null;
+    }
+
+//    public List<Object> getStaffAssigns(List<String> staffIds) {
+//
+//    }
 }

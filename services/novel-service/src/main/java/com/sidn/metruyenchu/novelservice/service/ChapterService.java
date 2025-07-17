@@ -13,11 +13,13 @@ import com.sidn.metruyenchu.novelservice.dto.response.chapter.ChapterContentResp
 import com.sidn.metruyenchu.novelservice.dto.response.chapter.ChapterListResponse;
 import com.sidn.metruyenchu.novelservice.dto.response.chapter.ChapterPublishCheckResponse;
 import com.sidn.metruyenchu.novelservice.entity.*;
+import com.sidn.metruyenchu.novelservice.enums.ChapterState;
 import com.sidn.metruyenchu.novelservice.enums.NovelVisibility;
 import com.sidn.metruyenchu.novelservice.exception.AppException;
 import com.sidn.metruyenchu.novelservice.exception.ErrorCode;
 import com.sidn.metruyenchu.novelservice.mapper.ChapterMapper;
 import com.sidn.metruyenchu.novelservice.repository.ChapterRepository;
+import com.sidn.metruyenchu.novelservice.repository.ChapterStatusDetailRepository;
 import com.sidn.metruyenchu.novelservice.repository.ChapterStatusRepository;
 import com.sidn.metruyenchu.novelservice.repository.NovelRepository;
 import com.sidn.metruyenchu.novelservice.repository.httpclient.FileClient;
@@ -34,8 +36,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.sidn.metruyenchu.novelservice.utils.TokenUtils.getUserIdFromContext;
 
@@ -54,7 +57,7 @@ public class ChapterService {
 //    NovelService novelService;
     ChapterMapper  chapterMapper;
     ChapterStatusRepository chapterStatusRepository;
-
+    ChapterStatusDetailRepository chapterStatusDetailRepository;
     FileClient fileClient;
     BookShelfService bookShelfService;
     BookShelfItemService bookShelfItemService;
@@ -104,6 +107,17 @@ public class ChapterService {
      */
     @Transactional
     public ChapterResponse createChapter(ChapterCreationRequest request) {
+        if (request.getPublisher() == null) {
+            request.setPublisher(getUserIdFromContext());
+        }
+        if (request.getState() == null) {
+            request.setState(ChapterState.CREATED);
+        }
+
+        if (request.getIsInsertMode() == null) {
+            request.setIsInsertMode(false);
+        }
+
         var chapter = chapterMapper.toChapter(request);
 
         // Lấy tiểu thuyết liên quan theo ID, ném ngoại lệ nếu không tìm thấy
@@ -175,7 +189,120 @@ public class ChapterService {
         return chapterResponse;
     }
 
+    @Transactional
+    public List<ChapterResponse> createChapters(List<ChapterCreationRequest> requests) {
+        if (requests == null || requests.isEmpty()) {
+            return new ArrayList<>();
+        }
+        log.info("Creating {} chapters", requests.size());
 
+        // Pre-fetch user ID and validate requests
+        String publisher = getUserIdFromContext();
+        List<ChapterResponse> responses = new ArrayList<>();
+        Map<String, Novel> novelCache = new HashMap<>();
+        Map<String, ChapterStatus> statusCache = new HashMap<>();
+
+        // Group requests by novel to optimize processing
+        Map<String, List<ChapterCreationRequest>> requestsByNovel = requests.stream()
+                .collect(Collectors.groupingBy(ChapterCreationRequest::getNovelId));
+
+        for (Map.Entry<String, List<ChapterCreationRequest>> entry : requestsByNovel.entrySet()) {
+            String novelId = entry.getKey();
+            List<ChapterCreationRequest> novelRequests = entry.getValue();
+
+            // Fetch novel once per novel ID
+            Novel novel = novelCache.computeIfAbsent(novelId, id -> novelRepository.findById(id)
+                    .orElseThrow(() -> new AppException(ErrorCode.NOVEL_NOT_FOUND)));
+
+            // Fetch all required chapter statuses in one query
+            Set<String> statusIds = novelRequests.stream()
+                    .flatMap(req -> req.getChapterStatus().stream())
+                    .collect(Collectors.toSet());
+            List<ChapterStatus> chapterStatuses = chapterStatusRepository.findAllById(statusIds);
+            statusCache.putAll(chapterStatuses.stream()
+                    .collect(Collectors.toMap(ChapterStatus::getId, Function.identity())));
+
+            // Prepare chapters and status details
+            List<Chapter> chapters = new ArrayList<>();
+            List<ChapterStatusDetail> allStatusDetails = new ArrayList<>();
+            int totalChapters = novel.getTotalChapters();
+
+            for (ChapterCreationRequest request : novelRequests) {
+                // Set defaults
+                if (request.getPublisher() == null) {
+                    request.setPublisher(publisher);
+                }
+                if (request.getState() == null) {
+                    request.setState(ChapterState.CREATED);
+                }
+                if (request.getIsInsertMode() == null) {
+                    request.setIsInsertMode(false);
+                }
+
+                // Map request to chapter
+                Chapter chapter = chapterMapper.toChapter(request);
+                chapter.setNovel(novel);
+
+                // Handle chapter index
+                if (!request.getIsInsertMode()) {
+                    chapter.setChapterIdx(++totalChapters);
+                } else {
+                    chapter.setChapterIdx(request.getChapterIdx());
+                }
+
+                // Create chapter status details
+                List<ChapterStatusDetail> statusDetails = request.getChapterStatus().stream()
+                        .map(statusId -> {
+                            ChapterStatus status = statusCache.get(statusId);
+                            if (status == null) {
+                                throw new AppException(ErrorCode.CHAPTER_STATUS_NOT_FOUND);
+                            }
+                            return ChapterStatusDetail.builder()
+                                    .chapter(chapter)
+                                    .chapterStatus(status)
+                                    .build();
+                        })
+                        .collect(Collectors.toList());
+
+                chapter.setChapterStatus(statusDetails);
+                chapters.add(chapter);
+                allStatusDetails.addAll(statusDetails);
+            }
+
+            // Handle insert mode: bulk update chapter indices
+            novelRequests.stream()
+                    .filter(ChapterCreationRequest::getIsInsertMode)
+                    .forEach(req -> chapterRepository.bulkUpdateChapterIdx(novel, req.getChapterIdx()));
+
+            try {
+                // Batch save chapters and status details
+                chapterRepository.saveAll(chapters);
+                chapterStatusDetailRepository.saveAll(allStatusDetails);
+
+                // Update total chapters for novel
+                novelRepository.updateTotalChapters(novel.getId(), totalChapters);
+            } catch (DataIntegrityViolationException e) {
+                throw new AppException(ErrorCode.CHAPTER_ALREADY_EXISTS);
+            }
+
+            // Map to responses
+            log.info("Chapters created for novel: {}", chapters.size());
+            log.info("Novel ID: {}", chapters.getFirst().getId());
+            for (Chapter chapter : chapters) {
+                ChapterResponse response = chapterMapper.toChapterResponse(chapter);
+                List<ChapterStatusResponse> statusResponses = chapter.getChapterStatus().stream()
+                        .map(detail -> ChapterStatusResponse.builder()
+                                .id(detail.getChapterStatus().getId())
+                                .name(detail.getChapterStatus().getName())
+                                .build())
+                        .collect(Collectors.toList());
+                response.setChapterStatus(statusResponses);
+                responses.add(response);
+            }
+        }
+
+        return responses;
+    }
     /**
      * Xóa một chương theo ID.
      * @param chapterId
@@ -579,5 +706,10 @@ public class ChapterService {
         );
 
         return null;
+    }
+
+    public Chapter findEntityById(String chapterId) {
+        return chapterRepository.findByIdAndIsDeletedIsFalse(chapterId)
+                .orElseThrow(() -> new AppException(ErrorCode.CHAPTER_NOT_FOUND));
     }
 }

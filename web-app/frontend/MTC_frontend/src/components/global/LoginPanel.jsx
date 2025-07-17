@@ -48,7 +48,20 @@ const LoginPanel = ({ onClose }) => {
 
     }
 
+  //   const onGoogleLogin = async () => {
+  //   try {
+  //     // Gọi endpoint /social-login để lấy URL đăng nhập
+  //     const response = await axios.get('http://localhost:8100/identity/auth/social-login');
+  //     const authUrl = response.data;
+  //
+  //     // Chuyển hướng đến URL đăng nhập Google
+  //     window.location.href = authUrl;
+  //   } catch (error) {
+  //     console.error('Failed to get Google auth URL:', error);
+  //   }
+  // };
     const onGoogleLogin = async () => {
+
     try {
       // Gọi endpoint /social-login để lấy URL đăng nhập
     //   const response = await axios.get('http://localhost:8100/identity/auth/social-login');
@@ -56,13 +69,13 @@ const LoginPanel = ({ onClose }) => {
       console.log('Google auth URL:', response.data);
     const authUrl = response.data;
 
-      // Chuyển hướng đến URL đăng nhập Google
-      window.location.href = authUrl;
-    } catch (error) {
-      console.error('Failed to get Google auth URL:', error);
-    }
-  };
 
+            // Chuyển hướng đến URL đăng nhập Google
+            window.location.href = authUrl;
+        } catch (error) {
+            console.error('Failed to get Google auth URL:', error);
+        }
+    };
     const fetchUserInfo = async () => {
         try {
             var myInfoStr = API.MY_INFO + "?username=" + userInfo.email;

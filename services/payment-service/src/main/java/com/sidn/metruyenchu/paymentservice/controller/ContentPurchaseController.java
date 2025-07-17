@@ -3,6 +3,8 @@ package com.sidn.metruyenchu.paymentservice.controller;
 import com.sidn.metruyenchu.paymentservice.dto.ApiResponse;
 import com.sidn.metruyenchu.paymentservice.dto.BaseFilterRequest;
 import com.sidn.metruyenchu.paymentservice.dto.PageResponse;
+import com.sidn.metruyenchu.paymentservice.dto.request.contentPurchase.CheckUserCanReadContentRequest;
+import com.sidn.metruyenchu.paymentservice.dto.request.contentPurchase.CheckUserPurchaseContentRequest;
 import com.sidn.metruyenchu.paymentservice.dto.request.contentPurchase.ContentPurchaseRequest;
 import com.sidn.metruyenchu.paymentservice.dto.response.contentPurchase.ContentPurchaseResponse;
 import com.sidn.metruyenchu.paymentservice.service.ContentPurchaseService;
@@ -64,4 +66,23 @@ public class ContentPurchaseController {
                 .result(purchases)
                 .build();
     }
+
+    @GetMapping("/check")
+    public ApiResponse<Boolean> checkContentPurchased(
+            @ModelAttribute CheckUserPurchaseContentRequest request) {
+        boolean isPurchased = contentPurchaseService.hasPurchasedContent(request);
+        return ApiResponse.<Boolean>builder()
+                .result(isPurchased)
+                .build();
+    }
+
+    @GetMapping("/can-read")
+    public ApiResponse<Boolean> checkUserCanReadContent(
+            @ModelAttribute CheckUserCanReadContentRequest request) {
+        boolean isPurchased = contentPurchaseService.hasPurchasedNovelOrChapter(request);
+        return ApiResponse.<Boolean>builder()
+                .result(isPurchased)
+                .build();
+    }
+
 }

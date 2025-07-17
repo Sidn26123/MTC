@@ -72,3 +72,20 @@ export const getPublishedByPublisher = async (publisherId, limit) => {
 
     return response;
 }
+
+export const getFilteredChapters = async (filter) => {
+    const response = await api.post(API.NOVEL + "/chapters/filter", filter);
+    return response;
+};
+
+export const uploadChapter = async (data) => {
+    const response = await api.post(API.CHAPTER + "/create", data);
+
+    return response;
+}
+
+export const uploadChapters = async (data) => {
+    const response = await api.post(API.CHAPTER + "/createMany", data);
+
+    return response;
+}

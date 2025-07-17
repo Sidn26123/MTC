@@ -49,7 +49,7 @@ public class VipMembershipService {
     VipChapterUsageRepository vipChapterUsageRepository;
     VipMembershipMapper vipMembershipMapper;
     ContentPurchaseService contentPurchaseService;
-    private final VipAuditService vipAuditService;
+    VipAuditService vipAuditService;
 
     /**
      * Purchase VIP membership

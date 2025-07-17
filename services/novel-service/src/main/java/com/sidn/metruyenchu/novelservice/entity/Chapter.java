@@ -31,6 +31,8 @@ public class Chapter {
     @Builder.Default
     Integer totalViews = 0;
 
+    Integer wordCount;
+
     @Column(nullable = false)
     String publisher;
 

@@ -200,7 +200,12 @@ public enum ErrorCode {
     NOTIFICATION_ALREADY_EXISTS(1025, "Thông báo đã tồn tại", HttpStatus.BAD_REQUEST),
     INVALID_ARGUMENT_TYPE(1026, "Loại đối số không hợp lệ", HttpStatus.BAD_REQUEST),
     COUPON_USAGE_LIMIT_REACHED(4000, "Đã đạt giới hạn sử dụng mã giảm giá", HttpStatus.BAD_REQUEST),
-    COUPON_USAGE_LIMIT_EXCEEDED(4001, "Số lần sử dụng mã giảm giá đã vượt quá giới hạn", HttpStatus.BAD_REQUEST);
+    COUPON_USAGE_LIMIT_EXCEEDED(4001, "Số lần sử dụng mã giảm giá đã vượt quá giới hạn", HttpStatus.BAD_REQUEST),
+    NO_AVAILABLE_STAFF(4002, "Không có nhân viên nào khả dụng để xử lý báo cáo", HttpStatus.BAD_REQUEST),
+    DRAFT_NOT_FOUND(4003, "Bản nháp không tồn tại", HttpStatus.NOT_FOUND),
+    DRAFT_ALREADY_EXISTS(4004, "Bản nháp đã tồn tại", HttpStatus.BAD_REQUEST),
+    POLICY_NOT_FOUND(4005, "Chính sách không tồn tại", HttpStatus.NOT_FOUND),
+    POLICY_ALREADY_EXISTS(4006, "Chính sách đã tồn tại", HttpStatus.BAD_REQUEST);
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
         this.code = code;

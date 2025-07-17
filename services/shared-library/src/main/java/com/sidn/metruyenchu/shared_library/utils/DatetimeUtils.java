@@ -11,4 +11,11 @@ public class DatetimeUtils {
         return startOfWeek.atStartOfDay();
     }
 
+    public static LocalDateTime fromString(String dateTimeStr) {
+        if (dateTimeStr == null || dateTimeStr.isEmpty()) {
+            return null;
+        }
+        return LocalDateTime.parse(dateTimeStr);
+    }
+
 }

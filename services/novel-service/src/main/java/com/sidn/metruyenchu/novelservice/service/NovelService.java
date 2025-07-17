@@ -472,6 +472,10 @@ public class NovelService {
         return fetchDataMissOfNovel(novelRepository.findById(novelId)
                 .orElseThrow(() -> new AppException(ErrorCode.NOVEL_NOT_FOUND)));
     }
+    public Novel getNovelEntityById(String novelId) {
+        return novelRepository.findById(novelId)
+                .orElseThrow(() -> new AppException(ErrorCode.NOVEL_NOT_FOUND));
+    }
 
     public NovelResponse updateNovel(String novelId, NovelUpdateRequest request){
         Novel novel = novelRepository.findById(novelId)
@@ -741,4 +745,8 @@ public class NovelService {
     }
 
 
+    public Novel findEntityById(String novelId) {
+        return novelRepository.findById(novelId)
+                    .orElseThrow(() -> new AppException(ErrorCode.NOVEL_NOT_FOUND));
+    }
 }

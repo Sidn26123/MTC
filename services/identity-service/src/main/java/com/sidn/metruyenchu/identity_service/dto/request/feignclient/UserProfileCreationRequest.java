@@ -13,6 +13,7 @@ import java.util.Date;
 public class UserProfileCreationRequest {
     String userId; // ID của người dùng từ dịch vụ xác thực
     String username;
+
     String email;
     String avatarPath;
     String status;
