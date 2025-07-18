@@ -216,12 +216,26 @@ const PublishedNovelTable = ({novels}) => {
                 {novels.data.map((novel) => (
                     <tr key={novel.id} className="border-b hover:bg-gray-50">
                         <th scope="row" className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">
-                            {novel.displayName}
+
+                            <div className={'flex flex-col gap-y-2'}>
+                                <div className={'flex flex-row gap-x-2'}>
+                                    <img
+                                        className="h-10 w-10 shadow-xl rounded"
+                                        loading="lazy"
+                                        src={novel.novelCoverImage}
+                                        alt=""
+                                    />
+                                    <div className={'flex flex-col text-yellow-500'}>
+                                        <span className={'text-sm text-gray-400'}>{novel.displayName}</span>
+                                    </div>
+                                </div>
+
+                            </div>
                         </th>
                         <td className="px-6 py-4">{novel.description}</td>
                         <td className="px-6 py-4">{novel.slug}</td>
                         <td className="px-6 py-4">
-                            <SpecItem novelId={novel.id} novel = {novel} />
+                            <SpecItem novelId={novel.id} novel={novel} />
                         </td>
                     </tr>
                 ))}
@@ -239,7 +253,7 @@ const PublishedNovelTable = ({novels}) => {
 }
 
 
-const SpecItem = ({data, novel}) => {
+const SpecItem = ({ data, novel }) => {
     const navigate = useNavigate();
     const setCurrentChosenPublishedNovel = useSetPublishedByPublisher();
     const setCurrentPublishedNovel = useSetCurrentPublishedNovel();

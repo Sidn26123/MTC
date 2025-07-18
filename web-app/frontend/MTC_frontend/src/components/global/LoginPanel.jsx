@@ -1,6 +1,6 @@
 import React from "react";
 import axios from 'axios';
-import { logIn } from '../../services/authenticationService.js';
+import { logIn, logInWithGoogle } from '../../services/authenticationService.js';
 import api from '../../middlewares/axios.js';
 import { API } from '../../configurations/configuration.js';
 import useUserStore from '../../stores/userStores.js';
