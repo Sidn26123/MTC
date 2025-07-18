@@ -22,7 +22,11 @@ function parseJwt(token) {
 
 const getScopeArray = (token) => {
     const payload = parseJwt(token);
+    console.log("payload: ", payload.scope);
     if (!payload || !payload.scope) return [];
+   // log("payload.scope: ", payload.scope);
+    console.log("payload.scope type: ",  payload.scope);
+    console.log("payload.scope.split: ", payload.scope.split(' '));
 
     return payload.scope.split(' ');
 };

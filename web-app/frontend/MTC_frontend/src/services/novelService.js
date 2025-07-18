@@ -17,8 +17,21 @@ export const getNovelBySlug = async (slug) => {
 
 export const getFilteredNovels = async (filter) => {
     const response = await api.post(API.NOVEL + "/novels/filter", filter);
-    return response;
+    return response;    
 };
+
+// export const fetchFilteredNovels = async (filters) => {
+//     const params = {
+//         status: filters.status,
+//         categoryId: filters.categoryId,
+//         sortBy: 'publishDate',
+//         sortDirection: filters.sortDirection || 'desc',
+//         page: filters.page || 0,
+//         size: filters.size || 10,
+//     };
+//     const response = await api.get(API.NOVEL + "/novels/filter", params);
+//     return response;
+// };
 
 export const isNovelBookmarked = async (novelId, novelList) => {
     //check if novelId is in novelList

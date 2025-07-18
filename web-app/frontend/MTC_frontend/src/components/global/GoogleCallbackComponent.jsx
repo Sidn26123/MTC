@@ -4,13 +4,14 @@ import axios from 'axios';
 import { parseJwt, getScopeArray } from '../../utils/JWTUtils.js';
 import {showSuccess} from '../../utils/ToastUtils.js';
 import useUserStore from '../../stores/userStores.js';
+import { googleCallback } from '../../services/authenticationService.js';
 
 import { API } from '../../configurations/configuration.js';
 import api from '../../middlewares/axios.js';
 import { useAuthActions } from '../../stores/authStore.js';
 // import { showSuccess } from '../../utils/NotificationUtil.js'; // Đừng quên bật lại
 
-function GoogleCallback() {
+function GoogleCallbackComponent() {
   debugger;
   const navigate = useNavigate();
   const location = useLocation();
@@ -38,7 +39,8 @@ function GoogleCallback() {
       debugger;
       try {
         debugger;
-        const response = await axios.get(`http://localhost:8100/identity/auth/social/callback?code=${code}`);
+        // const response = await axios.get(`http://localhost:8100/identity/auth/social/callback?code=${code}`);
+        const response = await googleCallback(code);
         const { token, refreshToken, authenticated } = response.data.data;
         console.log("token: ", token);
         debugger;
@@ -65,14 +67,14 @@ function GoogleCallback() {
         // Nếu bạn cần lấy profile thì bật lại phần này
         // const profileResponse = await api.get(`${API.MY_INFO}?username=${encodeURIComponent(email)}`);
         // const profileResponse = await axios.get(`http://localhost:8089/user-profiles/byId?userId=${encodeURIComponent(userId)}`);
-        const profileResponse = await axios.get(
-          `http://localhost:8889/api/v1/user/user-profiles/byId?userId=${encodeURIComponent(userId)}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`
-            }
-          }
-        );
+        // const profileResponse = await axios.get(
+        //   `http://localhost:8889/api/v1/user/user-profiles/byId?userId=${encodeURIComponent(userId)}`,
+        //   {
+        //     headers: {
+        //       Authorization: `Bearer ${token}`
+        //     }
+        //   }
+        // );
         debugger;
         const user = profileResponse.data?.result;
         console.log('user', user);
@@ -93,7 +95,16 @@ function GoogleCallback() {
 
         showSuccess('Đăng nhập thành công!');
         debugger;
-        navigate('/');
+        if(user && user.roles && user.roles.includes('ROLE_ADMIN')) {
+          navigate('/admin'); 
+        // } else if (user && user.roles && user.roles.includes('ROLE_CONTENT_MOD')) {
+        //   navigate('/content-mod');
+        // } else if (user && user.roles && user.roles.includes('ROLE_PUBLISHER')) {
+        //   navigate('/publisher');
+        } else {
+          navigate('/'); // Chuyển hướng về trang chính nếu không có vai trò đặc biệt
+        }
+       // navigate('/');
         debugger;
       } catch (err) {
         
@@ -108,7 +119,7 @@ function GoogleCallback() {
   return <div>Đang xử lý đăng nhập...</div>;
 }
 
-export default GoogleCallback;
+export default GoogleCallbackComponent;
 
 
 
