@@ -2,16 +2,21 @@
 import React from 'react';
 
 const UserManagePage = () => {
+
+  
   return (
-    <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl mt-10">
+    // <div className="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl mt-10">
+    <div className="max-w-md mx-auto rounded-xl border border-white overflow-hidden md:max-w-2xl mt-10">
+    {/* // <div className="max-w-md mx-auto rounded-xl overflow-hidden md:max-w-2xl mt-10"> */}
+    {/* // <div className="max-w-md mx-auto rounded-xl border border-white p-4 mt-10"> */}
       <div className="md:flex">
         <div className="p-8">
           <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold">Profile</div>
           <div className="flex items-center">
-            <img className="h-16 w-16 rounded-full mr-4" src="https://via.placeholder.com/150" alt="Profile" />
+            <img className="h-16 w-16 rounded-full mr-4" src="https://react-demo.tailadmin.com/images/user/owner.jpg" alt="Profile" />
             <div>
-              <h1 className="text-xl font-medium text-gray-900">Musharof Chowdhury</h1>
-              <p className="text-gray-600">Team Manager | Arizona, United States</p>
+              <h1 className="text-xl font-medium 	text-white">Musharof Chowdhury</h1>
+              <p className="	text-white">Team Manager | Arizona, United States</p>
             </div>
           </div>
           <div className="mt-4 flex space-x-2">
@@ -30,24 +35,24 @@ const UserManagePage = () => {
         </div>
         <div className="mt-4 grid grid-cols-2 gap-4">
           <div>
-            <p className="text-gray-600">First Name</p>
-            <p className="text-gray-900">Musharof</p>
+            <p className="text-gray-300">First Name</p>
+            <p className="text-white">Musharof</p>
           </div>
           <div>
-            <p className="text-gray-600">Last Name</p>
-            <p className="text-gray-900">Chowdhury</p>
+            <p className="text-gray-300">Last Name</p>
+            <p className="text-white">Chowdhury</p>
           </div>
           <div>
-            <p className="text-gray-600">Email address</p>
-            <p className="text-gray-900">randomuser@pimjo.com</p>
+            <p className="text-gray-300">Email address</p>
+            <p className="text-white">randomuser@pimjo.com</p>
           </div>
           <div>
-            <p className="text-gray-600">Phone</p>
-            <p className="text-gray-900">+09 363 398 46</p>
+            <p className="text-gray-300">Phone</p>
+            <p className="text-white">+09 363 398 46</p>
           </div>
           <div className="col-span-2">
-            <p className="text-gray-600">Bio</p>
-            <p className="text-gray-900">Team Manager</p>
+            <p className="text-gray-300">Bio</p>
+            <p className="text-white">Team Manager</p>
           </div>
         </div>
         <div className="mt-6">
@@ -57,20 +62,20 @@ const UserManagePage = () => {
           </div>
           <div className="mt-4 grid grid-cols-2 gap-4">
             <div>
-              <p className="text-gray-600">Country</p>
-              <p className="text-gray-900">United States.</p>
+              <p className="text-gray-300">Country</p>
+              <p className="text-white">United States.</p>
             </div>
             <div>
-              <p className="text-gray-600">City/State</p>
-              <p className="text-gray-900">Phoenix, Arizona, United States.</p>
+              <p className="text-gray-300">City/State</p>
+              <p className="text-white">Phoenix, Arizona, United States.</p>
             </div>
             <div>
-              <p className="text-gray-600">Postal Code</p>
-              <p className="text-gray-900">ERT 2489</p>
+              <p className="text-gray-300">Postal Code</p>
+              <p className="text-white">ERT 2489</p>
             </div>
             <div>
-              <p className="text-gray-600">TAX ID</p>
-              <p className="text-gray-900">A54S6834</p>
+              <p className="text-gray-300">TAX ID</p>
+              <p className="text-white">A54S6834</p>
             </div>
           </div>
         </div>

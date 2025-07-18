@@ -172,7 +172,7 @@ const CustomDropdownMenuItem = ({ children, className, ...props }) => {
     )
 }
 
-export default function NovelManagePage() {
+export default function AccountManagePage() {
 
     const user = useUser();
 
@@ -202,10 +202,10 @@ export default function NovelManagePage() {
 
     // category popup state
     const popupRef = useRef();
-    const [showCategoryPopup, setShowCategoryPopup] = useState(false);
-    const [selectedCategory, setSelectedCategory] = useState(null);
+    const [showRolePopup, setShowRolePopup] = useState(false);
+    const [selectedRole, setSelectedRole] = useState(null);
 
-    const categoryOptions = ['Tiểu thuyết', 'Truyện tranh', 'Kinh dị', 'Hài hước'];
+    const RoleOptions = ['USER', 'ADMIN'];
 
     // status dropdown state
     const statusDropdownRef = useRef();
@@ -236,7 +236,7 @@ export default function NovelManagePage() {
 
         const handleClickOutside = (event) => {
             if (popupRef.current && !popupRef.current.contains(event.target)) {
-                setShowCategoryPopup(false);
+                setShowRolePopup(false);
             }
             if (statusDropdownRef.current && !statusDropdownRef.current.contains(event.target)) {
                 setShowStatusDropdown(false);
@@ -258,53 +258,55 @@ export default function NovelManagePage() {
     const transactions = [
         {
             id: "1",
-            name: "Võ Tòng",
+            name: "Adam Smith",
             logo: "/placeholder.svg?height=24&width=24", // Placeholder for PayPal logo
             date: "Nov 23, 01:00 PM",
-            price: "Kim Dung",
-            category: "Cổ trang",
-            status: "Success",
+            price: "adam@gmail.com",
+            category: "USER",
+            status: "Hoạt động",
         },
         {
             id: "2",
-            name: "Tống Giang",
+            name: "Messi",
             logo: "/placeholder.svg?height=24&width=24", // Placeholder for Apple logo
             date: "Nov 23, 01:00 PM",
-            price: "Kim Dung",
-            category: "Cổ trang",
-            status: "Pending",
+            price: "leo@gmail.com",
+            category: "USER",
+            status: "Hoạt động",
         },
         {
             id: "3",
-            name: "Thủy hử",
+            name: "Ronaldo",
             logo: "/placeholder.svg?height=24&width=24", // Placeholder for KKR logo
             date: "Nov 23, 01:00 PM",
-            price: "Lưu Tư",
-            category: "Xuyên không",
-            status: "Success",
+            price: "cr7@gmail.com",
+            category: "USER",
+            status: "Hoạt động",
         },
         {
             id: "4",
-            name: "Tôn Ngộ Không",
+            name: "Si da",
             logo: "/placeholder.svg?height=24&width=24", // Placeholder for Facebook logo
             date: "Nov 23, 01:00 PM",
-            price: "Hồng Bích",
-            category: "Phá đảo",
-            status: "Success",
+            price: "sida@gmail.com",
+            category: "ADMIN",
+            status: "Hoạt động",
         },
         {
             id: "5",
-            name: "Hồng Lâu Mộng",
+            name: "Donald Trump",
             logo: "/placeholder.svg?height=24&width=24", // Placeholder for Amazon logo
             date: "Nov 23, 01:00 PM",
-            price: "Kim Dung",
-            category: "Cổ trang",
-            status: "Failed",
+            price: "donaldtrump@gmail.com",
+            category: "USER",
+            status: "Hoạt động",
         },
     ]
 
     const getStatusBadgeClass = (status) => {
         switch (status) {
+            case "Hoạt động":
+                return "bg-green-100 text-green-700"
             case "Success":
                 return "bg-green-100 text-green-700"
             case "Pending":
@@ -319,7 +321,7 @@ export default function NovelManagePage() {
     return (
         <CustomCard className="w-full max-w-4xl mx-auto">
             <CustomCardHeader>
-                <CustomCardTitle>Quản lý Truyện</CustomCardTitle>
+                <CustomCardTitle>Quản lý Tài Khoản</CustomCardTitle>
                 <div className="relative w-48">
                     <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-400" />
                     <CustomInput type="search" placeholder="Search..." className="w-full rounded-md pl-8 text-white" />
@@ -336,21 +338,21 @@ export default function NovelManagePage() {
                                     scope="col"
                                     className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider w-[200px]"
                                 >
-                                    Tên truyện
+                                    Tên tài khoản
                                 </th>
                                 <th
                                     scope="col"
                                     className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider cursor-pointer select-none"
                                     onClick={handleSortByDate}
                                 >
-                                    Ngày đăng
+                                    Ngày đăng ký
                                     {sortDirection === 'asc' ? ' 🔼' : ' 🔽'}
                                 </th>
                                 <th
                                     scope="col"
                                     className="px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider"
                                 >
-                                    Tác giả
+                                    Email
                                 </th>
                                 {/* <th
                                     scope="col"
@@ -361,30 +363,31 @@ export default function NovelManagePage() {
                                 <th
                                     scope="col"
                                     className="relative px-4 py-3 text-left text-xs font-medium text-gray-300 uppercase tracking-wider cursor-pointer select-none"
-                                    onClick={() => setShowCategoryPopup(true)}
+                                    onClick={() => setShowRolePopup(true)}
                                 >
-                                    Category {selectedCategory ? `: ${selectedCategory}` : ''}
+                                    {/* Role  */}
+                                    Role {selectedRole? `: ${selectedRole}` : ''}
 
-                                    {showCategoryPopup && (
+                                    {showRolePopup && (
                                         <div
                                             ref={popupRef}
-                                            className="absolute z-50 mt-2 w-40 border border-gray-300 rounded shadow bg-white"
+                                            className="absolute z-50 mt-2 w-40 border bg-white border-gray-300 rounded shadow"
                                         >
-                                            {categoryOptions.map((category) => (
+                                            {RoleOptions.map((role) => (
                                                 <div
-                                                    key={category}
-                                                    className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-gray-700"
+                                                    key={role}
+                                                    className="px-4 py-2 hover:bg-gray-200 cursor-pointer text-gray-700"
                                                     // onClick={() => {
                                                     //     setSelectedCategory(category);
                                                     //     setShowCategoryPopup(false);
                                                     // }}
                                                     onClick={() => {
-                                                        setSelectedCategory(category);
-                                                        setFilters(prev => ({ ...prev, category }));
-                                                        setShowCategoryPopup(false);
+                                                        setSelectedRole(role);
+                                                        setFilters(prev => ({ ...prev, role }));
+                                                        setShowRolePopup(false);
                                                     }}
                                                 >
-                                                    {category}
+                                                    {role}
                                                 </div>
                                             ))}
                                         </div>
@@ -407,7 +410,7 @@ export default function NovelManagePage() {
                                     {showStatusDropdown && (
                                         <div
                                             ref={statusDropdownRef}
-                                            className="absolute z-50 mt-2 w-40 border border-gray-300 rounded shadow bg-white"
+                                            className="absolute z-50 mt-2 w-40 border bg-white border-gray-300 rounded shadow"
                                         >
                                             {statusOptions.map((status) => (
                                                 <div
@@ -542,77 +545,3 @@ export default function NovelManagePage() {
         </CustomCard>
     )
 }
-
-
-
-// import React from "react";
-
-// function NovelManagePage() {
-//   const data = [
-//     { id: 1, user: "Abram Schliefer", position: "Sales Assistant", office: "Edinburgh", age: 57, startDate: "25 Apr, 2027", salary: "$89,500" },
-//     { id: 2, user: "Charlotte Anderson", position: "Marketing Manager", office: "London", age: 42, startDate: "12 Mar, 2025", salary: "$105,000" },
-//     { id: 3, user: "Ethan Brown", position: "Software Engineer", office: "San Francisco", age: 30, startDate: "01 Jan, 2024", salary: "$120,000" },
-//     { id: 4, user: "Isabella Davis", position: "UI/UX Designer", office: "Austin", age: 29, startDate: "18 Jul, 2025", salary: "$92,000" },
-//     { id: 5, user: "James Wilson", position: "Data Analyst", office: "Chicago", age: 28, startDate: "20 Sep, 2025", salary: "$80,000" },
-//   ];
-
-//   return (
-//     <div className="p-4 bg-gray-50 rounded-lg shadow">
-//       <div className="flex justify-between items-center mb-4">
-//         <h2 className="text-lg font-semibold text-gray-800">Data Table 1</h2>
-//         <div className="flex space-x-4">
-//           <div className="flex items-center">
-//             <label className="mr-2 text-gray-600">Show</label>
-//             <select className="p-1 border rounded">
-//               <option>10</option>
-//               <option>25</option>
-//               <option>50</option>
-//               <option>100</option>
-//             </select>
-//             <span className="ml-2 text-gray-600">entries</span>
-//           </div>
-//           <div>
-//             <input
-//               type="text"
-//               placeholder="Search..."
-//               className="p-1 border rounded"
-//             />
-//           </div>
-//         </div>
-//       </div>
-//       <table className="w-full bg-white border-collapse">
-//         <thead>
-//           <tr className="bg-gray-100">
-//             <th className="p-2 text-left text-gray-600 border-b">User</th>
-//             <th className="p-2 text-left text-gray-600 border-b">Position</th>
-//             <th className="p-2 text-left text-gray-600 border-b">Office</th>
-//             <th className="p-2 text-left text-gray-600 border-b">Age</th>
-//             <th className="p-2 text-left text-gray-600 border-b">Start Date</th>
-//             <th className="p-2 text-left text-gray-600 border-b">Salary</th>
-//           </tr>
-//         </thead>
-//         <tbody>
-//           {data.map((item) => (
-//             <tr key={item.id} className="hover:bg-gray-50">
-//               <td className="p-2 border-b flex items-center">
-//                 <img
-//                   src={`https://via.placeholder.com/40`}
-//                   alt={item.user}
-//                   className="w-8 h-8 rounded-full mr-2"
-//                 />
-//                 {item.user}
-//               </td>
-//               <td className="p-2 border-b">{item.position}</td>
-//               <td className="p-2 border-b">{item.office}</td>
-//               <td className="p-2 border-b">{item.age}</td>
-//               <td className="p-2 border-b">{item.startDate}</td>
-//               <td className="p-2 border-b">{item.salary}</td>
-//             </tr>
-//           ))}
-//         </tbody>
-//       </table>
-//     </div>
-//   );
-// }
-
-// export default NovelManagePage;
