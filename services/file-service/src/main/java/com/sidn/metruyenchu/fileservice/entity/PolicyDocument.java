@@ -25,7 +25,6 @@ public class PolicyDocument {
     @Column(nullable = false, length = 256)
     String title;
 
-    @Lob
     @Column(columnDefinition = "TEXT", nullable = false)
     String content;
 

@@ -25,13 +25,13 @@ import java.util.List;
 public class PolicyDocumentController {
 
     PolicyDocumentService service;
-
-    @GetMapping("/{id}")
-    public ApiResponse<PolicyDocumentResponse> getPublicById(@PathVariable String id) {
-        return ApiResponse.<PolicyDocumentResponse>builder()
-                .result(service.getPublicById(id))
-                .build();
-    }
+//
+//    @GetMapping("/{id}")
+//    public ApiResponse<PolicyDocumentResponse> getPublicById(@PathVariable String id) {
+//        return ApiResponse.<PolicyDocumentResponse>builder()
+//                .result(service.getPublicById(id))
+//                .build();
+//    }
 
     @GetMapping("/{slug}")
     public ApiResponse<PolicyDocumentResponse> getPublicBySlug(@PathVariable String slug) {
@@ -40,14 +40,14 @@ public class PolicyDocumentController {
                 .build();
     }
 
-    @GetMapping("/admin")
+    @GetMapping("")
     public ApiResponse<List<PolicyDocumentResponse>> getAll() {
         return ApiResponse.<List<PolicyDocumentResponse>>builder()
                 .result(service.getAll())
                 .build();
     }
 
-    @PostMapping("/admin")
+    @PostMapping("")
     public ApiResponse<PolicyDocumentResponse> create(
             @RequestBody PolicyDocumentCreateRequest request
     ) {
@@ -56,7 +56,7 @@ public class PolicyDocumentController {
                 .build();
     }
 
-    @PutMapping("/admin/{slug}")
+    @PutMapping("/{slug}")
     public ApiResponse<PolicyDocumentResponse> update(
             @PathVariable String slug,
             @Valid @RequestBody PolicyDocumentUpdateRequest request
