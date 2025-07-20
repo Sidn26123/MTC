@@ -19,7 +19,7 @@ const AdminRoutes = ({ user, userRoles}) => {
     const isAdmin = hasScope(userRoles, "ROLE_ADMIN");
 
     return (
-      //  <Route element={<ProtectedRoute isAllowed={isAdmin} />}>
+       <Route element={<ProtectedRoute isAllowed={isAdmin} />}>
             <Route element={<AdminLayout />}>
                 <Route path={`${adminRoutesPrefix}/dashboard`} element={<Dashboard />} />
                 <Route path={`${adminRoutesPrefix}/novels`} element={<NovelManagePage />} />
@@ -28,7 +28,7 @@ const AdminRoutes = ({ user, userRoles}) => {
                 <Route path={`${adminRoutesPrefix}/category`} element={<CategoryManagePage />} />
                 {/* <Route path="settings" element={<Settings />} /> */}
             </Route>
-        //</Route>
+       </Route>
     );
 };
 

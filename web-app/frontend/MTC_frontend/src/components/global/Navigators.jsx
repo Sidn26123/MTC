@@ -148,8 +148,8 @@ const PageNavigator = ({
                            totalPages = 1,
                            totalElements = 0,
                            onPageChange,
-                           onPageSizeChange
-                       }) => {
+                           onPageSizeChange }) =>
+{
     const [inputPage, setInputPage] = useState(page.toString());
     const [currentPage, setCurrentPage] = useState(page);
     const [currentPageSize, setCurrentPageSize] = useState(pageSize.toString());

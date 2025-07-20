@@ -1,6 +1,6 @@
 // const API_GATEWAY = 'http://localhost:8889/api/v1';
 // const API_GATEWAY = 'http://localhost:8100/';
-const API_GATEWAY = 'http://192.168.1.3:8889/api/v1';
+const API_GATEWAY = 'http://localhost:8889/api/v1';
 
 const IDENTITY_SERVICE = API_GATEWAY + '/identity';
 const NOVEL_SERVICE = API_GATEWAY + '/novel';
@@ -21,7 +21,6 @@ export const API = {
     LOGIN_GOOGLE: '/identity/auth/social-login',
     MY_INFO: '/user/user-profiles',
     INFO_ME: '/user/user-profiles/me',
-    LOGIN_GOOGLE: '/identity/auth/social-login',
     REGISTER: IDENTITY_SERVICE + '/users/registration',
     NOVEL: NOVEL_SERVICE,
     CHAPTER: NOVEL_SERVICE + "/chapters",
