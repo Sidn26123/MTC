@@ -75,7 +75,7 @@ function PublishedNovelPage() {
             setMyPublishedNovels(response.data.result);
             setPageData({
                 currentPage: page,
-                size: size,
+                pageSize: size,
                 totalPages: response.data.totalPages,
                 totalElements: response.data.totalElements,
             });
