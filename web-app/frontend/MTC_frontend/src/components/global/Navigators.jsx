@@ -155,7 +155,7 @@ const PageNavigator = ({
     const [currentPageSize, setCurrentPageSize] = useState(pageSize.toString());
 
     // const changePage = onPageChange;
-    const changePage = useSetPage();
+    const changePage = onPageChange;
     const changePageSize = onPageSizeChange;
 
     // Update state when props change
@@ -312,7 +312,7 @@ const PageNavigator = ({
                     className="border border-primary border-gray-500 rounded h-8 w-12 pl-4 bg-inherit text-black dark:text-white placeholder:text-gray-500 text-sm"
                     aria-label="Items per page"
                 />
-                <span className="text-sm ml-1">/ page</span>
+                <span className="text-sm ml-1">/ {totalElements}</span>
             </div>
         </div>
     );

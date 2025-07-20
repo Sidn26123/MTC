@@ -72,21 +72,27 @@ function PublishedNovelPage() {
                 size,
             };
             const response = await getFilteredNovels(filter);
+            console.log(response.data.result.totalPages);
             setMyPublishedNovels(response.data.result);
             setPageData({
                 currentPage: page,
                 pageSize: size,
-                totalPages: response.data.totalPages,
-                totalElements: response.data.totalElements,
+                totalPages: response.data.result.totalPages,
+                totalElements: response.data.result.totalElements,
             });
         } catch (err) {
             console.error("Error fetching novels:", err);
         }
     };
 
+    // useEffect(() => {
+    //     fetchNovels(pageData.page, pageData.pageSize).then(r => {});
+    // }, [user?.id, pageData.currentPage, pageData.pageSize]);
+
     useEffect(() => {
-        fetchNovels(pageData.page, pageData.pageSize).then(r => {});
+        fetchNovels(pageData.currentPage, pageData.pageSize).then(r => {});
     }, [user?.id, pageData.currentPage, pageData.pageSize]);
+
 
     return (
         <div>
@@ -218,13 +224,15 @@ export default PublishedNovelPage;
 const PublishedNovelTable = ({ novels, pageData, setPageData, fetchNovels }) => {
     const novelProgressStatus = useNovelProgressStatus();
     const handleChangePage = (page) => {
-        fetchNovels(page, pageData.pageSize);
+        console.log("Changing page to:", page);
+        setPageData((prev) => ({ ...prev, currentPage: page }));
+        // fetchNovels(page, pageData.pageSize);
     };
 
     const handlePageSizeChange = (newSize) => {
         console.log("Changing page size to:", newSize);
         setPageData((prev) => ({ ...prev, pageSize: newSize, currentPage: 1 }));
-        fetchNovels(1, newSize);
+        // fetchNovels(1, newSize);
     };
 
     return (
@@ -306,7 +314,7 @@ const PublishedNovelTable = ({ novels, pageData, setPageData, fetchNovels }) => 
                 <div className="mt-3">
                     <PageNavigator
                         page={pageData.currentPage}
-                        pageSize={pageData.pageSize}
+                        pageSize={pageData.size}
                         totalPages={pageData.totalPages}
                         totalElements={pageData.totalElements}
                         onPageChange={handleChangePage}
