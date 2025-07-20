@@ -26,9 +26,7 @@ const UserLayout = () => {
                         <Outlet />
                     {/*</main>*/}
                 </div>
-                {/*{isChatOpen && (*/}
-                {/*    <ChatFrame onClose = {() => closeChatFrame()}/>*/}
-                {/*)}*/}
+
                 {isChatOpen && (
                     <UpdatedChatFrame
                         onClose={() => closeChatFrame()}

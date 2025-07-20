@@ -505,27 +505,6 @@ const NovelStat = (novel) => {
                                 </>
                             ))
                             }
-
-                            {/*<div className={"flex flex-col w-1/3 mr-5"}>*/}
-                            {/*    <Link to="/novel/chapter/1" className={"hover:cursor-pointer"}>*/}
-                            {/*        <div className={"flex flex-row yellow-text-color"}>*/}
-                            {/*            Chuong 1*/}
-                            {/*        </div>*/}
-                            {/*        <div className={"text-sm"}>*/}
-                            {/*            5 gio truoc*/}
-                            {/*        </div>*/}
-                            {/*    </Link>*/}
-                            {/*</div>*/}
-                            {/*<div className={"flex flex-col w-1/3 mr-5"}>*/}
-                            {/*    <Link to="/novel/chapter/1" className={"hover:cursor-pointer"}>*/}
-                            {/*        <div className={"flex flex-row yellow-text-color"}>*/}
-                            {/*            Chuong 1*/}
-                            {/*        </div>*/}
-                            {/*        <div className={"text-sm"}>*/}
-                            {/*            5 gio truoc*/}
-                            {/*        </div>*/}
-                            {/*    </Link>*/}
-                            {/*</div>*/}
                         </div>
                     </div>
 
@@ -541,13 +520,7 @@ const NovelStat = (novel) => {
                     </div>
                     <div>
                         <div className={"text-gray-600 dark:text-gray-300 py-4 px-2 md:px-1 text-base break-words"}>
-                            {/*Là Đan Đế trọng sinh? Là dung hợp linh hồn? Bị đánh cắp linh căn, linh huyết, linh cốt ba không*/}
-                            {/*thiếu niên — — Long Trần, nương tựa theo trong trí nhớ luyện đan thần thuật, tu hành thần bí*/}
-                            {/*công pháp Cửu Tinh Bá Thể Quyết, đẩy ra sương mù dày đặc, giải khai cái bẫy động trời.*/}
-                            {/*<br/>*/}
-                            {/*<br/>*/}
-                            {/*Tay cầm thiên địa càn khôn, chân đạp nhật nguyệt tinh thần, thông đồng các loại mỹ nữ, trấn áp*/}
-                            {/*ác quỷ tà thần.*/}
+
                             <FormattedContent content={novel.description} />
                         </div>
 
@@ -565,15 +538,6 @@ const NovelStat = (novel) => {
 
                         </div>
                         <div className={"flex flex-row justify-start items-center mt-2"}>
-                            {/*{publishedByPublisher ? publishedByPublisher.map(((novel, idx) => (*/}
-                            {/*    <>*/}
-                            {/*        <div className={'w-44 h-60 mr-2 mb-2'}>*/}
-                            {/*            <MinialIntroduceNovelCard data={novel} />*/}
-
-                            {/*        </div>*/}
-                            {/*    </>*/}
-                            {/*))): <></>}*/}
-                            {/*{publishedByPublisher ? publishedByPublisher.map(((novel, idx) => () }*/}
                             {Array.isArray(publishedByPublisher.data) && publishedByPublisher.data !== null ? publishedByPublisher.data.map((published, index) => (
                                 <>
                                 <div className={'w-44 h-60 mr-2 mb-2'}>

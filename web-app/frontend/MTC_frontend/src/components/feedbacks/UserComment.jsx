@@ -26,15 +26,7 @@ function UserComment({ comment }) {
     }
 
     const childComments = [];
-    // useEffect(() => {
-    //     const fetchProfile = () => {
-    //         if (comment.commentedBy) {
-    //             const profile = getProfileById(comment.commentedBy);
-    //             setUserCommentProfile(profile);
-    //         }
-    //     };
-    //     fetchProfile();
-    // }, [comment.commentedBy]);
+
 
     function timeUtil(timestamp){
         return timeAgo(new Date(timestamp));

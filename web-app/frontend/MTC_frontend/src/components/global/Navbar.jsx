@@ -234,17 +234,7 @@ function Navbar() {
                     )}
 
                 </div>
-                {/*<div>*/}
-                {/*<NovelFilter /> */}
-                {/*    <div*/}
-                {/*        className={"bg-gray-50/50 transition-opacity z-40 fixed top-0 left-0 w-full h-full outline-none overflow-x-hidden"}>*/}
-                {/*        <div className={"h-full max-w-screen-lg mx-auto relative w-auto pointer-events-none"}>*/}
-                {/*            <div className={"min-h-screen max-h-full overflow-hidden border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-clip-padding bg-gray-50  outline-none"}>*/}
-                {/*                /!*<NovelFilter />*!/*/}
-                {/*            </div>*/}
-                {/*        </div>*/}
-                {/*    </div>*/}
-                {/*</div>*/}
+
             </nav>
 
         </>

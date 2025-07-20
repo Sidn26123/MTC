@@ -162,26 +162,7 @@ const ChapterList = ({chapterList}) => {
                 </div>
                 {/*    Chapter content*/}
                 <div className={"grid grid-cols-1 gap-4 sm:grid-cols-2"}>
-                    {/*<a data-x-bind="ChapterItem(index)"*/}
-                    {/*   className="space-y-1 border-b border-auto pb-2 primary-text-color visited:text-gray-500 col-span-1"*/}
-                    {/*   href="https://metruyencv.com/truyen/tan-the-suong-mu-bat-dau-thu-luu-song-bao-thai-ty-muoi/chuong-1"*/}
-                    {/*   id="chapter-16845491">*/}
-                    {/*    <div className="text-sm md:text-base font-medium"*/}
-                    {/*         >Chương 1: Mục tiêu là kia đôi song*/}
-                    {/*        bào thai!*/}
-                    {/*    </div>*/}
-                    {/*    <div className="flex items-center text-xs text-gray-400"><span*/}
-                    {/*        data-x-text="dayjs(chapter.published_at).format('YYYY-MM-DD HH:mm:ss')">2023-10-02 09:47:13</span>*/}
-                    {/*        <svg data-x-show="chapter.unlock_price" className="ml-2 w-3 h-3"*/}
-                    {/*             xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"*/}
-                    {/*             fill="currentColor" aria-hidden="true" data-slot="icon"*/}
-                    {/*             style={{display: 'none'}}>*/}
-                    {/*            <path fillRule="evenodd"*/}
-                    {/*                  d="M12 1.5a5.25 5.25 0 0 0-5.25 5.25v3a3 3 0 0 0-3 3v6.75a3 3 0 0 0 3 3h10.5a3 3 0 0 0 3-3v-6.75a3 3 0 0 0-3-3v-3c0-2.9-2.35-5.25-5.25-5.25Zm3.75 8.25v-3a3.75 3.75 0 1 0-7.5 0v3h7.5Z"*/}
-                    {/*                  clipRule="evenodd"></path>*/}
-                    {/*        </svg>*/}
-                    {/*    </div>*/}
-                    {/*</a>*/}
+
                     {chapterList.map((chapter, index) => (
                         <ChapterListItem chapter={chapter}/>
 
