@@ -1,67 +1,235 @@
-import React from "react";
+import React, { useState } from 'react';
+
+// function ReportHandlePage() {
+//     const [showRequestDetail, setShowRequestDetail] = React.useState(false);
+//
+//     return (
+//         <>
+//             <div>
+//                 <div className={"flex flex-col gap-x-5 mt-3 rounded-md bg-background-light p-3"}>
+//                     <div className={"flex flex-col"}>
+//                         <h3>Bao cao loi</h3>
+//                         <span>Đây là các báo cáo lỗi bạn cần xử lý, ấn vào báo cáo để xem chi tiết.</span>
+//                     </div>
+//                     {!showRequestDetail ? (
+//                         <div className={"mt-4"}>
+//                             {/*<ReportHandleItem />*/}
+//                             <table className="w-full text-sm text-left ">
+//                                 <thead
+//                                     className="text-sm text-gray-500">
+//                                 <tr>
+//
+//                                     <th scope="col" className="px-6 py-3">
+//                                         Thông tin
+//                                     </th>
+//                                     <th scope="col" className="px-6 py-3">
+//                                         TEN CHUONG
+//                                     </th>
+//                                     <th scope="col" className="px-6 py-3">
+//                                         XUAT BAN LUC
+//                                     </th>
+//
+//                                 </tr>
+//                                 </thead>
+//                                 <tbody>
+//                                 <tr className="border-gray-500 hover:bg-gray-500/10 hover:cursor-pointer">
+//
+//                                     <th scope="row"
+//                                         className="px-6 py-4 w-3/12 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+//                                         <GeneralDetail />
+//                                     </th>
+//                                     <td className="px-6 py-4">
+//                                         <ReportContent />
+//                                     </td>
+//                                     <td className="px-6 py-4">
+//                                         <RequestState />
+//                                     </td>
+//                                 </tr>
+//
+//                                 </tbody>
+//                             </table>
+//
+//                         </div>
+//                     ) : (
+//                         <div className={'mt-4'}>
+//
+//                         </div>
+//                     )}
+//
+//                 </div>
+//             </div>
+//         </>
+//     );
+// }
+
+import { Search, ChevronDown, Lock, Image, Send, Paperclip } from "lucide-react";
 
 function ReportHandlePage() {
-    const [showRequestDetail, setShowRequestDetail] = React.useState(false);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [commentText, setCommentText] = useState("");
 
     return (
-        <>
-            <div>
-                <div className={"flex flex-col gap-x-5 mt-3 rounded-md bg-background-light p-3"}>
-                    <div className={"flex flex-col"}>
-                        <h3>Bao cao loi</h3>
-                        <span>Đây là các báo cáo lỗi bạn cần xử lý, ấn vào báo cáo để xem chi tiết.</span>
-                    </div>
-                    {!showRequestDetail ? (
-                        <div className={"mt-4"}>
-                            {/*<ReportHandleItem />*/}
-                            <table className="w-full text-sm text-left ">
-                                <thead
-                                    className="text-sm text-gray-500">
-                                <tr>
-
-                                    <th scope="col" className="px-6 py-3">
-                                        Thông tin
-                                    </th>
-                                    <th scope="col" className="px-6 py-3">
-                                        TEN CHUONG
-                                    </th>
-                                    <th scope="col" className="px-6 py-3">
-                                        XUAT BAN LUC
-                                    </th>
-
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr className="border-gray-500 hover:bg-gray-500/10 hover:cursor-pointer">
-
-                                    <th scope="row"
-                                        className="px-6 py-4 w-3/12 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        <GeneralDetail />
-                                    </th>
-                                    <td className="px-6 py-4">
-                                        <ReportContent />
-                                    </td>
-                                    <td className="px-6 py-4">
-                                        <RequestState />
-                                    </td>
-                                </tr>
-
-                                </tbody>
-                            </table>
-
-                        </div>
-                    ) : (
-                        <div className={'mt-4'}>
-
-                        </div>
-                    )}
-
+        <div className="min-h-screen bg-gray-900 text-gray-100">
+            {/* Header */}
+            <div className="bg-gray-800 px-6 py-8">
+                <div className="max-w-7xl mx-auto">
+                    <h1 className="text-2xl font-semibold text-white mb-2">Yêu cầu & Báo cáo</h1>
+                    <p className="text-gray-400">
+                        Nơi tạo yêu cầu và xử lý các vấn đề liên quan tới truyện.
+                    </p>
                 </div>
             </div>
-        </>
+
+            {/* Controls Bar */}
+            <div className="bg-gray-800 px-6 py-4 border-t border-gray-700">
+                <div className="max-w-7xl mx-auto flex items-center justify-between">
+                    <button className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-md font-medium transition-colors">
+                        Tạo Mới
+                    </button>
+
+                    <div className="flex items-center gap-4">
+                        <div className="relative">
+                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                            <input
+                                type="text"
+                                placeholder="Tên truyện"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="bg-gray-700 border border-gray-600 rounded-md pl-10 pr-4 py-2 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent w-64"
+                            />
+                        </div>
+
+                        <div className="relative">
+                            <select className="bg-gray-700 border border-gray-600 rounded-md px-4 py-2 text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500 appearance-none pr-10">
+                                <option>Yêu cầu đã đóng</option>
+                                <option>Yêu cầu mở</option>
+                                <option>Tất cả yêu cầu</option>
+                            </select>
+                            <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div className="max-w-7xl mx-auto flex gap-6 p-6">
+                {/* Sidebar */}
+                <div className="w-80 space-y-4">
+                    <div className="bg-gray-800 rounded-lg">
+                        <div className="p-4 border-b border-gray-700">
+                            <h3 className="font-semibold text-gray-200">TIÊU ĐỀ</h3>
+                        </div>
+                        <div className="p-4">
+                            <div className="bg-gray-700 rounded-md p-3">
+                                <h4 className="text-orange-400 font-medium mb-1">Yêu cầu hoặc liên hệ khác</h4>
+                                <p className="text-gray-400 text-sm">
+                                    - E muốn góp ý 1 chút về phần lấy danh sách chương....
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="bg-gray-800 rounded-lg">
+                        <div className="p-4 border-b border-gray-700">
+                            <h3 className="font-semibold text-gray-200">TÌNH TRẠNG</h3>
+                        </div>
+                        <div className="p-4">
+                            <div className="bg-orange-600 text-white text-center py-2 rounded-md text-sm font-medium">
+                                Đã xử lý và đóng
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Main Content */}
+                <div className="flex-1 bg-gray-800 rounded-lg">
+                    {/* Post Header */}
+                    <div className="p-6 border-b border-gray-700">
+                        <div className="flex items-center justify-between mb-4">
+                            <div className="flex items-center gap-3">
+                                <Image
+                                    src="/placeholder.svg?height=40&width=40"
+                                    alt="Sidnn avatar"
+                                    className="w-10 h-10 rounded-full"
+                                />
+                                <div>
+                                    <div className="flex items-center gap-2">
+                                        <span className="font-semibold text-white">Sidnn</span>
+                                        <span className="text-gray-400 text-sm">(ID: 1034366)</span>
+                                    </div>
+                                    <div className="text-gray-400 text-sm">00:53 - 23/03/2025</div>
+                                </div>
+                            </div>
+
+                            <button className="flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-md font-medium transition-colors">
+                                <Lock className="w-4 h-4" /> Mở Lại
+                            </button>
+                        </div>
+
+                        <h2 className="text-xl font-semibold text-white mb-4">Yêu Cầu Hoặc Liên Hệ Khác</h2>
+
+                        <div className="text-gray-300 leading-relaxed">
+                            <p>
+                                E muốn góp ý 1 chút về phần lấy danh sách chương. Hiện tại thì web đang lấy 1 lần toàn bộ danh sách
+                                chương, nên dẫn đến hiện tượng UI phải chờ rất lâu để lấy được danh sách chương của các truyện nhiều
+                                chương, sau đó thì rất lạc thì phải load nhiều dữ liệu. E muốn góp ý các ad có thể paging nó ra hoặc 1
+                                lần lấy 100 chương gì đó a.
+                            </p>
+                        </div>
+
+                        <div className="flex items-center gap-2 mt-4">
+                            <Image src="/placeholder.svg?height=24&width=24" alt="Clark avatar" className="w-6 h-6 rounded-full" />
+                            <span className="text-orange-400 text-sm">Clark đang xử lý</span>
+                        </div>
+                    </div>
+
+                    {/* Comments Section */}
+                    <div className="p-6">
+                        <h3 className="text-lg font-semibold text-white mb-4">Bình luận</h3>
+
+                        <div className="flex items-start gap-3 mb-6">
+                            <Image src="/placeholder.svg?height=40&width=40" alt="User avatar" className="w-10 h-10 rounded-full" />
+                            <div className="flex-1">
+                <textarea
+                    value={commentText}
+                    onChange={(e) => setCommentText(e.target.value)}
+                    placeholder="Viết bình luận..."
+                    className="w-full bg-gray-700 border border-gray-600 rounded-md p-3 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
+                    rows={3}
+                />
+                                <div className="flex items-center justify-between mt-3">
+                                    <button className="flex items-center gap-2 text-gray-400 hover:text-gray-300 transition-colors">
+                                        <Paperclip className="w-4 h-4" />
+                                        <span className="text-sm">Đính kèm hình ảnh (tối đa 3)</span>
+                                    </button>
+                                    <button className="bg-orange-600 hover:bg-orange-700 text-white p-2 rounded-full transition-colors">
+                                        <Send className="w-4 h-4" />
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Existing Comment */}
+                        <div className="border-t border-gray-700 pt-4">
+                            <div className="flex items-start gap-3">
+                                <Image
+                                    src="/placeholder.svg?height=40&width=40"
+                                    alt="Clark avatar"
+                                    className="w-10 h-10 rounded-full"
+                                />
+                                <div className="flex-1">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <span className="font-semibold text-white">Clark</span>
+                                        <span className="text-gray-400 text-sm">09:10 - 24/03/2025</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     );
 }
-
 export default ReportHandlePage;
 
 const RequestState = () => {

@@ -25,3 +25,28 @@ export const uploadNovelCover = async (novelId, file) => {
     console.log("Upload novel cover response:", response);
     return response;
 };
+
+export const getAllMyDrafts = async () => {
+    const response = await api.get(API.DRAFT + "/my/all");
+    return response;
+}
+
+export const updateDraft = async (draftId, data) => {
+    const response = await api.put(API.DRAFT + "/" + draftId, data);
+    return response;
+}
+
+export const getDraftById = async (draftId) => {
+    const response = await api.get(API.DRAFT + "/" + draftId);
+    return response;
+}
+
+export const deleteDraft = async (draftId) => {
+    const response = await api.delete(API.DRAFT + "/" + draftId);
+    return response;
+}
+
+export const createDraft = async (data) => {
+    const response = await api.post(API.DRAFT + "/create", data);
+    return response;
+}

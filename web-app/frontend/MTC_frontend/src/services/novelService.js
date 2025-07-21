@@ -26,3 +26,8 @@ export const isNovelBookmarked = async (novelId, novelList) => {
     const isBookmarked = novelList.some((novel) => novel.id === novelId);
     return isBookmarked;
 }
+
+export const getAllMyNovels = async () => {
+    const response = await api.get(API.NOVEL + "/novels/my/novels/all");
+    return response;
+}

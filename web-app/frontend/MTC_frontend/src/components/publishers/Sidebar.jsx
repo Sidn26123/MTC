@@ -128,6 +128,22 @@ const Sidebar = () => {
                             </div>
                         </Link>
                     </div>
+                    <div className="flex flex-col w-full items-start justify-start hover:bg-gray-100/25 rounded-md">
+                        <Link to={`${publisherRoutesPrefix}/ban-nhap/tao`} className="block w-full">
+                            <div className="flex p-2 w-full">
+                                <FontAwesomeIcon icon={faLifeRing} className="mr-2 text-gray-300" />
+                                <span className="text-gray-300 font-normal">Bản nháp</span>
+                            </div>
+                        </Link>
+                    </div>
+                    <div className="flex flex-col w-full items-start justify-start hover:bg-gray-100/25 rounded-md">
+                        <Link to={`${publisherRoutesPrefix}/ban-nhap`} className="block w-full">
+                            <div className="flex p-2 w-full">
+                                <FontAwesomeIcon icon={faLifeRing} className="mr-2 text-gray-300" />
+                                <span className="text-gray-300 font-normal">Đã lưu</span>
+                            </div>
+                        </Link>
+                    </div>
                 </div>
             </div>
 

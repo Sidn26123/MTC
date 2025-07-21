@@ -60,6 +60,7 @@ export const usePublisherStore = create((set) => ({
     currentPublishedNovel: {},
     myPublishedNovels: [],
     chapterPrepareForPublish: [],
+    drafts: [],
     actions: {
         setMyPublishedNovels: (paginationData) => set((state) => ({
             myPublishedNovels: paginationData
@@ -72,7 +73,13 @@ export const usePublisherStore = create((set) => ({
         })),
         setChapterPrepareForPublish: (chapters) => set(() => ({
             chapterPrepareForPublish: chapters
-        }))
+        })),
+        setNovelStatistics: (statistics) => set((state) => ({
+            novelStatistics: statistics
+        })),
+        setDrafts: (drafts) => set((state) => ({
+            drafts: drafts
+        })),
     },
     // --- Pagination States ---
     ...Object.fromEntries([...paginatedKeys, ...dynamicPaginationKeys].map(key => [key, { ...defaultPagination }])),
@@ -92,8 +99,10 @@ export const useNovelStatistics = () => usePublisherStore((state) => state.novel
 export const useCurrentChosenPublishedNovel = () => usePublisherStore((state) => state.currentChosenPublishedNovel);
 export const useCurrentPublishedNovel = () => usePublisherStore((state) => state.currentPublishedNovel);
 export const useChapterPrepareForPublish = () => usePublisherStore((state) => state.chapterPrepareForPublish);
+export const useDrafts = () => usePublisherStore((state) => state.drafts);
 
 export const useSetMyPublishedNovels = () => usePublisherStore((state) => state.actions.setMyPublishedNovels);
 export const useSetCurrentChosenPublishedNovel = () => usePublisherStore((state) => state.actions.setCurrentChosenPublishedNovel);
 export const useSetCurrentPublishedNovel = () => usePublisherStore((state) => state.actions.setCurrentPublishedNovel);
 export const useSetChapterPrepareForPublish = () => usePublisherStore((state) => state.actions.setChapterPrepareForPublish);
+export const useSetDrafts = () => usePublisherStore((state) => state.actions.setDrafts);

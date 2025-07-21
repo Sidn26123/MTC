@@ -27,3 +27,17 @@ export const getChildCommentsOfComment = (commentId, comments) => {
     return childComments;
 }
 
+export const reportNovel = async (data) => {
+    const response = await api.post(API.FEEDBACK + "/novel", data);
+    return response;
+}
+
+export const reportComment = async (data) => {
+    const response = await api.post(API.FEEDBACK + "/comment", data);
+    return response;
+}
+
+export const reportRating = async (data) => {
+    const response = await api.post(API.FEEDBACK + "/rating", data);
+    return response;
+}

@@ -24,6 +24,7 @@ export const API = {
     REGISTER: IDENTITY_SERVICE + '/users/registration',
     NOVEL: NOVEL_SERVICE,
     CHAPTER: NOVEL_SERVICE + "/chapters",
+    DRAFT: NOVEL_SERVICE + "/drafts",
     FILES: FILE_SERVICE + "/files",
     POLICY: FILE_SERVICE + "/policies",
     CATEGORY: NOVEL_SERVICE + "/categories",
