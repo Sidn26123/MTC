@@ -14,8 +14,9 @@ const AdminSidebar = () => (
       
       <Link to="/admin/novels">Quản lý truyện</Link>
       <Link to="/admin/accounts">Quản lý tài khoản</Link>
-      <Link to="/admin/settings">Cài đặt</Link>
       <Link to={`${adminRoutesPrefix}/category`}>Quản lý Danh Mục</Link>
+      <Link to={`${adminRoutesPrefix}/analytics`}>Thống Kê</Link>
+      <Link to="/admin/settings">Cài đặt</Link>
         {/* Add more links as needed */}
     </nav>
   </div>

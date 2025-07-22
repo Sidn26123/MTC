@@ -6,6 +6,7 @@ import ProtectedRoute from '../components/global/ProtectedRoute.jsx';
 import NovelManagePage from '../pages/admins/NovelManagePage.jsx';
 import AccountManagePage from '../pages/admins/AccountManagePage.jsx';
 import CategoryManagePage from '../pages/admins/CategoryManagePage.jsx';
+import AnalyticsPage from '../pages/admins/AnalyticsPage.jsx';
 import { hasScope } from '../services/authoriazationService.js';
 
 const adminRoutesPrefix = "/admin";
@@ -26,6 +27,7 @@ const AdminRoutes = ({ user, userRoles}) => {
                 <Route path={`${adminRoutesPrefix}/users`} element={<ManageUsers />} />
                 <Route path={`${adminRoutesPrefix}/accounts`} element={<AccountManagePage />} />
                 <Route path={`${adminRoutesPrefix}/category`} element={<CategoryManagePage />} />
+                <Route path={`${adminRoutesPrefix}/analytics`} element={<AnalyticsPage />} />
                 {/* <Route path="settings" element={<Settings />} /> */}
             </Route>
         //</Route>
