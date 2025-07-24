@@ -17,9 +17,11 @@ import ReportListPage from '../pages/users/ReportListPage.jsx';
 
 const publisherRoutesPrefix = "/bookhub";
 
-const AdminRoutes = ({ user }) => {
+const PublisherRoutes = ({ user }) => {
+    const isAuthenticated = user && user.id;
+
     return (
-        // <Route element={<ProtectedRoute />}>
+        <Route element={<ProtectedRoute isAllowed={isAuthenticated} redirectTo={"/a"}/>}>
             <Route element={<PublisherLayout />}>
                 <Route path={`${publisherRoutesPrefix}/dashboard`} element={<PublisherDashboard />} />
                 <Route path={`${publisherRoutesPrefix}/published`} element={<PublishedNovelPage />} />
@@ -38,8 +40,8 @@ const AdminRoutes = ({ user }) => {
                 <Route path={`${publisherRoutesPrefix}/novels/:novelSlug/chapters`} element={<ChapterList />} />
                 <Route path={`${publisherRoutesPrefix}/chapters/:chapterId/edit`} element={<ChapterEditPage />} />
             </Route>
-        // </Route>
+        </Route>
     );
 };
 
-export default AdminRoutes;
+export default PublisherRoutes;

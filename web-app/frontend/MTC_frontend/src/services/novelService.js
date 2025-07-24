@@ -31,3 +31,4 @@ export const getAllMyNovels = async () => {
     const response = await api.get(API.NOVEL + "/novels/my/novels/all");
     return response;
 }
+
