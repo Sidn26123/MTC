@@ -28,7 +28,7 @@ public class ReportComment {
     @JoinColumn(name = "report_id", nullable = false)
     Report report;
 
-    @Column(name = "commenter_id", nullable = false)
+    @Column(name = "commenter_id")
     String commenterId;
 
     @Enumerated(EnumType.STRING)

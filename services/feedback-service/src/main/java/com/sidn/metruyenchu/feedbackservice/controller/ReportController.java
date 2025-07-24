@@ -2,12 +2,15 @@ package com.sidn.metruyenchu.feedbackservice.controller;
 
 import com.sidn.metruyenchu.feedbackservice.dto.ApiResponse;
 import com.sidn.metruyenchu.feedbackservice.dto.request.report.ReportCreationRequest;
+import com.sidn.metruyenchu.feedbackservice.dto.request.report.ReportFilterRequest;
 import com.sidn.metruyenchu.feedbackservice.dto.request.report.ReportUpdateRequest;
 import com.sidn.metruyenchu.feedbackservice.dto.response.ReportResponse;
+import com.sidn.metruyenchu.feedbackservice.enums.TargetType;
 import com.sidn.metruyenchu.feedbackservice.service.ReportService;
 import com.sidn.metruyenchu.shared_library.dto.BaseFilterRequest;
 import com.sidn.metruyenchu.shared_library.dto.PageResponse;
 import com.sidn.metruyenchu.shared_library.enums.feedback.AssigneeRole;
+import com.sidn.metruyenchu.shared_library.enums.feedback.ReportType;
 import com.sidn.metruyenchu.shared_library.enums.user.UserRole;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -42,6 +45,15 @@ public class ReportController {
         AssigneeRole userRole = AssigneeRole.valueOf(role.toUpperCase());
         return ApiResponse.<PageResponse<ReportResponse>>builder()
                 .result(reportService.getReportsForUser(userId, userRole, pageable))
+                .build();
+    }
+
+    @GetMapping("/filter")
+    ApiResponse<PageResponse<ReportResponse>> getReportsByFilter(
+            @ModelAttribute ReportFilterRequest filterRequest
+    ) {
+        return ApiResponse.<PageResponse<ReportResponse>>builder()
+                .result(reportService.filterReports(filterRequest))
                 .build();
     }
 
@@ -105,7 +117,6 @@ public class ReportController {
                 .build();
     }
 
-    @Operation(summary = "Tạo báo cáo")
     @PostMapping("/comment")
     ApiResponse<ReportResponse> createReportForComment(
             @Valid @RequestBody ReportCreationRequest request
@@ -128,6 +139,8 @@ public class ReportController {
     ApiResponse<ReportResponse> createReportForNovel(
             @Valid @RequestBody ReportCreationRequest request
     ) {
+        request.setReportType(ReportType.NOVEL_VIOLATION);
+        request.setTargetType(TargetType.NOVEL);
         return ApiResponse.<ReportResponse>builder()
                 .result(reportService.reportNovel(request))
                 .build();

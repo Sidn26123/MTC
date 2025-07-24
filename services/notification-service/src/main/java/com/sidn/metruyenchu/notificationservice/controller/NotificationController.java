@@ -1,6 +1,8 @@
 package com.sidn.metruyenchu.notificationservice.controller;
 
+import com.sidn.metruyenchu.notificationservice.dto.request.NotificationRequest;
 import com.sidn.metruyenchu.notificationservice.dto.response.NotificationResponse;
+import com.sidn.metruyenchu.notificationservice.mapper.NotificationMapper;
 import com.sidn.metruyenchu.notificationservice.service.NotificationService;
 import com.sidn.metruyenchu.shared_library.dto.ApiResponse;
 import com.sidn.metruyenchu.shared_library.dto.PageResponse;
@@ -21,6 +23,16 @@ import static com.sidn.metruyenchu.notificationservice.utils.TokenUtils.getUserI
 public class NotificationController {
 
     NotificationService service;
+
+    NotificationMapper mapper;
+
+    @PostMapping
+    public ApiResponse<NotificationResponse> createNotification(@RequestBody NotificationRequest request) {
+        String userId = getUserIdFromContext();
+        return ApiResponse.<NotificationResponse>builder()
+                .result(mapper.toResponse(service.createNotification(request)))
+                .build();
+    }
 
     @GetMapping
     public ApiResponse<PageResponse<NotificationResponse>> getNotifications(

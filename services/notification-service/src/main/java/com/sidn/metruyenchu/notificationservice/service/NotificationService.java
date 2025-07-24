@@ -64,9 +64,9 @@ public class NotificationService {
     private final NotificationMapper notificationMapper;
 
     public Notification createNotification(NotificationRequest dto) {
-        NotificationTemplate template = templateRepository.findByNotificationType(dto.getNotificationType().name())
-                .orElseThrow(() -> new IllegalArgumentException("Template not found"));
-        
+//        NotificationTemplate template = templateRepository.findByNotificationType(dto.getNotificationType().name())
+//                .orElseThrow(() -> new IllegalArgumentException("Template not found"));
+//
         Notification notification = new Notification();
         notification.setRecipientId(dto.getRecipientId());
         notification.setSenderId(dto.getSenderId());
@@ -81,8 +81,8 @@ public class NotificationService {
         notification.setTitle(dto.getTitle());
         notification.setContent(dto.getContent());
         notification.setActionUrl(dto.getActionUrl());
-        notification.setMetadata(dto.getMetadata());
-        notification.setPriority(dto.getPriority() != null ? dto.getPriority() : template.getDefaultPriority());
+//        notification.setMetadata(dto.getMetadata());
+        notification.setPriority(dto.getPriority() != null ? dto.getPriority() : NotificationPriority.LOW);
         notification.setScheduledAt(dto.getScheduledAt());
         Duration expiresAt = Duration.parse("PT72H");
         if (dto.getExpiresAt() != null) {
@@ -98,6 +98,8 @@ public class NotificationService {
         
         return saved;
     }
+
+
     
     void sendNotification(Notification notification) {
         NotificationPreference preference = getOrCreatePreference(notification.getRecipientId());

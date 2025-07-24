@@ -43,6 +43,7 @@ import static com.sidn.metruyenchu.feedbackservice.utils.FeignResponseUtils.call
 import static com.sidn.metruyenchu.feedbackservice.utils.FeignResponseUtils.callFeignGetNovelInfo;
 import static com.sidn.metruyenchu.feedbackservice.utils.GeneralUtils.getPageable;
 import static com.sidn.metruyenchu.feedbackservice.utils.TokenUtils.getUserIdFromContext;
+import static com.sidn.metruyenchu.shared_library.utils.PageUtils.mapBaseFilter;
 
 @Service
 @RequiredArgsConstructor
@@ -457,6 +458,17 @@ public class ReportService {
                 .targetId(chapterId)
                 .build();
         Pageable pageable = PageUtils.from(filterRequest);
+        Page<Report> reports = reportRepository.findAll(ReportSpecification.filter(request), pageable);
+
+        return PageUtils.toPageResponse(
+                reports,
+                reportMapper::toResponse,
+                pageable.getPageNumber() + 1
+        );
+    }
+
+    public PageResponse<ReportResponse> filterReports(ReportFilterRequest request) {
+        Pageable pageable = PageUtils.from(PageUtils.toBaseFilter(request));
         Page<Report> reports = reportRepository.findAll(ReportSpecification.filter(request), pageable);
 
         return PageUtils.toPageResponse(
