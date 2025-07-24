@@ -1,6 +1,6 @@
 import React from "react";
 
-const SettingsPage = () => {
+const ReportListPage = () => {
     return (
         <>
             A
@@ -8,4 +8,4 @@ const SettingsPage = () => {
     );
 }
 
-export default SettingsPage;
+export default ReportListPage;

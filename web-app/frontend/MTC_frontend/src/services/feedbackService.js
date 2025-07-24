@@ -28,16 +28,82 @@ export const getChildCommentsOfComment = (commentId, comments) => {
 }
 
 export const reportNovel = async (data) => {
-    const response = await api.post(API.FEEDBACK + "/novel", data);
+    const response = await api.post(API.REPORT + "/novel", data);
     return response;
 }
 
 export const reportComment = async (data) => {
-    const response = await api.post(API.FEEDBACK + "/comment", data);
+    const response = await api.post(API.REPORT + "/comment", data);
     return response;
 }
 
 export const reportRating = async (data) => {
-    const response = await api.post(API.FEEDBACK + "/rating", data);
+    const response = await api.post(API.REPORT + "/rating", data);
     return response;
+}
+
+export const fetchTickets = async (status) => {
+    try {
+        const res = await api.get(API.REPORT + "/filter", {
+            params: {
+                page: 0,
+                size: 10,
+                status: "PENDING",
+            },
+
+        });
+        return res;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+export const fetchMyPullReports = async () => {
+    try {
+        const res = await api.get(API.REPORT + "/filter", {
+            params: {
+                page: 0,
+                size: 10,
+
+            },
+
+        });
+        return res;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+export const fetchMyIssues = async () => {
+    try {
+        const res = await api.get(API.REPORT + "/filter", {
+            params: {
+                page: 0,
+                size: 10,
+
+            },
+
+        });
+        return res;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+export const getReportById = async (id) => {
+    try {
+        const res = await api.get(API.REPORT + "/" + id);
+        return res;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
+export const getCommentListOfReport = async (reportId) => {
+    try {
+        const res = await api.get(API.REPORT + "/report-comments/report/" + reportId);
+        return res;
+    } catch (error) {
+        console.error(error);
+    }
 }

@@ -110,7 +110,7 @@ const CategoryDropdown = ({ dropdown = [], onSelect, placeholder = "Chọn mục
     };
 
     return (
-        <div ref={dropdownRef} className="relative inline-block w-full">
+        <div ref={dropdownRef} className="relative inline-block w-full min-w-[20px]">
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="inline-flex items-center justify-between w-full text-gray-500 border border-gray-500 font-medium rounded-lg text-sm px-3 py-1.5 focus:outline-none hover:ring-1 focus:ring-1 focus:ring-gray-500"
@@ -263,4 +263,30 @@ const FormattedContent = ({ content }) => {
     );
 };
 
-export { FullScreenWrapper, SimpleDropdown, useOutsideClick, CustomDatePicker, CategoryDropdown, FormattedContent };
+
+const ExpandableText = ({ text = '', limit = 100 }) => {
+    const [expanded, setExpanded] = useState(false);
+
+    if (!text) return <span className="text-gray-400 italic">Không có mô tả</span>;
+
+    const isLongText = text.length > limit;
+    const displayedText = expanded || !isLongText ? text : text.slice(0, limit) + '...';
+
+    return (
+        <span className="text-gray-400 text-sm">
+            {displayedText}
+            {isLongText && (
+                <button
+                    onClick={() => setExpanded(!expanded)}
+                    className="ml-1 text-blue-400 hover:underline"
+                >
+                    {expanded ? 'Ẩn bớt' : 'Đọc tiếp'}
+                </button>
+            )}
+        </span>
+    );
+};
+
+
+
+export { FullScreenWrapper, SimpleDropdown, useOutsideClick, CustomDatePicker, CategoryDropdown, FormattedContent, ExpandableText};

@@ -14,7 +14,35 @@ const defaultPagination = {
 const useFeedbackStore = create((set, get) => ({
     currentNovelRating: { ...defaultPagination },
     currentNovelComments: { ...defaultPagination },
-
+    tickets: [],
+    status: [
+        {
+            name: "Tất cả",
+            id: "ALL",
+        },
+        {
+            name: "Đang xử lý",
+            id: "PROCESSING",
+        },
+        {
+            name: "Đã gửi yêu cầu",
+            id: "PENDING",
+        },
+        {
+            name: "Đã xử lý",
+            id: "DONE",
+        },
+        {
+            name: "Đã hủy",
+            id: "CANCELED",
+        },
+    ],
+    isLoading: false,
+    actions: {
+        setTickets: (tickets) => set((state) => ({
+            tickets: tickets
+        })),
+    },
     // Fetch comments
     fetchComments: async (novelId) => {
         const state = get().currentNovelComments;
@@ -99,11 +127,16 @@ const useFeedbackStore = create((set, get) => ({
 }));
 
 // Export hooks and actions
-export const useNovelFeedbackStore = useFeedbackStore;
+export default useFeedbackStore;
 
 // Selectors
 export const useCurrentNovelComments = () => useFeedbackStore((state) => state.currentNovelComments);
 export const useCurrentNovelRatings = () => useFeedbackStore((state) => state.currentNovelRating);
+export const useTickets = () => useFeedbackStore((state) => state.tickets);
+export const useTicketsStatus = () => useFeedbackStore((state) => state.status);
+export const useIsLoading = () => useFeedbackStore((state) => state.isLoading);
+export const useFetchTickets = () => useFeedbackStore((state) => state.fetchTickets);
+export const useSetTickets = () => useFeedbackStore((state) => state.actions.setTickets);
 
 // Actions
 export const fetchCommentPage = (novelId) => useFeedbackStore.getState().fetchComments(novelId);

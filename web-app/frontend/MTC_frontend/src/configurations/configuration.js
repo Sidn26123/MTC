@@ -30,6 +30,7 @@ export const API = {
     CATEGORY: NOVEL_SERVICE + "/categories",
     USER: USER_SERVICE + "/user-profiles",
     FEEDBACK: FEEDBACK_SERVICE,
+    REPORT: FEEDBACK_SERVICE + "/reports",
     FEEDBACK_RATING: FEEDBACK_SERVICE + "/ratings",
     FEEDBACK_COMMENT: FEEDBACK_SERVICE + "/comments",
     FEEDBACK_LIKE: FEEDBACK_SERVICE + "/likes",
@@ -47,3 +48,7 @@ export const API_CATEGORY = {
     WORLD_SCENES: NOVEL_SERVICE + NOVEL_CATEGORY_PREFIX + "/world-scenes",
     NOVEL_TYPES: NOVEL_SERVICE + NOVEL_CATEGORY_PREFIX + "/novel-types",
 };
+
+export const API_ENUMS = {
+
+}

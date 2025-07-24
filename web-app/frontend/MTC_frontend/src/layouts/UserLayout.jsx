@@ -21,7 +21,7 @@ const UserLayout = () => {
         <div className={"background-color "}>
             <div>
                 <UserNavbar />
-                <div className="px-20 ">
+                <div className="px-20 mt-5">
                     {/*<main className="">*/}
                         <Outlet />
                     {/*</main>*/}

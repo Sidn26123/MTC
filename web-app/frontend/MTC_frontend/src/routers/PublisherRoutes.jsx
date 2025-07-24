@@ -10,9 +10,10 @@ import AddChapterPage from '../pages/publishers/AddChapterPage.jsx';
 import ChapterList from '../pages/publishers/ChapterList.jsx';
 import ChapterEditPage from '../pages/publishers/ChapterEditPage.jsx';
 import UpdateNovelInfoPage from '../pages/publishers/UpdateNovelInfoPage.jsx';
-import ReportHandlePage from '../pages/publishers/ReportHandlePage.jsx';
+import ReportDetailPage from '../pages/publishers/ReportDetailPage.jsx';
 import DraftPage from '../pages/users/DraftPage.jsx';
 import ManageDraftPage from '../pages/users/ManageDraftPage.jsx';
+import ReportListPage from '../pages/users/ReportListPage.jsx';
 
 const publisherRoutesPrefix = "/bookhub";
 
@@ -24,11 +25,9 @@ const AdminRoutes = ({ user }) => {
                 <Route path={`${publisherRoutesPrefix}/published`} element={<PublishedNovelPage />} />
                 <Route path={`${publisherRoutesPrefix}/new`} element={<PublishNewNovel />} />
                 <Route path={`${publisherRoutesPrefix}/analytic`} element={<AnalyticsNovelPage />} />
-                <Route path={`${publisherRoutesPrefix}/bao-cao`} element={<ReportHandlePage />} />
+                <Route path={`${publisherRoutesPrefix}/bao-cao`} element={<ReportListPage />} />
+                <Route path={`${publisherRoutesPrefix}/bao-cao/:reportId`} element={<ReportDetailPage />} />
                 <Route path={`${publisherRoutesPrefix}/ho-tro`} element={<AnalyticsNovelPage />} />
-                {/*<Route path={`${publisherRoutesPrefix}/ban-nhap`} element={<ManageDraftPage />} />*/}
-                {/*<Route path={`${publisherRoutesPrefix}/ban-nhap/tao`} element={<DraftPage />} />*/}
-                {/*<Route path={`${publisherRoutesPrefix}/ban-nhap/:id`} element={<DraftPage />} />*/}
                 <Route path={`${publisherRoutesPrefix}/ban-nhap`}>
                     <Route index element={<ManageDraftPage />} /> {/* /ban-nhap */}
                     <Route path="tao" element={<DraftPage />} />   {/* /ban-nhap/tao */}

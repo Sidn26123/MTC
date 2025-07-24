@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-// function ReportHandlePage() {
+// function ReportDetailPage() {
 //     const [showRequestDetail, setShowRequestDetail] = React.useState(false);
 //
 //     return (
@@ -63,19 +63,55 @@ import React, { useState } from 'react';
 // }
 
 import { Search, ChevronDown, Lock, Image, Send, Paperclip } from "lucide-react";
+import { useParams } from 'react-router';
+import { getCommentListOfReport, getReportById } from '../../services/feedbackService.js';
+import { ExpandableText } from '../../common/CommonComponents.jsx';
+import { getProfileById } from '../../services/userService.js';
+import { useUser } from '../../stores/userStores.js';
 
-function ReportHandlePage() {
+function ReportDetailPage() {
     const [searchTerm, setSearchTerm] = useState("");
     const [commentText, setCommentText] = useState("");
+    const [reportData, setReportData] = useState(null);
+    const [handlerProfile, setHandlerProfile] = useState(null);
+    const [commentList, setCommentList] = useState([]);
+    const user = useUser();
+    const { reportId } = useParams();
+
+    useEffect(() => {
+        getReportById(reportId).then(
+            (response) => {
+                console.log("Report details:", response.data);
+                setReportData(response.data.result);
+                if (response.data.result.assignedTo) {
+                    getProfileById(response.data.result.assignedTo).then(r => {
+                        console.log("Handler profile:", r.data);
+                        setHandlerProfile(r.data.result);
+                    });
+
+                }
+            },
+
+        )
+        getCommentListOfReport(reportId).then(
+            (response) => {
+                console.log("Comments:", response.data);
+                setCommentList(response.data.result);
+            }
+        )
+    }, [reportId]);
 
     return (
         <div className="min-h-screen bg-gray-900 text-gray-100">
             {/* Header */}
             <div className="bg-gray-800 px-6 py-8">
                 <div className="max-w-7xl mx-auto">
-                    <h1 className="text-2xl font-semibold text-white mb-2">Yêu cầu & Báo cáo</h1>
+                    <h1 className="text-2xl font-semibold text-white mb-2">
+                        Yêu cầu & Báo cáo
+                    </h1>
                     <p className="text-gray-400">
-                        Nơi tạo yêu cầu và xử lý các vấn đề liên quan tới truyện.
+                        Nơi tạo yêu cầu và xử lý các vấn đề liên quan tới
+                        truyện.
                     </p>
                 </div>
             </div>
@@ -87,27 +123,28 @@ function ReportHandlePage() {
                         Tạo Mới
                     </button>
 
-                    <div className="flex items-center gap-4">
-                        <div className="relative">
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                            <input
-                                type="text"
-                                placeholder="Tên truyện"
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="bg-gray-700 border border-gray-600 rounded-md pl-10 pr-4 py-2 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent w-64"
-                            />
-                        </div>
+                    {/*Trang chi tiết mở comment ra*/}
+                    {/*<div className="flex items-center gap-4">*/}
+                    {/*    <div className="relative">*/}
+                    {/*        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />*/}
+                    {/*        <input*/}
+                    {/*            type="text"*/}
+                    {/*            placeholder="Tên truyện"*/}
+                    {/*            value={searchTerm}*/}
+                    {/*            onChange={(e) => setSearchTerm(e.target.value)}*/}
+                    {/*            className="bg-gray-700 border border-gray-600 rounded-md pl-10 pr-4 py-2 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent w-64"*/}
+                    {/*        />*/}
+                    {/*    </div>*/}
 
-                        <div className="relative">
-                            <select className="bg-gray-700 border border-gray-600 rounded-md px-4 py-2 text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500 appearance-none pr-10">
-                                <option>Yêu cầu đã đóng</option>
-                                <option>Yêu cầu mở</option>
-                                <option>Tất cả yêu cầu</option>
-                            </select>
-                            <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />
-                        </div>
-                    </div>
+                    {/*    <div className="relative">*/}
+                    {/*        <select className="bg-gray-700 border border-gray-600 rounded-md px-4 py-2 text-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500 appearance-none pr-10">*/}
+                    {/*            <option>Yêu cầu đã đóng</option>*/}
+                    {/*            <option>Yêu cầu mở</option>*/}
+                    {/*            <option>Tất cả yêu cầu</option>*/}
+                    {/*        </select>*/}
+                    {/*        <ChevronDown className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 pointer-events-none" />*/}
+                    {/*    </div>*/}
+                    {/*</div>*/}
                 </div>
             </div>
 
@@ -116,25 +153,42 @@ function ReportHandlePage() {
                 <div className="w-80 space-y-4">
                     <div className="bg-gray-800 rounded-lg">
                         <div className="p-4 border-b border-gray-700">
-                            <h3 className="font-semibold text-gray-200">TIÊU ĐỀ</h3>
+                            <h3 className="font-semibold text-gray-200">
+                                TIÊU ĐỀ
+                            </h3>
                         </div>
                         <div className="p-4">
                             <div className="bg-gray-700 rounded-md p-3">
-                                <h4 className="text-orange-400 font-medium mb-1">Yêu cầu hoặc liên hệ khác</h4>
-                                <p className="text-gray-400 text-sm">
-                                    - E muốn góp ý 1 chút về phần lấy danh sách chương....
-                                </p>
+                                {reportData && (
+                                    <h4 className="text-orange-400 font-medium mb-1">
+                                        {reportData.title}
+                                    </h4>
+                                )}
+                                {reportData && (
+                                    <p className="text-gray-400 text-sm">
+                                        {reportData.description ? (
+                                            <ExpandableText
+                                                text={reportData.description}
+                                                limit={120}
+                                            />
+                                        ) : (
+                                            'Không có mô tả'
+                                        )}
+                                    </p>
+                                )}
                             </div>
                         </div>
                     </div>
 
                     <div className="bg-gray-800 rounded-lg">
                         <div className="p-4 border-b border-gray-700">
-                            <h3 className="font-semibold text-gray-200">TÌNH TRẠNG</h3>
+                            <h3 className="font-semibold text-gray-200">
+                                TÌNH TRẠNG
+                            </h3>
                         </div>
                         <div className="p-4">
                             <div className="bg-orange-600 text-white text-center py-2 rounded-md text-sm font-medium">
-                                Đã xử lý và đóng
+                                {reportData ? reportData.status : 'Đang xử lý'}
                             </div>
                         </div>
                     </div>
@@ -153,10 +207,16 @@ function ReportHandlePage() {
                                 />
                                 <div>
                                     <div className="flex items-center gap-2">
-                                        <span className="font-semibold text-white">Sidnn</span>
-                                        <span className="text-gray-400 text-sm">(ID: 1034366)</span>
+                                        <span className="font-semibold text-white">
+                                            Sidnn
+                                        </span>
+                                        <span className="text-gray-400 text-sm">
+                                            (ID: {user.id})
+                                        </span>
                                     </div>
-                                    <div className="text-gray-400 text-sm">00:53 - 23/03/2025</div>
+                                    <div className="text-gray-400 text-sm">
+                                        00:53 - 23/03/2025
+                                    </div>
                                 </div>
                             </div>
 
@@ -165,41 +225,63 @@ function ReportHandlePage() {
                             </button>
                         </div>
 
-                        <h2 className="text-xl font-semibold text-white mb-4">Yêu Cầu Hoặc Liên Hệ Khác</h2>
+                        <h2 className="text-xl font-semibold text-white mb-4">
+                            Yêu Cầu Hoặc Liên Hệ Khác
+                        </h2>
 
                         <div className="text-gray-300 leading-relaxed">
                             <p>
-                                E muốn góp ý 1 chút về phần lấy danh sách chương. Hiện tại thì web đang lấy 1 lần toàn bộ danh sách
-                                chương, nên dẫn đến hiện tượng UI phải chờ rất lâu để lấy được danh sách chương của các truyện nhiều
-                                chương, sau đó thì rất lạc thì phải load nhiều dữ liệu. E muốn góp ý các ad có thể paging nó ra hoặc 1
-                                lần lấy 100 chương gì đó a.
+                                E muốn góp ý 1 chút về phần lấy danh sách
+                                chương. Hiện tại thì web đang lấy 1 lần toàn bộ
+                                danh sách chương, nên dẫn đến hiện tượng UI phải
+                                chờ rất lâu để lấy được danh sách chương của các
+                                truyện nhiều chương, sau đó thì rất lạc thì phải
+                                load nhiều dữ liệu. E muốn góp ý các ad có thể
+                                paging nó ra hoặc 1 lần lấy 100 chương gì đó a.
                             </p>
                         </div>
-
+                        {/* Người xử lý report*/}
                         <div className="flex items-center gap-2 mt-4">
-                            <Image src="/placeholder.svg?height=24&width=24" alt="Clark avatar" className="w-6 h-6 rounded-full" />
-                            <span className="text-orange-400 text-sm">Clark đang xử lý</span>
+                            <Image
+                                src= {handlerProfile ? handlerProfile.avatar : "/placeholder.svg?height=40&width=40"}
+
+                                alt="Avatar"
+                                className="w-6 h-6 rounded-full"
+                            />
+                            <span className="text-orange-400 text-sm">
+                                {handlerProfile ? handlerProfile.username : 'Đang chờ'}
+                            </span>
                         </div>
                     </div>
 
                     {/* Comments Section */}
                     <div className="p-6">
-                        <h3 className="text-lg font-semibold text-white mb-4">Bình luận</h3>
+                        <h3 className="text-lg font-semibold text-white mb-4">
+                            Bình luận
+                        </h3>
 
                         <div className="flex items-start gap-3 mb-6">
-                            <Image src="/placeholder.svg?height=40&width=40" alt="User avatar" className="w-10 h-10 rounded-full" />
+                            <Image
+                                src="/placeholder.svg?height=40&width=40"
+                                alt="User avatar"
+                                className="w-10 h-10 rounded-full"
+                            />
                             <div className="flex-1">
-                <textarea
-                    value={commentText}
-                    onChange={(e) => setCommentText(e.target.value)}
-                    placeholder="Viết bình luận..."
-                    className="w-full bg-gray-700 border border-gray-600 rounded-md p-3 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
-                    rows={3}
-                />
+                                <textarea
+                                    value={commentText}
+                                    onChange={(e) =>
+                                        setCommentText(e.target.value)
+                                    }
+                                    placeholder="Viết bình luận..."
+                                    className="w-full bg-gray-700 border border-gray-600 rounded-md p-3 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
+                                    rows={3}
+                                />
                                 <div className="flex items-center justify-between mt-3">
                                     <button className="flex items-center gap-2 text-gray-400 hover:text-gray-300 transition-colors">
                                         <Paperclip className="w-4 h-4" />
-                                        <span className="text-sm">Đính kèm hình ảnh (tối đa 3)</span>
+                                        <span className="text-sm">
+                                            Đính kèm hình ảnh (tối đa 3)
+                                        </span>
                                     </button>
                                     <button className="bg-orange-600 hover:bg-orange-700 text-white p-2 rounded-full transition-colors">
                                         <Send className="w-4 h-4" />
@@ -218,8 +300,12 @@ function ReportHandlePage() {
                                 />
                                 <div className="flex-1">
                                     <div className="flex items-center gap-2 mb-1">
-                                        <span className="font-semibold text-white">Clark</span>
-                                        <span className="text-gray-400 text-sm">09:10 - 24/03/2025</span>
+                                        <span className="font-semibold text-white">
+                                            Clark
+                                        </span>
+                                        <span className="text-gray-400 text-sm">
+                                            09:10 - 24/03/2025
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -230,7 +316,7 @@ function ReportHandlePage() {
         </div>
     );
 }
-export default ReportHandlePage;
+export default ReportDetailPage;
 
 const RequestState = () => {
     return (
