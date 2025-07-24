@@ -12,6 +12,7 @@ import NovelOverviewPage from "../pages/novels/NovelOverviewPage.jsx";
 import NovelListPage from '../pages/novels/NovelListPage.jsx';
 import ProtectedRoute from '../components/global/ProtectedRoute.jsx';
 import RAGApp from '../components/chatbot/RagApp.jsx';
+import PaymentSuccess from "../pages/users/PaymentSuccess.jsx";
 
 const UserRoutes = ({user}) => {
     return (
@@ -29,6 +30,7 @@ const UserRoutes = ({user}) => {
                 <Route path="/nap-tien" element={<DonatePage />} />
                 <Route path="/chatbot" element={<RAGApp />} />
             </Route>
+            <Route path="/payment-success" element={<PaymentSuccess />} />
         </Route>
     );
 };
