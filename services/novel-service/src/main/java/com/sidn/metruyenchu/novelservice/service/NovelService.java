@@ -69,8 +69,10 @@ public class NovelService {
     public PageResponse<NovelResponse> getNovels(
             NovelFilterRequest request
     ) {
-        Pageable pageable = PageUtils.from(request);
+        log.info("{} {}", request.getPage(), request.getSize());
 
+        Pageable pageable = PageUtils.from(request);
+        log.info("{} {}", pageable.getPageSize(), pageable.getPageNumber());
         Page<Novel> novels = novelRepository.findAll(NovelSpecification.filter(request), pageable);
 
 
@@ -748,5 +750,25 @@ public class NovelService {
     public Novel findEntityById(String novelId) {
         return novelRepository.findById(novelId)
                     .orElseThrow(() -> new AppException(ErrorCode.NOVEL_NOT_FOUND));
+    }
+
+    public PageResponse<NovelResponse> getMyNovels(BaseFilterRequest request) {
+        NovelFilterRequest novelFilterRequest = NovelFilterRequest.builder()
+                .authorId(getUserIdFromToken(getTokenFromContext()))
+                .build();
+
+        //remove de test utils mapbasefilter
+//        novelFilterRequest.setPage(request.getPage());
+//        novelFilterRequest.setSize(request.getSize());
+//        novelFilterRequest.setSortBy(request.getSortBy());
+//        novelFilterRequest.setSortDirection(request.getSortDirection());
+
+        PageUtils.mapBaseFilter(request, novelFilterRequest);
+        return getNovelWithFilter(novelFilterRequest);
+    }
+
+    public List<NovelResponse> getAllMyNovels() {
+        String publisherId = getUserIdFromToken(getTokenFromContext());
+        return novelMapper.toNovelResponses(novelRepository.findAllByCurrentPublisher(publisherId));
     }
 }

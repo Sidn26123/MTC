@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -23,6 +24,7 @@ public interface NovelRepository extends JpaRepository<Novel, String>, JpaSpecif
 
     Optional<Novel> findByAuthorId(String authorId);
 
+    List<Novel> findAllByCurrentPublisher(String publisherId);
 
 //    @Query("SELECT n FROM Novel n WHERE n.name LIKE %:searchText% OR n.author.name LIKE %:searchText% AND n.isDeleted = false")
 //    Page<Novel> findByFilter(NovelFilterRequest request, Pageable pageable);

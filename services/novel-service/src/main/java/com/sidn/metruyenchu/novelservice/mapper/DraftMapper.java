@@ -26,6 +26,7 @@ public interface DraftMapper {
     @Mapping(source = "state", target = "state")
     DraftResponse toResponse(Draft draft);
 
+    List<DraftResponse> toResponse(List<Draft> drafts);
     @Mapping(target = "novel", ignore = true)
     @Mapping(target = "chapter", ignore = true)
     void updateEntity(@MappingTarget Draft draft, DraftUpdateRequest request);

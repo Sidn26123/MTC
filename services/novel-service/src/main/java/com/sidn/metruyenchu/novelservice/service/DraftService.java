@@ -23,6 +23,10 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
+import static com.sidn.metruyenchu.novelservice.utils.TokenUtils.getUserIdFromContext;
+
 
 @Service
 @RequiredArgsConstructor
@@ -50,6 +54,10 @@ public class DraftService {
 
     @Transactional
     public DraftResponse createDraft(DraftCreationRequest request) {
+        if (request.getPublisher() == null){
+            request.setPublisher(getUserIdFromContext());
+        }
+
         var draft = draftMapper.toEntity(request);
 
         if (request.getNovelId() != null) {
@@ -92,5 +100,13 @@ public class DraftService {
         }
 
         return draftMapper.toResponse(draftRepository.save(draft));
+    }
+
+    public List<DraftResponse> getAllMyDrafts() {
+        String publisherId = getUserIdFromContext();
+
+        List<Draft> data = draftRepository.findByPublisherAndIsDeletedFalseOrderByUpdatedAtDesc(publisherId);
+
+        return draftMapper.toResponse(data);
     }
 }

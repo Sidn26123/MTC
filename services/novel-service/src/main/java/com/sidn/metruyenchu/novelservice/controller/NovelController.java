@@ -285,4 +285,21 @@ public class NovelController {
                 .build();
     }
 
+    @GetMapping("/my/novels")
+    ApiResponse<PageResponse<NovelResponse>> getMyNovels(
+            @ModelAttribute BaseFilterRequest request
+    ) {
+        return ApiResponse.<PageResponse<NovelResponse>>builder()
+                .result(novelService.getMyNovels(request))
+                .build();
+    }
+
+    @GetMapping("/my/novels/all")
+    ApiResponse<List<NovelResponse>> getAllMyNovels(
+    ) {
+
+        return ApiResponse.<List<NovelResponse>>builder()
+                .result(novelService.getAllMyNovels())
+                .build();
+    }
 }
