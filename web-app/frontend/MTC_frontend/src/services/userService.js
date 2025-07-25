@@ -10,7 +10,7 @@ export const getMyInfo = async () => {
     //         Authorization: `Bearer ${getToken()}`,
     //     },
     // });
-    return await api.get(API.MY_INFO);
+    return await api.get(API.MY_INFO + "/me");
 };
 
 export const getProfileById = async (userId) => {

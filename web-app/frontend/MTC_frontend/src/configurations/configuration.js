@@ -1,6 +1,6 @@
-// const API_GATEWAY = 'http://localhost:8889/api/v1';
+const API_GATEWAY = 'http://localhost:8889/api/v1';
 // const API_GATEWAY = 'http://localhost:8100/';
-const API_GATEWAY = 'http://192.168.1.3:8889/api/v1';
+// const API_GATEWAY = 'http://192.168.1.3:8889/api/v1';
 
 const IDENTITY_SERVICE = API_GATEWAY + '/identity';
 const NOVEL_SERVICE = API_GATEWAY + '/novel';
