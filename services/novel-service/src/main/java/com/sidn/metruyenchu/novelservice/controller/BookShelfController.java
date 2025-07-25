@@ -48,6 +48,14 @@ public class BookShelfController {
                 .build();
     }
 
+    @GetMapping("/me")
+    public ApiResponse<BookShelfResponse> getMyCurrentActiveBookShelf() {
+        return ApiResponse.<BookShelfResponse>builder()
+                .result(bookShelfService.getMyCurrentActiveBookShelf())
+                .build();
+    }
+
+
     @GetMapping("/{bookShelfId}")
     public ApiResponse<BookShelfResponse> getBookShelf(@PathVariable String bookShelfId) {
         return ApiResponse.<BookShelfResponse>builder()

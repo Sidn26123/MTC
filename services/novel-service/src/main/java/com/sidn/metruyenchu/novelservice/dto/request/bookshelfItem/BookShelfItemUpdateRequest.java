@@ -13,4 +13,5 @@ public class BookShelfItemUpdateRequest {
     String novelId;
     Integer currentChapterIdx;
     Boolean isDeleted;
+    Boolean isNoticed;
 }

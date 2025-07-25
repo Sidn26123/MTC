@@ -15,6 +15,9 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import static com.sidn.metruyenchu.novelservice.utils.TokenUtils.getTokenFromContext;
+import static com.sidn.metruyenchu.shared_library.utils.TokenUtils.getUserIdFromToken;
+
 @RestController
 @RequestMapping("/bookshelfs/marked-novels")
 @RequiredArgsConstructor
@@ -33,6 +36,16 @@ public class MarkedNovelController {
     public ApiResponse<MarkedNovelResponse> createMarkedNovel(@Valid @RequestBody MarkedNovelCreateRequest request) {
         return ApiResponse.<MarkedNovelResponse>builder()
                 .result(markedNovelService.createMarkedNovel(request))
+                .build();
+    }
+
+    @GetMapping("/me")
+    public ApiResponse<PageResponse<MarkedNovelResponse>> getMyMarkedNovels(@ModelAttribute BaseFilterRequest request) {
+        log.info("Get marked novel by id: {}", request);
+
+        String userId = getUserIdFromToken(getTokenFromContext());
+        return ApiResponse.<PageResponse<MarkedNovelResponse>>builder()
+                .result(markedNovelService.getMyMarkedNovels(request))
                 .build();
     }
 
@@ -75,6 +88,8 @@ public class MarkedNovelController {
                 .result(markedNovelService.getAllByUserId(userId, page, size))
                 .build();
     }
+
+
 
     /**
      * Cập nhật truyện đã đánh dấu
