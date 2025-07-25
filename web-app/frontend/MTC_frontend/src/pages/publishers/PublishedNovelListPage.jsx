@@ -39,7 +39,6 @@ function PublishedNovelPage() {
                 size,
             };
             const response = await getFilteredNovels(filter);
-            console.log(response.data.result.totalPages);
             setMyPublishedNovels(response.data.result);
             setPageData({
                 currentPage: page,
@@ -76,15 +75,11 @@ export default PublishedNovelPage;
 const PublishedNovelTable = ({ novels, pageData, setPageData, fetchNovels }) => {
     const novelProgressStatus = useNovelProgressStatus();
     const handleChangePage = (page) => {
-        console.log("Changing page to:", page);
         setPageData((prev) => ({ ...prev, currentPage: page }));
-        // fetchNovels(page, pageData.pageSize);
     };
 
     const handlePageSizeChange = (newSize) => {
-        console.log("Changing page size to:", newSize);
         setPageData((prev) => ({ ...prev, pageSize: newSize, currentPage: 1 }));
-        // fetchNovels(1, newSize);
     };
 
     return (
@@ -182,9 +177,9 @@ const SpecItem = ({ data, novel }) => {
     const navigate = useNavigate();
     const setCurrentChosenPublishedNovel = useSetPublishedByPublisher();
     const setCurrentPublishedNovel = useSetCurrentPublishedNovel();
+
     function handleGotoChapterList() {
         setCurrentChosenPublishedNovel(novel.id);
-        console.log("novel: ", novel);
         setCurrentPublishedNovel(novel);
         navigate(`/bookhub/novels/${novel.slug}/chapters`);
     }

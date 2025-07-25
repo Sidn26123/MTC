@@ -36,7 +36,7 @@ const DefaultNavigator = ({data, goNext, goBack, goFirst, goLast}) => {
 
 
 const PageNavigator = ({
-                           page = 0,
+                           page = 1,
                            pageSize = 10,
                            totalPages = 1,
                            totalElements = 0,
@@ -53,7 +53,7 @@ const PageNavigator = ({
 
     // Update state when props change
     useEffect(() => {
-        setCurrentPage(page);
+        setCurrentPage(page-1);
         setInputPage(page.toString());
     }, [page]);
 
@@ -69,15 +69,15 @@ const PageNavigator = ({
     };
 
     const handlePreviousPage = () => {
-        if (currentPage > 1) {
-            changePage(currentPage - 1);
+        if (currentPage > 0) {
+            changePage(currentPage);
         }
     };
 
     const handleNextPage = () => {
-        console.log(currentPage, totalPages);
-        if (currentPage < totalPages) {
-            changePage(currentPage + 1);
+        if (currentPage < totalPages - 1) {
+            changePage(currentPage + 2);
+
         }
     };
 
@@ -133,9 +133,12 @@ const PageNavigator = ({
         let newPageSize = parseInt(currentPageSize, 10);
 
         // Validate the page size
-        if (isNaN(newPageSize) || newPageSize < 1) {
+        if (isNaN(newPageSize)) {
             newPageSize = 10; // Default page size
-        } else if (newPageSize > 100) {
+        } else if (newPageSize < 1) {
+            newPageSize = 1; // Min page size
+        }
+        else if (newPageSize > 100) {
             newPageSize = 100; // Max page size
         }
 

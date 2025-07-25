@@ -16,6 +16,7 @@ export const getNovelBySlug = async (slug) => {
 }
 
 export const getFilteredNovels = async (filter) => {
+    console.log("getFilteredNovels", filter);
     const response = await api.post(API.NOVEL + "/novels/filter", filter);
     return response;    
 };
@@ -32,3 +33,4 @@ export const getAllMyNovels = async () => {
     return response;
 }
 
+// export const getJustReadNovel = async

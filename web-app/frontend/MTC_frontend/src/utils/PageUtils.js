@@ -11,12 +11,20 @@ export const extractPageData = (data, excludedFields = []) => {
     );
 };
 
-export const initPageData = () => {
-    return {
-        page: 1,
-        size: 10,
-        totalPages: 0,
-        totalItems: 0,
-        items: [],
-    };
-}
+// export const initPageData = () => {
+//     return {
+//         page: 0,
+//         size: 10,
+//         totalPages: 0,
+//         totalItems: 0,
+//         items: [],
+//     };
+// }
+
+export const initPageData = () => ({
+    page: 1,
+    size: 10,
+    totalPages: 0,
+    totalItems: 0,
+    items: [],
+});

@@ -26,12 +26,14 @@ import { getProfileById } from '../../services/userService.js';
 import { sendRating } from '../../services/feedbackService.js';
 import { fetchCommentPage, useCurrentNovelComments } from '../../stores/feedbackStore.js';
 import { UserReply } from '../../components/feedbacks/Reply.jsx';
+import { getUserIdFromContext } from '../../services/authenticationService.js';
 
 const NovelOverviewPage= () => {
     const [mode, setMode] = React.useState("rating");
     const [showReport, setShowReport] = React.useState(false);
     const { slug } = useParams();
     const currentNovel = useCurrentNovel();
+    console.log("currentNovel", currentNovel);
     const setCurrentNovel = useSetCurrentNovel();
     const currentNovelComments = useCurrentNovelComments();
     console.log("currentNovelComments", currentNovelComments);
@@ -562,6 +564,7 @@ const NovelStat = (novel) => {
 }
 
 const NovelRating = (novel) => {
+    novel = novel.novel;
     const [mainCharacterRateContent, setMainCharacterRateContent] = useState("");
     const [novelContentRateContent, setNovelContentRateContent] = useState("");
     const [worldContentRateContent, setWorldContentRateContent] = useState("");
@@ -579,7 +582,7 @@ const NovelRating = (novel) => {
 
     const handleRating = async () => {
         const ratingData = {
-            rating: ratingValue,
+            rate: ratingValue,
             ...(isOnlyRating
                 ? {}
                 : {
@@ -588,7 +591,9 @@ const NovelRating = (novel) => {
                     // worldContent: worldContentRateContent,
                     content: ratingDetailContent,
                     ratingInNovelId: novel.id,
-                    lastReadChapterId: novel.id
+                    // lastReadChapterId: novel.id,
+                    novelId: novel.id,
+                    ratedBy: getUserIdFromContext(),
                 })
         };
 

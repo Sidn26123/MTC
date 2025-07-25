@@ -287,6 +287,25 @@ const ExpandableText = ({ text = '', limit = 100 }) => {
     );
 };
 
+export const NovelCoverImage_S = ({ src, alt, onClick }) => {
+    return (
+        <img
+            className={
+                'w-10 h-15 shadow-lg rounded mx-auto'
+            }
+            src={src}
+            alt={alt}
+        ></img>
+    );
+};
 
 
-export { FullScreenWrapper, SimpleDropdown, useOutsideClick, CustomDatePicker, CategoryDropdown, FormattedContent, ExpandableText};
+export {
+    FullScreenWrapper,
+    SimpleDropdown,
+    useOutsideClick,
+    CustomDatePicker,
+    CategoryDropdown,
+    FormattedContent,
+    ExpandableText
+};

@@ -2,7 +2,15 @@ import api from '../middlewares/axios.js';
 import { API } from '../configurations/configuration.js';
 
 export const sendRating = async (rating) => {
-    const response = await api.post(API.FEEDBACK_RATING, rating);
+    console.log("Sending rating:", rating);
+    try{
+        const response = await api.post(API.FEEDBACK_RATING, rating);
+
+    }
+    catch (error) {
+        console.error("Error sending rating:", error);
+        throw error; // Re-throw the error for further handling if needed
+    }
     return response;
 }
 

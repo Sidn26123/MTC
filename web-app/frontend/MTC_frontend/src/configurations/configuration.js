@@ -34,6 +34,8 @@ export const API = {
     FEEDBACK_RATING: FEEDBACK_SERVICE + "/ratings",
     FEEDBACK_COMMENT: FEEDBACK_SERVICE + "/comments",
     FEEDBACK_LIKE: FEEDBACK_SERVICE + "/likes",
+    BOOKSHELF: NOVEL_SERVICE + "/bookshelfs",
+    BOOKMARKED: NOVEL_SERVICE + "/bookshelfs/marked-novels",
 
 }
 
