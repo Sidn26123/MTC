@@ -300,12 +300,14 @@ public class WalletService {
     public void initializeWalletForUser(String userId) {
         //currency list
         List<Currency> currencies = currenciesRepository.findAllByCurrencyStatus(CurrencyStatus.ACTIVE);
-
         for (Currency currency : currencies) {
+
             // Check if wallet already exists
             Optional<Wallet> existingWallet = walletRepository.findByUserIdAndCurrencyId(userId, currency.getId());
+            log.info("ex: {}", currency.getId());
             if (existingWallet.isPresent()) {
                 continue; // Wallet already exists, skip creation
+
             }
 
             // Create a new wallet for each active currency
@@ -317,6 +319,8 @@ public class WalletService {
                     .build();
 
             walletRepository.save(newWallet);
+
+
         }
 
         // Create a new wallet with zero balance

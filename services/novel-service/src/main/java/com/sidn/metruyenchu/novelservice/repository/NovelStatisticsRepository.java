@@ -185,7 +185,7 @@ public interface NovelStatisticsRepository extends JpaRepository<Novel, String> 
 //    List<TopNovelDto> getTopNovelsByBookmarks(Pageable pageable);
 
     @Query(value = """
-    SELECT n.id, n.name, n.slug, n.total_bookmarks, n.total_views, n.avg_rate,
+    SELECT n.id, n.name, n.slug,n.novel_cover_image, n.total_bookmarks, n.total_views, n.avg_rate, n.total_promotions
            ROW_NUMBER() OVER (ORDER BY n.total_bookmarks DESC) AS rank
     FROM novel n
     WHERE n.is_deleted = false
@@ -202,6 +202,23 @@ public interface NovelStatisticsRepository extends JpaRepository<Novel, String> 
     @Query("SELECT SUM(c.wordCount) FROM Chapter c WHERE c.createdAt BETWEEN :startTime AND :endTime AND c.isDeleted = false")
     Long getWordCountBetween(@Param("startTime") LocalDateTime startTime,
                              @Param("endTime") LocalDateTime endTime);
+
+//    @Query(value = """
+//    SELECT n.id, n.name, n.slug, n.total_bookmarks, n.total_views, n.avg_rate, n.total_promotions,
+//           ROW_NUMBER() OVER (ORDER BY n.total_promotions DESC) AS rank
+//    FROM novel n
+//    WHERE n.is_deleted = false
+//    ORDER BY n.total_promotions ASC
+//    LIMIT :limit
+//    """, nativeQuery = true)
+    @Query(value = """
+        SELECT n.id, n.name, n.slug, n.novel_cover_image, n.total_bookmarks, n.total_views, n.avg_rate, n.total_promotions
+        FROM novel n
+        WHERE n.is_deleted = false
+        ORDER BY n.total_promotions DESC
+        LIMIT :limit
+        """, nativeQuery = true)
+    List<Object[]> getTopNovelsByPromotions(int limit);
 
     // Novel completion statistics
 //    @Query("SELECT new com.example.dto.NovelCompletionDto(n.id, n.name, " +

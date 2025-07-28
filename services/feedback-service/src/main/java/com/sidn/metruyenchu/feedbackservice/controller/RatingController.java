@@ -27,6 +27,7 @@ public class RatingController {
     @PostMapping()
     ApiResponse<RatingResponse> createReview(@Valid @RequestBody RatingCreationRequest request) {
         ApiResponse<RatingResponse> apiResponse = new ApiResponse<>();
+        log.info("Creating review with request: {}", request);
         apiResponse.setResult(reviewService.createReview(request));
         return apiResponse;
     }

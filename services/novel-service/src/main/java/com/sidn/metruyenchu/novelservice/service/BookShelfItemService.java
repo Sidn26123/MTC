@@ -128,7 +128,7 @@ public class BookShelfItemService {
     // Delete item from bookshelf (hard delete luôn) với điều kiện là item có novelId
     public void deleteBookShelfItemByNovelId(String bookShelfId, String novelId) {
         BookShelfItem item = bookShelfItemRepository.findByNovelId(novelId)
-                .orElseThrow((a) -> new AppException(ErrorCode.BOOKSHELF_ITEM_NOT_FOUND));
+                .orElseThrow(() -> new AppException(ErrorCode.BOOKSHELF_ITEM_NOT_FOUND));
 
         item.setIsDeleted(true); // Đánh dấu là đã xoá
         try {

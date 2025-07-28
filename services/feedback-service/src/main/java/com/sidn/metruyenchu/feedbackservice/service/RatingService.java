@@ -70,28 +70,30 @@ public class RatingService {
     public RatingResponse createReview(RatingCreationRequest request){
         String userId = getUserIdFromToken(getTokenFromContext());
         request.setRatedBy(userId);
+        log.info("Creating rating with request: {}", request);
+
         //Kiểm tra novel và chapter có tồn tại không
         //Kiểm tra chapter có thuộc novel không
-        if (request.getNovelId() == null || request.getLastReadChapterId() == null){
+        if (request.getNovelId() == null || request.getLastReadChapterIdx() == null){
             throw new AppException(ErrorCode.OBJECT_NOT_FOUND);
         }
 
-        NovelResponse novelResponse = callFeignGetNovelInfo(novelClient, request.getNovelId()).getResult();
-        ChapterResponse chapterResponse = callFeignGetChapterInfo(novelClient, request.getLastReadChapterId()).getResult();
-
-        if (novelResponse == null || chapterResponse == null){
-            throw new AppException(ErrorCode.OBJECT_NOT_FOUND);
-        }
-
-        if (!Objects.equals(chapterResponse.getNovel(), request.getNovelId())){
-            throw new AppException(ErrorCode.CHAPTER_NOT_BELONG_TO_NOVEL);
-        }
+//        NovelResponse novelResponse = callFeignGetNovelInfo(novelClient, request.getNovelId()).getResult();
+//        ChapterResponse chapterResponse = callFeignGetChapterInfo(novelClient, request.getLastReadChapterId()).getResult();
+//        if (novelResponse == null || chapterResponse == null){
+//            throw new AppException(ErrorCode.OBJECT_NOT_FOUND);
+//        }
+//
+//        if (!Objects.equals(chapterResponse.getNovel(), request.getNovelId())){
+//            throw new AppException(ErrorCode.CHAPTER_NOT_BELONG_TO_NOVEL);
+//        }
 
 //        if (chapterResponse.getChapterIdx() < novelResponse.getChapterReadToComment())
 
         var rating = ratingMapper.toEntity(request);
 
         try{
+            log.info("{}", rating);
             rating = ratingRepository.save(rating);
             log.info("Rating created with id: {}", rating.getId());
             novelClient.ratingNovel(

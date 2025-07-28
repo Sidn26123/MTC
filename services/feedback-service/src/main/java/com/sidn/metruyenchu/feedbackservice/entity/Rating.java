@@ -29,6 +29,7 @@ public class Rating {
 
     String lastReadChapterId;
 
+    Integer lastReadChapterIdx;
 
     @Column(nullable = false)
     Float rate;

@@ -6,6 +6,7 @@ import com.sidn.metruyenchu.novelservice.dto.request.chapter.*;
 import com.sidn.metruyenchu.novelservice.dto.response.chapter.ChapterResponse;
 import com.sidn.metruyenchu.novelservice.dto.response.chapter.ChapterContentResponse;
 import com.sidn.metruyenchu.novelservice.dto.response.chapter.ChapterListResponse;
+import com.sidn.metruyenchu.novelservice.dto.response.chapter.TopChapterResponse;
 import com.sidn.metruyenchu.novelservice.service.ChapterService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -166,6 +167,15 @@ public class ChapterController {
                 .result(chapterService.navigateChapter(request))
                 .build();
     };
+
+    @GetMapping("/top/published")
+    ApiResponse<List<TopChapterResponse>> getTopPublishedChapters(
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
+        return ApiResponse.<List<TopChapterResponse>>builder()
+                .result(chapterService.findNTopLastedChaptersByNovelId(size))
+                .build();
+    }
 
 
 

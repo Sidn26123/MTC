@@ -19,6 +19,11 @@ import java.util.List;
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
 @Entity
+@Table(indexes = {
+        @Index(name = "idx_chapter_novel_published", columnList = "novel_id, published_at"),
+        @Index(name = "idx_chapter_status_flags", columnList = "is_deleted, is_published, is_public"),
+        @Index(name = "idx_chapter_published", columnList = "published_at")
+})
 public class Chapter {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

@@ -7,17 +7,14 @@ import com.sidn.metruyenchu.novelservice.dto.request.bookshelfItem.BookShelfItem
 import com.sidn.metruyenchu.novelservice.dto.request.chapter.*;
 import com.sidn.metruyenchu.novelservice.dto.request.chapter.mongo.ReadingLogCreateRequest;
 import com.sidn.metruyenchu.novelservice.dto.response.bookshelfItem.BookShelfItemResponse;
-import com.sidn.metruyenchu.novelservice.dto.response.chapter.ChapterResponse;
-import com.sidn.metruyenchu.novelservice.dto.response.chapter.ChapterStatusResponse;
-import com.sidn.metruyenchu.novelservice.dto.response.chapter.ChapterContentResponse;
-import com.sidn.metruyenchu.novelservice.dto.response.chapter.ChapterListResponse;
-import com.sidn.metruyenchu.novelservice.dto.response.chapter.ChapterPublishCheckResponse;
+import com.sidn.metruyenchu.novelservice.dto.response.chapter.*;
 import com.sidn.metruyenchu.novelservice.entity.*;
 import com.sidn.metruyenchu.novelservice.enums.ChapterState;
 import com.sidn.metruyenchu.novelservice.enums.NovelVisibility;
 import com.sidn.metruyenchu.novelservice.exception.AppException;
 import com.sidn.metruyenchu.novelservice.exception.ErrorCode;
 import com.sidn.metruyenchu.novelservice.mapper.ChapterMapper;
+import com.sidn.metruyenchu.novelservice.mapper.NovelMapper;
 import com.sidn.metruyenchu.novelservice.repository.ChapterRepository;
 import com.sidn.metruyenchu.novelservice.repository.ChapterStatusDetailRepository;
 import com.sidn.metruyenchu.novelservice.repository.ChapterStatusRepository;
@@ -56,6 +53,7 @@ public class ChapterService {
     NovelRepository novelRepository;
 //    NovelService novelService;
     ChapterMapper  chapterMapper;
+    NovelMapper novelMapper;
     ChapterStatusRepository chapterStatusRepository;
     ChapterStatusDetailRepository chapterStatusDetailRepository;
     FileClient fileClient;
@@ -459,6 +457,8 @@ public class ChapterService {
 
         checkUserCanReadChapterThrow(chapter, userId);
 
+        
+
         return chapterMapper.toChapterContentResponse(chapter);
     }
 
@@ -633,7 +633,6 @@ public class ChapterService {
         if (bookShelf == null) {
             throw new AppException(ErrorCode.BOOKSHELF_NOT_FOUND);
         }
-        log.info("BookShelf: {}", bookShelf.getId());
         //Nếu chưa có trong bookshelf thì tao moi
         BookShelfItem bookShelfItem = bookShelfItemService.getBookShelfItemOfUser(
                 BookShelfItemGetRequest.builder()
@@ -642,8 +641,8 @@ public class ChapterService {
                         .userId(request.getUserId())
                         .build()
         );
-        log.info("BookShelfItem: {}", bookShelfItem);
         BookShelfItemResponse bookShelfItemResponse = null;
+        log.info("{}", bookShelfItem);
         if (bookShelfItem == null) {
             bookShelfItemResponse = bookShelfItemService.addItemToBookShelf(
                     bookShelf.getId(),
@@ -664,13 +663,14 @@ public class ChapterService {
                             .currentChapterIdx(request.getCurrentChapterIdx())
                             .build()
             );
-            log.info("BookShelfItemResponse: {}", bookShelfItemResponse);
+            log.info("BookShelfItemResponse update: {} - {}",bookShelfItemResponse.getId(), bookShelfItemResponse.getCurrentChapterIdx());
         }
         return null;
     }
 
 
     public Void navigateChapter(ChapterNavigationRequest request) {
+        log.info("Navigate chapter request: {}", request);
         Chapter chapter = chapterRepository.findByIdAndIsDeletedIsFalse(request.getChapterId())
                 .orElseThrow(() -> new AppException(ErrorCode.CHAPTER_NOT_FOUND));
         Novel novel = chapter.getNovel();
@@ -711,5 +711,21 @@ public class ChapterService {
     public Chapter findEntityById(String chapterId) {
         return chapterRepository.findByIdAndIsDeletedIsFalse(chapterId)
                 .orElseThrow(() -> new AppException(ErrorCode.CHAPTER_NOT_FOUND));
+    }
+
+    public List<TopChapterResponse> findNTopLastedChaptersByNovelId(int n) {
+        List<Chapter> chapters = chapterRepository.findTopNLatestPublishedChaptersPerNovel(n);
+        List<TopChapterResponse> topChapters = new ArrayList<>();
+        for (Chapter chapter : chapters) {
+            TopChapterResponse topChapter = TopChapterResponse.builder()
+                    .id(chapter.getId())
+                    .name(chapter.getName())
+                    .chapterIdx(chapter.getChapterIdx())
+                    .createdAt(chapter.getCreatedAt())
+                    .novel(novelMapper.toNovelResponse(chapter.getNovel()))
+                    .build();
+            topChapters.add(topChapter);
+        }
+        return topChapters;
     }
 }

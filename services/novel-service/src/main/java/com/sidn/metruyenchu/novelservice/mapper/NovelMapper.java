@@ -2,6 +2,7 @@ package com.sidn.metruyenchu.novelservice.mapper;
 
 import com.sidn.metruyenchu.novelservice.dto.request.novel.NovelCreationRequest;
 import com.sidn.metruyenchu.novelservice.dto.request.novel.NovelUpdateRequest;
+import com.sidn.metruyenchu.novelservice.dto.request.statistic.TopNovelDto;
 import com.sidn.metruyenchu.novelservice.dto.response.novel.NovelResponse;
 import com.sidn.metruyenchu.novelservice.entity.Novel;
 import org.mapstruct.Mapper;
@@ -41,4 +42,8 @@ public interface NovelMapper {
 
     @Mapping(target = "status", ignore = true)
     void updateNovel(@MappingTarget Novel novel, NovelUpdateRequest request);
+
+    TopNovelDto toTopNovelDto(Object object);
+
+    List<TopNovelDto> toTopNovelDtos(List<Object> objects);
 }

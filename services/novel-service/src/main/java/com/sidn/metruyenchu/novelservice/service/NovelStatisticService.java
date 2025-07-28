@@ -91,13 +91,32 @@ public class NovelStatisticService {
                         (String) row[0], // novelId
                         (String) row[1], // title
                         (String) row[2], // slug
-                        ((Number) row[3]).longValue(), // bookmarks
-                        ((Number) row[4]).longValue(), // views
-                        ((Number) row[5]).floatValue(), // avgRate
-                        ((Number) row[6]).intValue()    // rank
+                        (String) row[3],
+                        ((Number) row[4]).longValue(), // bookmarks
+                        ((Number) row[5]).longValue(), // views
+                        ((Number) row[6]).floatValue(), // avgRate
+                        ((Number) row[7]).intValue(),    // rank
+                        ((Number) row[8]).intValue()     // totalPromotions
                 ))
                 .toList();
         return topNovels;
+    }
+
+    public List<TopNovelDto> getTopNovelsByPromotions(int limit) {
+        List<Object[]> raw = novelRepository.getTopNovelsByPromotions(limit);
+        return raw.stream()
+                .map(row -> new TopNovelDto(
+                        (String) row[0], // novelId
+                        (String) row[1], // title
+                        (String) row[2], // slug
+                        (String) row[3],
+                        ((Number) row[4]).longValue(), // bookmarks
+                        ((Number) row[5]).longValue(), // views
+                        ((Number) row[6]).floatValue(), // avgRate
+                        0,    // rank
+                        ((Number) row[7]).intValue()     // totalPromotions
+                ))
+                .collect(Collectors.toList());
     }
 
     public Long getTotalWordCount() {
