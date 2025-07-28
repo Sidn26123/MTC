@@ -34,3 +34,14 @@ export const getAllMyNovels = async () => {
 }
 
 // export const getJustReadNovel = async
+
+export const getTopPromotionNovels = async () => {
+    const response = await api.get(API.NOVEL + "/novel-statistic/top/promotions",
+        {
+            params: {
+                page: 1,
+                limit: 10
+            }
+        });
+    return response;
+}

@@ -56,24 +56,14 @@ export function OverviewStats() {
             value: "0",
             iconColor: "bg-red-600",
         },
-        {
-            icon: <Gift className="w-5 h-5" />,
-            label: "Được tặng quà 0 lần",
-            value: "0",
-            iconColor: "bg-green-600",
-        },
+
         {
             icon: <Users className="w-5 h-5" />,
             label: "0 người đang theo dõi",
             value: "0",
             iconColor: "bg-gray-600",
         },
-        {
-            icon: <DollarSign className="w-5 h-5" />,
-            label: "Tổng tiền được tặng 0 đ",
-            value: "0 đ",
-            iconColor: "bg-blue-600",
-        },
+
         {
             icon: <Bookmark className="w-5 h-5" />,
             label: "Đánh dấu 0 lượt",
@@ -101,7 +91,7 @@ export function OverviewStats() {
     ]
 
     return (
-        <div className="bg-gray-800 rounded-lg p-6">
+        <div className="bg-gray-600 rounded-lg p-6">
             <div className="mb-6">
                 <h2 className="text-xl font-semibold text-white">Thống kê tổng</h2>
                 <p className="text-gray-400">Truyện Mới</p>

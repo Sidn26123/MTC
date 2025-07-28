@@ -15,6 +15,7 @@ import RAGApp from '../components/chatbot/RagApp.jsx';
 import MyReportPage from '../pages/users/MyReportPage.jsx';
 import ReportDetailPage from '../pages/publishers/ReportDetailPage.jsx';
 import NotificationListPage from '../pages/users/NotificationListPage.jsx';
+import DonateChoosePage from '../pages/users/DonateChoosePage.jsx';
 
 const UserRoutes = ({user}) => {
     return (
@@ -30,6 +31,7 @@ const UserRoutes = ({user}) => {
                 <Route path="/tu-truyen" element={<MyBookShelfPage />} />
                 <Route path="/lich-su-giao-dich" element={<PaymentHistoryPage />} />
                 <Route path="/nap-tien" element={<DonatePage />} />
+                <Route path="/nap-tien/chi-tiet" element={<DonateChoosePage />} />
                 <Route path="/yeu-cau-ho-tro" element={<MyReportPage />} />
                 <Route path="/yeu-cau-ho-tro/:reportId" element={<ReportDetailPage />} />
                 <Route path="/thong-bao" element={<NotificationListPage />} />

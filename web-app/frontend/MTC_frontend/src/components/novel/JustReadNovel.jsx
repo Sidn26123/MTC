@@ -4,10 +4,12 @@ import { deleteBookshelfItem, getBookshelfItems } from '../../services/bookshelf
 import { timeAgo } from '../../utils/DatetimeUtil.js';
 import { faX } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { useUser } from '../../stores/userStores.js';
 
 function JustReadNovel() {
     const navigate = useNavigate();
     const [data, setData] = React.useState([]);
+    const user = useUser();
     const page = {
         page:0,
         size:5,
@@ -16,9 +18,10 @@ function JustReadNovel() {
     }
 
     useEffect(() => {
-        getBookshelfItems("693fdba8-5657-4625-8fd9-1c9f7bbbb5d5", page).then((response) => {
+        getBookshelfItems(user.id, page).then((response) => {
             if (response.data.result) {
                 setData(response.data.result);
+
                 console.log("Fetched novels:", response.data.result);
 
             } else {
@@ -27,8 +30,8 @@ function JustReadNovel() {
         })
     }, []);
 
-    function handleDeleteItem(id) {
-        deleteBookshelfItem(id, data.novel.id).then((response) => {
+    function handleDeleteItem(id, novelId) {
+        deleteBookshelfItem(id, novelId).then((response) => {
             if (response.data.result) {
                 console.log("Deleted bookshelf item successfully");
                 // Optionally, you can refresh the bookshelf items
@@ -82,7 +85,7 @@ function JustReadNovel() {
                                 <td className="px-6 py-4 text-right w-1/8">
                                     <FontAwesomeIcon
                                         icon={faX}
-                                        onClick={() => handleDeleteItem(data.id, data.novel.id)}
+                                        onClick={() => handleDeleteItem(item.id, item.novel.id)}
                                         className={'mr-3 hover:cursor-pointer'}
                                     />
                                 </td>

@@ -43,7 +43,6 @@ const NovelListPage = () => {
     const handleFilter = () => {
 
         getFilteredNovels(extractFiltersFromStore()).then(r => {
-            console.log("NovelListPage -> handleFilter -> r", r);
             setListNovel(r.data.result);
 
         });
@@ -57,7 +56,7 @@ const NovelListPage = () => {
 
     return (
         <>
-            <div className={'mx-24'}>
+            <div className={''}>
                 <div className={'mb-5'}>
                     <AdvertiseItem />
 
@@ -114,7 +113,7 @@ const NovelItem = ({ novel }) => {
                             // href="https://metruyencv.com/truyen/quy-bi-chi-chu"
                             // href = {`${novel.novelCoverImage}`}
                             // target="_blank"
-                            to = {`https://metruyencv.com/truyen/${novel.slug}`}
+                            to = {`truyen/${novel.slug}`}
                         >
                             <img
                                 className="h-32 w-24 shadow-xl rounded"

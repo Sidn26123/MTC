@@ -18,7 +18,8 @@ const ChapterList = () => {
             try {
                 const filter = { novelId: currentPublishedNovelChosen.id };
                 const response = await getFilteredChapters(filter);
-                console.log("Res: ", response.data.result);
+                console.log("Res: ", currentPublishedNovelChosen);
+
                 setCurrentChapterList(response.data.result);
             } catch (err) {
             }
@@ -36,11 +37,11 @@ const ChapterList = () => {
                         {/*Head part*/}
                         <div className={"flex flex-row justify-between items-center"}>
                             <div className={"flex flex-col"}>
-                                <span className={"text-lg"}>Danh sach chuong</span>
-                                <span className={"text-gray-500"}>Truyen dau tien</span>
+                                <span className={"text-lg"}>Danh sách chương</span>
+                                <span className={"text-gray-500"}>Cửu Tinh Bá Thể Quyết</span>
                             </div>
                             <div className={"flex flex-row gap-x-2"}>
-                                <Link to={'/bookhub/books/1/update'}>
+                                <Link to={'/bookhub/novels/1/update'}>
                                     <button
                                         className={'bg-cus-gray w-full text-white rounded-md p-2 hover:bg-yellow-500 focus:outline-none focus:ring-0 hover:cursor-pointer'}
 
@@ -102,13 +103,13 @@ const ChapterList = () => {
                                         STT
                                     </th>
                                     <th scope="col" className="px-6 py-3">
-                                        TEN CHUONG
+                                        TÊN CHƯƠNG
                                     </th>
                                     <th scope="col" className="px-6 py-3">
-                                        XUAT BAN LUC
+                                        XUẤT BẢN LÚC
                                     </th>
                                     <th scope="col" className="px-6 py-3">
-                                        SO TU
+                                        SỐ TỪ
                                     </th>
                                     <th scope="col" className="px-6 py-3">
                                         LƯỢT ĐỌC
@@ -135,7 +136,7 @@ const ChapterList = () => {
                                                     : 'Chưa xuất bản'}
                                             </td>
                                             <td className="px-6 py-4">
-                                                {chapter.wordCount ?? '—'}
+                                                {chapter.totalWorlds ?? '20'}
                                             </td>
                                             <td className="px-6 py-4">
                                                 {chapter.viewCount ?? 0}

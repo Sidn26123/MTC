@@ -15,6 +15,8 @@ import { getNovelProgressStatus } from '../../services/novelFilterService.js';
 import { useSetNovelStatus } from '../../stores/selectors/novelFilterSelector.js';
 import { getNovels } from '../../services/novelService.js';
 import { useSetListNovel } from '../../stores/novelStore.js';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCoins } from '@fortawesome/free-solid-svg-icons';
 
 function Navbar() {
     const [isDropdownOpen, setDropdownOpen] = useState(false);
@@ -193,7 +195,7 @@ function Navbar() {
                                             {user.avatarPath ? (
                                                 <>
                                                     <img
-                                                        className="w-8 h-8 rounded-full"
+                                                        className="w-10 h-10 rounded-full"
                                                         src="http://localhost:8889/api/v1/file/files/media/download/3557eebf-d947-4716-88ac-2ad9b7295a88.png"
                                                         alt="user"
                                                     />
@@ -201,7 +203,7 @@ function Navbar() {
                                             ) : (
                                                 <>
                                                     <img
-                                                        className="w-8 h-8 rounded-full"
+                                                        className="w-10 h-10 rounded-full"
                                                         alt="user"
                                                     />
                                                 </>
@@ -216,9 +218,23 @@ function Navbar() {
                                                         {user.username}
                                                     </span>
                                                 </Link>
-                                                <span className="block text-sm text-gray-500 truncate dark:text-gray-400">
-                                                    Cấp {user.level}
-                                                </span>
+                                                <div
+                                                    className={
+                                                        'flex flex-row py-2'
+                                                    }
+                                                >
+                                                    <span className="block text-sm text-gray-500 truncate dark:text-gray-400">
+                                                        Cấp {user.level}
+                                                    </span>
+                                                    <Link
+                                                        to={'/thong-bao'}
+                                                        title="Xem tất cả thông báo"
+                                                        className="bg-red-700 inline-flex items-center justify-center w-6 h-6 ms-2 text-xs font-semibold text-white rounded-full"
+                                                        data-x-text="$store.account.userData.unread_notifications_count"
+                                                    >
+                                                        20
+                                                    </Link>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -305,14 +321,14 @@ function Navbar() {
                                     {/*</div>*/}
 
                                     <ul className="px-8 list-disc pl-[10px] marker:mr-[4px] text-sm text-gray-200 space-y-1">
-                                        <li className="ml-3 border-b-1 border-gray-500/25 py-[3px]">
-                                            <Link
-                                                to="/nang-cap-tai-khoan"
-                                                className="block"
-                                            >
-                                                Nâng cấp tài khoản
-                                            </Link>
-                                        </li>
+                                        {/*<li className="ml-3 border-b-1 border-gray-500/25 py-[3px]">*/}
+                                        {/*    <Link*/}
+                                        {/*        to="/nang-cap-tai-khoan"*/}
+                                        {/*        className="block"*/}
+                                        {/*    >*/}
+                                        {/*        Nâng cấp tài khoản*/}
+                                        {/*    </Link>*/}
+                                        {/*</li>*/}
                                         <li className="ml-3 border-b-1 border-gray-500/25 py-[3px]">
                                             <Link
                                                 to="/tu-truyen"
@@ -351,18 +367,33 @@ function Navbar() {
 
                                     <div className="flex flex-col list-none">
                                         <div>
-                                            <li className="block px-4 py-2 text-gray-700 hover:bg-gray-400">
+                                            <li className="block px-4 py-2 text-gray-200 hover:bg-gray-400">
                                                 Túi
                                             </li>
                                         </div>
                                         <div className="flex flex-col w-full px-4">
-                                            <div className="flex flex-row justify-between">
-                                                <li>A:</li>
-                                                <li className="pr-10">B:</li>
-                                            </div>
-                                            <div className="flex flex-row justify-between">
-                                                <li>C:</li>
-                                                <li className="pr-10">D:</li>
+                                            <div className="flex flex-row justify-between ml-5 mr-10">
+                                                {/*<li>A:</li>*/}
+                                                <li className="pr-10">
+                                                    <FontAwesomeIcon icon={faCoins} />: 0
+                                                </li>
+                                                <li className={"flex flex-row"}>
+                                                    <svg
+                                                        className="w-5 h-5 text-primary"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        viewBox="0 0 24 24"
+                                                        fill="currentColor"
+                                                        aria-hidden="true"
+                                                        data-slot="icon"
+                                                    >
+                                                        <path
+                                                            fillRule="evenodd"
+                                                            d="M1.5 6.375c0-1.036.84-1.875 1.875-1.875h17.25c1.035 0 1.875.84 1.875 1.875v3.026a.75.75 0 0 1-.375.65 2.249 2.249 0 0 0 0 3.898.75.75 0 0 1 .375.65v3.026c0 1.035-.84 1.875-1.875 1.875H3.375A1.875 1.875 0 0 1 1.5 17.625v-3.026a.75.75 0 0 1 .374-.65 2.249 2.249 0 0 0 0-3.898.75.75 0 0 1-.374-.65V6.375Zm15-1.125a.75.75 0 0 1 .75.75v.75a.75.75 0 0 1-1.5 0V6a.75.75 0 0 1 .75-.75Zm.75 4.5a.75.75 0 0 0-1.5 0v.75a.75.75 0 0 0 1.5 0v-.75Zm-.75 3a.75.75 0 0 1 .75.75v.75a.75.75 0 0 1-1.5 0v-.75a.75.75 0 0 1 .75-.75Zm.75 4.5a.75.75 0 0 0-1.5 0V18a.75.75 0 0 0 1.5 0v-.75ZM6 12a.75.75 0 0 1 .75-.75H12a.75.75 0 0 1 0 1.5H6.75A.75.75 0 0 1 6 12Zm.75 2.25a.75.75 0 0 0 0 1.5h3a.75.75 0 0 0 0-1.5h-3Z"
+                                                            clipRule="evenodd"
+                                                        ></path>
+                                                    </svg>
+                                                    :12
+                                                </li>
                                             </div>
                                         </div>
                                     </div>

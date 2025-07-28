@@ -4,11 +4,14 @@ import { faThumbsUp } from '@fortawesome/free-solid-svg-icons';
 import { Reply, UserReply } from './Reply.jsx';
 import { getProfileById } from '../../services/userService.js';
 import { timeAgo } from '../../utils/DatetimeUtil.js';
+import { getFullPathOfAvatar } from '../../utils/ProfileUtils.js';
 
 function UserComment({ comment }) {
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
     const [isReplyOpen, setIsReplyOpen] = React.useState(true);
     const [userCommentProfile, setUserCommentProfile] = React.useState(null);
+    const [profile, setProfile] = useState({});
+
     const sampleData = {
         // onRemove: () => alert("Xóa bình luận"),
         // onReport: () => alert("Báo cáo bình luận"),
@@ -31,6 +34,15 @@ function UserComment({ comment }) {
     function timeUtil(timestamp){
         return timeAgo(new Date(timestamp));
     }
+    useEffect(() => {
+        getProfileById(comment.commentedBy).then(r => {
+            if (r.data.result) {
+                setProfile(r.data.result);
+            } else {
+                console.error("Failed to fetch profile data.");
+            }
+        })
+    }, []);
     return (
         <>
             <div>
@@ -42,7 +54,7 @@ function UserComment({ comment }) {
                             <p className="inline-flex items-center mr-3 text-sm text-gray-200">
                                 <img
                                     className="mr-2 w-6 h-6 rounded-full"
-                                    src="https://static.cdnno.com/user/3e51ba7aa3469845e79f046a025ac3f6/200.jpg?1736056051"
+                                    src={profile && getFullPathOfAvatar(profile.avatarPath)}
                                     alt="Dương Khai"
                                 />
                                 {userCommentProfile && userCommentProfile.username && (
@@ -104,7 +116,7 @@ function UserComment({ comment }) {
                         <div className="flex space-x-6">
                             <div className="flex items-center space-x-1 text-xs text-gray-500 hover:underline">
                                 <FontAwesomeIcon icon={faThumbsUp} />
-                                <span>0</span>
+                                <span>{comment.totalLikes}</span>
                                 <span className="hidden md:inline-flex">Thích</span>
                             </div>
                             <div className="text-xs text-gray-500 hover:underline">
@@ -115,26 +127,27 @@ function UserComment({ comment }) {
                                     <path strokeLinecap="round" strokeLinejoin="round"
                                           d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z"></path>
                                   </svg>
-                                  <span>0</span>
+                                  <span>{comment.totalComments}</span>
                                   <span className="hidden md:inline-flex">Trả lời</span>
                                 </span>
                             </div>
                         </div>
-                        <div className="w-52 md:w-60 text-right ">
-                            <div className="text-muted truncate text-xs">Chương 1: Trọng sinh, Tô Tiểu Tình cùng long
-                                phượng thai bảo bảo còn sống
-                            </div>
-                        </div>
+                        {/*<div className="w-52 md:w-60 text-right ">*/}
+                        {/*    <div className="text-muted truncate text-xs">Chương 1: Trọng sinh, Tô Tiểu Tình cùng long*/}
+                        {/*        phượng thai bảo bảo còn sống*/}
+                        {/*    </div>*/}
+                        {/*</div>*/}
                     </div>
                 </article>
-                {!isReplyOpen && (
+                {!isReplyOpen && comment.totalComments > 0 && (
                     <div className="ml-12 mb-4" onClick={() => setIsReplyOpen(true)}>
-                        <button className="font-bold text-sm">Xem 9 trả lời
+                        <button className="font-bold text-sm">
+                            Xem {comment.totalComments} trả lời
                         </button>
                     </div>
                 )}
 
-                {isReplyOpen && (
+                {isReplyOpen && comment.totalComments > 0 &&(
                     <div className={'ml-12'}>
                         <Reply />
                         <UserReply />

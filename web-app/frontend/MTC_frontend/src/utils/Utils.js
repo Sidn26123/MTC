@@ -13,3 +13,10 @@ export const getObjectFromList = (list, key, value) => {
     return list.find(item => item[key] === value) || null;
 }
 
+//Lam tron 2 con so sau dau .
+export const roundToTwoDecimalPlaces = (num) => {
+    if (typeof num !== 'number') {
+        throw new Error("Invalid number provided");
+    }
+    return Math.round((num + Number.EPSILON) * 100) / 100;
+}

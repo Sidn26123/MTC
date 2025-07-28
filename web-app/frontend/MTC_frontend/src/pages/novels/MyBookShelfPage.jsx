@@ -28,6 +28,8 @@ import { timeAgo } from '../../utils/DatetimeUtil.js';
 import { PageNavigator } from '../../components/global/Navigators.jsx';
 import { NovelCoverImage_S } from '../../common/CommonComponents.jsx';
 import { initPageData } from '../../utils/PageUtils.js';
+import useUserStore, { useUser } from '../../stores/userStores.js';
+import { useNavigate } from 'react-router';
 
 function MyBookShelfPage() {
     const [tab, setTab] = React.useState(0);
@@ -41,7 +43,7 @@ function MyBookShelfPage() {
     return (
         <>
             <div className={"flex flex-col"}>
-                <div className={"px-20 mt-5"}>
+                <div className={"mt-5"}>
                     {/*Quang cao*/}
                     <div className={"bg-gray-700 min-h-[120px]"}>
 
@@ -76,9 +78,10 @@ function ReadingNovels() {
     const currentBookshelf = useCurrentBookshelf();
     const setBookshelfItems = useSetBookshelfItems();
     const [pageData, setPageData] = useState(initPageData());
-
+    const user = useUserStore((state) => state.user);
+    console.log("Current user:", currentBookshelf.id);
     useEffect(() => {
-        getBookshelfItems("693fdba8-5657-4625-8fd9-1c9f7bbbb5d5", pageData).then((response) => {
+        getBookshelfItems(currentBookshelf.id, pageData).then((response) => {
             if (response.data.result) {
                 setBookshelfItems(response.data.result);
                 console.log("Fetched novels:", response.data.result);
@@ -159,6 +162,7 @@ function NavigationBar() {
 
 function BookShelfNovelCard({data}) {
     console.log(data);
+    const navigate = useNavigate();
     const handleUpdateNotice = (novelId, isNoticed) => {
         const payload = {
             isNoticed: isNoticed
@@ -186,12 +190,20 @@ function BookShelfNovelCard({data}) {
         });
     }
 
+    const handleGotoNovel = () => {
+        navigate(`/truyen/${data.novel.slug}/chuong-${data.currentChapterIdx}`, {
+            state: {
+                from: 'MyBookShelfPage'
+            }
+        })
+    }
     return (
         <>
             <div
                 className={
                     'relative overflow-x-auto shadow-md sm:rounded-lg select-none'
                 }
+                onClick={handleGotoNovel}
             >
                 <div
                     className={
@@ -215,13 +227,13 @@ function BookShelfNovelCard({data}) {
                         <div className={'flex flex-col'}>
                             <div className={'truncate'}>{data.novel.name}</div>
                             <div className={'text-gray-500 text-sm my-2'}>
-                                Đã đọc: {data.currentChapterIdx}/
-                                {data.novel.totalChapters}
+                                Đã đọc: {data.currentChapterIdx && data.currentChapterIdx}/
+                                {data.novel.totalChapters && data.novel.totalChapters}
                             </div>
                         </div>
                     </div>
                     <div className={'w-1/10 text-gray-500 text-xs'}>
-                        {timeAgo(data.lastReadAt)}
+                        {data.lastReadAt && timeAgo(data.lastReadAt)}
                     </div>
                     <div className={'w-1/10 justify-end'}>
                         <FontAwesomeIcon

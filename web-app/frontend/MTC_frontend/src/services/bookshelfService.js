@@ -15,7 +15,7 @@ export const getBookshelfItems = async (bookshelfId, data) => {
 }
 
 export const getItemOfBookshelfByNovelId = async (bookshelfId, novelId) => {
-    const response = await api.get(API.BOOKSHELF + bookshelfId + "/items/" + novelId);
+    const response = await api.get(API.BOOKSHELF + "/" + bookshelfId + "/items/" + novelId);
     return response;
 }
 
@@ -50,3 +50,4 @@ export const updateBookshelfItem = async (bookshelfId, data) => {
     const response = await api.put(API.BOOKSHELF + "/items/" + bookshelfId , data);
     return response;
 }
+

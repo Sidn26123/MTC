@@ -58,6 +58,10 @@ export const getCurrentPublisherChapter = async (novelId, limit) => {
     return response;
 }
 
+export const getChapterById = async (chapterId) => {
+    // return getCurrentPublisherChapter()
+}
+
 export const getPublishedByPublisher = async (publisherId, limit) => {
     let url = `${API.NOVEL}/novels/filter`;
     let response = await api.post(
@@ -87,5 +91,29 @@ export const uploadChapter = async (data) => {
 export const uploadChapters = async (data) => {
     const response = await api.post(API.CHAPTER + "/createMany", data);
 
+    return response;
+}
+
+export const getChapterByNovelSlugAndIdx = async (novelSlug, chapterIdx) => {
+
+}
+
+export const navigateToChapter = async (novelId, chapterId, data) => {
+    const response = await api.post(`${API.CHAPTER}/novel/${novelId}/chapter/${chapterId}/navigation`, data)
+    console.log("Navigate to chapter response: ", response);
+    return response
+}
+
+export const startReadChapter = async (chapterId, data) => {
+    const response = await api.post(`${API.CHAPTER}/${chapterId}/read`, data)
+}
+
+export const getJustPublishedChapters = async (page, size) => {
+    const response = await api.get(`${API.CHAPTER}/top/published`, {
+        params: {
+            page: page,
+            size: size
+        }
+    });
     return response;
 }

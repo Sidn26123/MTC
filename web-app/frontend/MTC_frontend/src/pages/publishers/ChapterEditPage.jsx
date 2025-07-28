@@ -10,7 +10,7 @@ const ChapterEditPage = () => {
                 <div>
                     <div className={'flex flex-col'}>
                         <div className={"flex flex-col bg-background-light rounded-md p-5 mt-2"}>
-                            <h2>Truyen Dau Tien</h2>
+                            <h2>Cửu Tinh Bá Thể Quyết</h2>
                             <span>Chuong 1 So</span>
                             <div className={"flex flex-col gap-y-2 mt-5"}>
                                 <span>STT</span>

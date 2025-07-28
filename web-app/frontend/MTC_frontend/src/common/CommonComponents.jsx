@@ -267,6 +267,9 @@ const FormattedContent = ({ content }) => {
 const ExpandableText = ({ text = '', limit = 100 }) => {
     const [expanded, setExpanded] = useState(false);
 
+    if (text.length > limit) {
+        setCanExpand(true);
+    }
     if (!text) return <span className="text-gray-400 italic">Không có mô tả</span>;
 
     const isLongText = text.length > limit;

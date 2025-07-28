@@ -5,32 +5,41 @@ import EditorRecommend from "../../components/novel/EditorRecommend.jsx";
 import JustPublishChapterNovel from "../../components/novel/JustPublishedChapterNovel.jsx";
 import JustPublishedChapterNovel from "../../components/novel/JustPublishedChapterNovel.jsx";
 import TopRankNovel from "../../components/novel/TopRankNovel.jsx";
+import AdvertiseItem from '../../components/global/AdvertiseItem.jsx';
+import JustFinishedNovelPanel from '../../components/novel/JustFinishedNovelPanel.jsx';
+import ReviewList from '../../components/novel/ReviewList.jsx';
+import ReaderConfigModal from '../../components/common/ReadingConfigModel.jsx';
 function Home() {
+    const [showModal, setShowModal] = React.useState(true);
+
+
     return (
         <>
-            <div className={"px-20 mt-5"}>
+            <div className={"mt-5"}>
                 {/*Quang cao*/}
-                <div className={"bg-gray-700 min-h-[120px]"}></div>
+                <div className={"bg-gray-700 min-h-[120px]"}>
+                    <AdvertiseItem />
+                </div>
                 <div>
                     <JustReadNovel />
                 </div>
                 <div>
                     <EditorRecommend />
                 </div>
-                <div className={"flex flex-row flex-1 mt-2"}>
-                    <div className={"flex w-1/2 mr-2"}>
+                <div className="flex flex-row flex-1 mt-2 justify-center">
+                    <div className={"flex"}>
                         <TopRankNovel/>
-
-                    </div>
-                    <div className={"flex w-1/2"}>
-                        <TopRankNovel/>
-
                     </div>
                 </div>
                 <div>
-                    <JustPublishedChapterNovel/>
+                    {/*<JustPublishedChapterNovel/>*/}
                 </div>
-
+                <div>
+                    <JustFinishedNovelPanel />
+                </div>
+                <div>
+                    <ReviewList />
+                </div>
             </div>
 
         </>

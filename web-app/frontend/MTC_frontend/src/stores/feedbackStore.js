@@ -42,7 +42,9 @@ const useFeedbackStore = create((set, get) => ({
         setTickets: (tickets) => set((state) => ({
             tickets: tickets
         })),
-    },
+        setCurrentNovelRating: (pagination) => set({ currentNovelRating: pagination }),
+
+},
     // Fetch comments
     fetchComments: async (novelId) => {
         const state = get().currentNovelComments;
@@ -140,5 +142,6 @@ export const useSetTickets = () => useFeedbackStore((state) => state.actions.set
 
 // Actions
 export const fetchCommentPage = (novelId) => useFeedbackStore.getState().fetchComments(novelId);
-export const fetchNextRatingPage = (novelId) => useFeedbackStore.getState().fetchRatings(novelId);
+export const fetchRatingPage = (novelId) => useFeedbackStore.getState().fetchRatings(novelId);
 export const resetFeedback = () => useFeedbackStore.getState().resetFeedback();
+export const useSetCurrentNovelRating = () => useFeedbackStore((state) => state.actions.setCurrentNovelRating);

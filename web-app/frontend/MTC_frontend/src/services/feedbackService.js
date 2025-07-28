@@ -8,14 +8,14 @@ export const sendRating = async (rating) => {
 
     }
     catch (error) {
-        console.error("Error sending rating:", error);
         throw error; // Re-throw the error for further handling if needed
     }
     return response;
 }
 
 export const getRatingOfNovel = async (novelId) => {
-    const response = await api.get(API.FEEDBACK_RATING + '/' + novelId);
+    console.log("Fetching rating for novel with ID:", novelId);
+    const response = await api.get(API.FEEDBACK_RATING + '/novel/' + novelId);
     return response;
 }
 

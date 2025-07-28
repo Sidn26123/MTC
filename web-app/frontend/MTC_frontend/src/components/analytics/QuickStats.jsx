@@ -20,22 +20,18 @@ function StatItem({ label, value, hasInfo = false }) {
 
 export function QuickStats() {
     return (
-        <div className="bg-gray-800 rounded-lg p-6 mb-8">
+        <div className="bg-gray-600 rounded-lg p-6 mb-8">
             <h2 className="text-xl font-semibold text-white mb-6">Thống kê nhanh tháng này</h2>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <div className="space-y-1">
                     <StatItem label="Lượt đọc chương mới: 0" value="" hasInfo />
-                    <StatItem label="Giả lượt đọc chương mới: 3" value="" hasInfo />
                     <StatItem label="Lượt đọc chương cũ: 0" value="" hasInfo />
-                    <StatItem label="Giả lượt đọc chương cũ: 3" value="" hasInfo />
                 </div>
 
                 <div className="space-y-1">
                     <StatItem label="Tiền lượt đọc tháng: 0 đ" value="" hasInfo />
                     <StatItem label="Tiền mở khóa tháng: 0 đ" value="" />
-                    <StatItem label="Tiền tặng quà tháng: 0 đ" value="" />
-                    <StatItem label="Tiền danh hiệu tháng: 0 đ" value="" />
                 </div>
             </div>
         </div>
