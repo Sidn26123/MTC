@@ -79,9 +79,9 @@ function ReadingNovels() {
     const setBookshelfItems = useSetBookshelfItems();
     const [pageData, setPageData] = useState(initPageData());
     const user = useUserStore((state) => state.user);
-    console.log("Current user:", currentBookshelf.id);
     useEffect(() => {
         getBookshelfItems(currentBookshelf.id, pageData).then((response) => {
+            console.log("Fetching bookshelf items with page data:", currentBookshelf.id);
             if (response.data.result) {
                 setBookshelfItems(response.data.result);
                 console.log("Fetched novels:", response.data.result);

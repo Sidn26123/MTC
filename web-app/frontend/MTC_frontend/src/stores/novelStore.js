@@ -28,6 +28,7 @@ const userNovelStore = create((set) => ({
     bookMark: { ...defaultPagination },
     publishedByPublisher: { ...defaultPagination },
     justFinishedNovelList: { ...defaultPagination },
+    bestNovel : [],
     actions: {
         setCurrentNovel: (novel) => set(() => ({
             current: { ...novel }
@@ -118,6 +119,9 @@ const userNovelStore = create((set) => ({
         setJustFinishedNovelList: (paginationData) => set(() => ({
             justFinishedNovelList: paginationData
         })),
+        setBestNovel: (bestNovel) => set(() => ({
+            bestNovel: bestNovel
+        })),
 
 
         resetCurrentNovel: () => set(() => ({
@@ -189,3 +193,5 @@ export const useCurrentNovelSlug = () => userNovelStore((state) => state.current
 export const useSetListNovel = () => userNovelStore((state) => state.actions.setListNovel);
 
 export const useSetJustFinishedNovelList = () => userNovelStore((state) => state.actions.setJustFinishedNovelList);
+export const useBestNovel = () => userNovelStore((state) => state.bestNovel);
+export const useSetBestNovel = () => userNovelStore((state) => state.actions.setBestNovel);

@@ -14,7 +14,10 @@ export const getNovelBySlug = async (slug) => {
     const response = await api.get(API.NOVEL + "/novels/" + slug);
     return response;
 }
-
+export const getNovelById = async (id) => {
+    const response = await api.get(API.NOVEL + "/novels/id/" + id);
+    return response;
+}
 export const getFilteredNovels = async (filter) => {
     console.log("getFilteredNovels", filter);
     const response = await api.post(API.NOVEL + "/novels/filter", filter);
@@ -45,3 +48,14 @@ export const getTopPromotionNovels = async () => {
         });
     return response;
 }
+
+export const getBestNovels = async () => {
+    const response = await api.get(API.NOVEL + "/novels/top/best",
+        {
+            params: {
+                limit: 10
+            }
+        });
+    return response;
+}
+

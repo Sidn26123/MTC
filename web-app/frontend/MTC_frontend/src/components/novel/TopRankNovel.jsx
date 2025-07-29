@@ -218,7 +218,6 @@ function TopRankNovel() {
                         </template>
                         <div>
                             {data.map((item, index) => {
-                                console.log(item);
                                 return (
                                     <RankedBookItem
                                         key={index}
@@ -465,7 +464,6 @@ export default TopRankNovel;
 const RankedBookItem = ({ index, item }) => {
     const isTop = index === 0;
     const isTop3 = index < 3;
-    console.log(item)
     const rankIcon = `https://static.cdnno.com/static/rank-index-${index + 1}.png`;
     const navigate = useNavigate();
 

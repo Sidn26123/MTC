@@ -18,6 +18,8 @@ import { useAuthRoles } from './stores/authStore.js';
 import ContentModRoutes from './routers/ContentModRoutes.jsx';
 import { useNavigate } from 'react-router';
 import GoogleCallbackComponent from './components/global/GoogleCallbackComponent.jsx';
+import { getCurrentBookshelf } from './services/bookshelfService.js';
+import { useSetCurrentBookshelf } from './stores/bookshelfStore.js';
 
 
 const App = () => {
@@ -25,15 +27,22 @@ const App = () => {
     const user = useUserStore((state => state.user));
     const setUser = useUserStore((state => state.setUser));
     const userRoles = useAuthRoles();
-
+    const setCurrentBookshelf = useSetCurrentBookshelf();
     useEffect(() => {
         const token = getTokenFromLocalStorage(); // Lấy token từ localStorage
         if (token) {
 
             api.get(API.INFO_ME).then(r => {
                     setUser(r.data.result);
-            }
-            );
+            });
+            getCurrentBookshelf().then((response) => {
+                if (response.data.result) {
+                    // Lưu thông tin sách vào store hoặc state nếu cần
+                    setCurrentBookshelf(response.data.result);
+                } else {
+                    console.error("Failed to fetch current bookshelf.");
+                }
+            })
             setLoading(false); // Có token thì gọi API
         } else {
             setLoading(false); // Không có token thì không gọi API

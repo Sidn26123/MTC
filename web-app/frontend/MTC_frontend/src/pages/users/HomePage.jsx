@@ -17,9 +17,9 @@ function Home() {
         <>
             <div className={"mt-5"}>
                 {/*Quang cao*/}
-                <div className={"bg-gray-700 min-h-[120px]"}>
-                    <AdvertiseItem />
-                </div>
+                {/*<div className={"bg-gray-700 min-h-[120px]"}>*/}
+                {/*    <AdvertiseItem />*/}
+                {/*</div>*/}
                 <div>
                     <JustReadNovel />
                 </div>

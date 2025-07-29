@@ -5,11 +5,13 @@ import { timeAgo } from '../../utils/DatetimeUtil.js';
 import { faX } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useUser } from '../../stores/userStores.js';
+import { useCurrentBookshelf } from '../../stores/bookshelfStore.js';
 
 function JustReadNovel() {
     const navigate = useNavigate();
     const [data, setData] = React.useState([]);
     const user = useUser();
+    const currentBookshelf = useCurrentBookshelf();
     const page = {
         page:0,
         size:5,
@@ -18,11 +20,10 @@ function JustReadNovel() {
     }
 
     useEffect(() => {
-        getBookshelfItems(user.id, page).then((response) => {
+        getBookshelfItems(currentBookshelf.id, page).then((response) => {
             if (response.data.result) {
                 setData(response.data.result);
 
-                console.log("Fetched novels:", response.data.result);
 
             } else {
                 console.error("Failed to fetch bookshelf items.");
@@ -33,7 +34,6 @@ function JustReadNovel() {
     function handleDeleteItem(id, novelId) {
         deleteBookshelfItem(id, novelId).then((response) => {
             if (response.data.result) {
-                console.log("Deleted bookshelf item successfully");
                 // Optionally, you can refresh the bookshelf items
             } else {
                 console.error("Failed to delete bookshelf item");
@@ -63,7 +63,7 @@ function JustReadNovel() {
             <div className={"flex flex-col gap-y-5"}>
                 <div className={"flex flex-row justify-between items-center pt-5"}>
                     <span>TRUYỆN VỪA ĐỌC</span>
-                    <Link to={"/#"}>--</Link>
+                    <Link to={"tu-truyen"}>--</Link>
                 </div>
                 {/*Data table*/}
                 <div className="relative overflow-x-auto shadow-md sm:rounded-lg select-none">

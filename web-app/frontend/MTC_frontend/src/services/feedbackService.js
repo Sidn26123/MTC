@@ -115,3 +115,18 @@ export const getCommentListOfReport = async (reportId) => {
         console.error(error);
     }
 }
+
+export const getNewestRatings = async (limit) => {
+    try {
+        const res = await api.get(API.FEEDBACK_RATING + "/new", {
+            params: {
+                limit: limit,
+            },
+        });
+        return res;
+    } catch (error) {
+        console.error("Error fetching newest ratings:", error);
+        throw error; // Re-throw the error for further handling if needed
+    }
+
+}

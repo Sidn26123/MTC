@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import ReviewItem from "./ReviewItem";
 import axios from "axios";
+import { getNewestRatings } from '../../services/feedbackService.js';
 const mockReviews = [
     {
         id: 1,
@@ -40,12 +41,13 @@ const mockReviews = [
 const ReviewList = () => {
     const [reviews, setReviews] = useState([]);
     const [loading, setLoading] = useState(true);
+
     useEffect(() => {
         // Fake fetch
-        setTimeout(() => {
-            setReviews(mockReviews);
+        getNewestRatings(10).then((response) => {
+            setReviews(response.data.result);
             setLoading(false);
-        }, 500);
+        })
     }, []);
 
     return (
@@ -65,7 +67,7 @@ const ReviewList = () => {
                 </div>
             ) : (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-                    {reviews.map((review, index) => (
+                    {reviews && reviews.map((review, index) => (
                         <ReviewItem key={review.id || index} review={review} index={index} />
                     ))}
                 </div>
