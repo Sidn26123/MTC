@@ -13,6 +13,7 @@ import com.sidn.metruyenchu.novelservice.dto.response.novel.NovelResponse;
 import com.sidn.metruyenchu.novelservice.dto.response.novel.NovelCanPublishResponse;
 import com.sidn.metruyenchu.novelservice.dto.response.publish.NovelPublishRequestResponse;
 import com.sidn.metruyenchu.novelservice.dto.response.publish.PublishRequestActionLogResponse;
+import com.sidn.metruyenchu.novelservice.entity.Novel;
 import com.sidn.metruyenchu.novelservice.service.NovelPublishRequestService;
 import com.sidn.metruyenchu.novelservice.service.NovelService;
 import com.sidn.metruyenchu.novelservice.service.PublishRequestActionLogService;
@@ -74,6 +75,13 @@ public class NovelController {
     ApiResponse<NovelResponse> getNovel(@PathVariable String novelSlug) {
         return ApiResponse.<NovelResponse>builder()
                 .result(novelService.getNovelBySlug(novelSlug))
+                .build();
+    }
+
+    @GetMapping("/id/{novelId}")
+    ApiResponse<NovelResponse> getNovelById(@PathVariable String novelId) {
+        return ApiResponse.<NovelResponse>builder()
+                .result(novelService.getNovelById(novelId))
                 .build();
     }
 
@@ -300,6 +308,14 @@ public class NovelController {
 
         return ApiResponse.<List<NovelResponse>>builder()
                 .result(novelService.getAllMyNovels())
+                .build();
+    }
+
+    @GetMapping("/top/best")
+    ApiResponse<List<NovelResponse>> getTopRatedNovelsByBayesian(int limit) {
+
+        return ApiResponse.<List<NovelResponse>>builder()
+                .result(novelService.getTopRatedNovelsByBayesian(limit))
                 .build();
     }
 }

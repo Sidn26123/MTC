@@ -88,4 +88,24 @@ public interface NovelRepository extends JpaRepository<Novel, String>, JpaSpecif
     @Query("UPDATE Novel n SET n.totalChapters = :totalChapters WHERE n.id = :novelId")
     void updateTotalChapters(@Param("novelId") String novelId, @Param("totalChapters") int totalChapters);
 
+    @Query(value = """
+    SELECT *
+    FROM novel
+    WHERE is_published = true
+      AND is_deleted = false
+      AND is_active = true
+      AND total_rates > 0
+    ORDER BY (
+        (total_rates / (total_rates + :minVotes)) * avg_rate +
+        (:minVotes / (total_rates + :minVotes)) * :systemAverageRate
+    ) DESC
+    LIMIT :limit
+    """,
+            nativeQuery = true
+    )
+    List<Novel> findTopNovelsByBayesianScore(
+            @Param("minVotes") int minVotes,
+            @Param("systemAverageRate") float systemAverageRate,
+            @Param("limit") int limit
+    );
 }

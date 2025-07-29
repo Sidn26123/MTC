@@ -471,8 +471,10 @@ public class NovelService {
     }
 
     public NovelResponse getNovelById(String novelId) {
-        return fetchDataMissOfNovel(novelRepository.findById(novelId)
-                .orElseThrow(() -> new AppException(ErrorCode.NOVEL_NOT_FOUND)));
+        Novel novel = novelRepository.findById(novelId)
+                .orElseThrow(() -> new AppException(ErrorCode.NOVEL_NOT_FOUND));
+        NovelResponse response = novelMapper.toNovelResponse(novel);
+        return getDataMissOfNovel(response);
     }
     public Novel getNovelEntityById(String novelId) {
         return novelRepository.findById(novelId)
@@ -770,5 +772,11 @@ public class NovelService {
     public List<NovelResponse> getAllMyNovels() {
         String publisherId = getUserIdFromToken(getTokenFromContext());
         return novelMapper.toNovelResponses(novelRepository.findAllByCurrentPublisher(publisherId));
+    }
+    public List<NovelResponse> getTopRatedNovelsByBayesian(int limit) {
+        int minVotes = 30;
+        float systemAverageRate = 3.5f;
+        List<Novel> novels = novelRepository.findTopNovelsByBayesianScore(minVotes, systemAverageRate, limit);
+        return novelMapper.toNovelResponses(novels);
     }
 }
