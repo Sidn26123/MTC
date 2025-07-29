@@ -39,4 +39,5 @@ public interface RatingRepository extends JpaRepository<Rating, String> {
                                   Pageable pageable);
 
 
+    Page<Rating> findAllByIsDeletedFalseAndIsHiddenFalseOrderByCreatedAtDesc(Pageable pageable);
 }

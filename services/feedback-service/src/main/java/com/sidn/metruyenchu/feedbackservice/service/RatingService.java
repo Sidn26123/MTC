@@ -22,12 +22,15 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.sidn.metruyenchu.feedbackservice.utils.FeignResponseUtils.callFeignGetChapterInfo;
 import static com.sidn.metruyenchu.feedbackservice.utils.FeignResponseUtils.callFeignGetNovelInfo;
@@ -179,5 +182,13 @@ public class RatingService {
 
     public void incrementTotalDisLikes(String ratingId){
         ratingRepository.incrementTotalDisLikes(ratingId);
+    }
+
+    public List<RatingResponse> getTopRecentRatings(int topN) {
+        Pageable pageable = PageRequest.of(0, topN, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<Rating> ratings = ratingRepository.findAllByIsDeletedFalseAndIsHiddenFalseOrderByCreatedAtDesc(pageable);
+        return ratings.getContent().stream()
+                .map(ratingMapper::toResponse)
+                .collect(Collectors.toList());
     }
 }

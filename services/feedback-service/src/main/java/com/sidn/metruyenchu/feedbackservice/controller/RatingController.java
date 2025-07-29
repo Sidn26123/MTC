@@ -63,5 +63,12 @@ public class RatingController {
                 .build();
     }
 
+    @GetMapping("/new")
+    ApiResponse<List<RatingResponse>> getNewReviews(@RequestParam(value = "size", defaultValue = "1") int size)
+                                                            {
+        return ApiResponse.<List<RatingResponse>>builder()
+                .result(reviewService.getTopRecentRatings(size))
+                .build();
+    }
 
 }
