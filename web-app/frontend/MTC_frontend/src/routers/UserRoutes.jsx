@@ -16,6 +16,7 @@ import MyReportPage from '../pages/users/MyReportPage.jsx';
 import ReportDetailPage from '../pages/publishers/ReportDetailPage.jsx';
 import NotificationListPage from '../pages/users/NotificationListPage.jsx';
 import DonateChoosePage from '../pages/users/DonateChoosePage.jsx';
+import PaymentSuccess from "../pages/users/PaymentSuccess.jsx";
 
 const UserRoutes = ({user}) => {
     return (
@@ -37,6 +38,7 @@ const UserRoutes = ({user}) => {
                 <Route path="/thong-bao" element={<NotificationListPage />} />
                 <Route path="/chatbot" element={<RAGApp />} />
             </Route>
+            <Route path="/payment-success" element={<PaymentSuccess />} />
         </Route>
     );
 };

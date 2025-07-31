@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 const adminRoutesPrefix = "/admin";
 
 const AdminSidebar = () => (
-  <div className="w-64 h-screen bg-gray-800 text-white p-4">
+  <div className="w-64 h-screen bg-gray-800 text-white p-4 fixed">
     <h2 className="text-xl font-bold mb-4">Admin</h2>
     <nav className="flex flex-col gap-2">
       <Link to="/admin/dashboard">Dashboard</Link>
@@ -14,8 +14,9 @@ const AdminSidebar = () => (
       
       <Link to="/admin/novels">Quản lý truyện</Link>
       <Link to="/admin/accounts">Quản lý tài khoản</Link>
-      <Link to="/admin/settings">Cài đặt</Link>
       <Link to={`${adminRoutesPrefix}/category`}>Quản lý Danh Mục</Link>
+      <Link to={`${adminRoutesPrefix}/analytics`}>Thống Kê</Link>
+      <Link to="/admin/settings">Cài đặt</Link>
         {/* Add more links as needed */}
     </nav>
   </div>
