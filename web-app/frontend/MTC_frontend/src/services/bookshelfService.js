@@ -51,3 +51,7 @@ export const updateBookshelfItem = async (bookshelfId, data) => {
     return response;
 }
 
+export const getListMarkedChapter = async (userId, novelId, pageData) => {
+    const response = await api.get(API.BOOKMARKED + "/user/" + userId + "/novel/" + novelId, pageData );
+    return response;
+}

@@ -4,14 +4,19 @@ import {defaultPagination} from '../constants/const.js';
 
 const userChapterStore = create((set) => ({
     currentBookshelf: {},
+    currentNovelReadingChapter: {},
     bookshelfList: [],
     bookshelfItems: { ...defaultPagination },
     bookmarkedNovels: { ...defaultPagination },
+
     actions: {
         setCurrentBookshelf: (bookshelf) => set({ currentBookshelf: bookshelf }),
         setBookshelfList: (list) => set({ bookshelfList: list }),
         setBookshelfItems: (pagination) => set({ bookshelfItems: pagination }),
         setBookmarkedNovels: (pagination) => set({ bookmarkedNovels: pagination }),
+        setCurrentNovelReadingChapter: (data) =>
+            set({ currentNovelReadingChapter: data }),
+
         resetStore: () =>
             set({
                 currentBookshelf: {},
@@ -53,3 +58,9 @@ export const useSetBookmarkedNovels = () =>
 
 export const useResetUserChapterStore = () =>
     userChapterStore((state) => state.actions.resetStore);
+
+export const useSetCurrentNovelReadingChapter = () =>
+    userChapterStore((state) => state.actions.setCurrentNovelReadingChapter);
+
+export const useCurrentNovelReadingChapter = () =>
+    userChapterStore((state) => state.currentNovelReadingChapter);

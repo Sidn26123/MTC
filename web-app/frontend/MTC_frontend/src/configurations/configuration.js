@@ -8,6 +8,7 @@ const NOVEL_CATEGORY_PREFIX = '/categories';
 const USER_SERVICE = API_GATEWAY + '/user';
 const FEEDBACK_SERVICE = API_GATEWAY + '/feedback';
 const FILE_SERVICE = API_GATEWAY + '/file';
+const PAYMENT_SERVICE = API_GATEWAY + '/payment';
 
 export const CONFIG = {
     API_GATEWAY: API_GATEWAY,
@@ -36,6 +37,10 @@ export const API = {
     FEEDBACK_LIKE: FEEDBACK_SERVICE + "/likes",
     BOOKSHELF: NOVEL_SERVICE + "/bookshelfs",
     BOOKMARKED: NOVEL_SERVICE + "/bookshelfs/marked-novels",
+    PAYMENT: PAYMENT_SERVICE,
+    TRANSACTIONS: PAYMENT_SERVICE + "/transactions",
+    WALLET: PAYMENT_SERVICE + "/wallets",
+
 
 }
 

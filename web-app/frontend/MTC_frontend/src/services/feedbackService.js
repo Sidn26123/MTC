@@ -13,10 +13,36 @@ export const sendRating = async (rating) => {
     return response;
 }
 
+export const sendComment = async (comment) => {
+    console.log("Sending comment:", comment);
+    try{
+        const response = await api.post(API.FEEDBACK_COMMENT, comment);
+        console.log("Comment sent successfully:", response);
+    }
+    catch (error) {
+        console.error("Error sending comment:", error);
+        throw error; // Re-throw the error for further handling if needed
+    }
+    return response;
+}
 export const getRatingOfNovel = async (novelId) => {
     console.log("Fetching rating for novel with ID:", novelId);
     const response = await api.get(API.FEEDBACK_RATING + '/novel/' + novelId);
     return response;
+}
+
+export const getCommentOfNovel = async (novelId, pageData) => {
+    try{
+        const response = await api.get(API.FEEDBACK_COMMENT + '/novel/' + novelId, {
+            params: pageData
+        });
+        console.log("Fetching comments for novel with ID:", novelId, "Response:", response);
+        return response;
+
+    }
+    catch (error) {
+        throw error; // Re-throw the error for further handling if needed
+    }
 }
 
 export const getChildCommentsOfRating = (ratingId, comments) => {

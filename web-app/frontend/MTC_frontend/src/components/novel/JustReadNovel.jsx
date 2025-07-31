@@ -21,6 +21,8 @@ function JustReadNovel() {
 
     useEffect(() => {
         getBookshelfItems(currentBookshelf.id, page).then((response) => {
+            console.log("Bookshelf items:", response.data);
+            console.log("Current Bookshelf:", currentBookshelf);
             if (response.data.result) {
                 setData(response.data.result);
 

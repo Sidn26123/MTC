@@ -40,7 +40,14 @@ export const getUserIdFromContext = () => {
     if (!token) return null;
 
     const payload = parseJwt(token);
-    return payload ? payload.userId : null;
+    return payload ? payload.user_id : null;
+}
+
+export const getUserIdFromToken = (token) => {
+    if (!token) return null;
+
+    const payload = parseJwt(token);
+    return payload ? payload.user_id : null;
 }
 export const logInWithGoogle = async () => {
     const response = await httpClient.get(API.LOGIN_GOOGLE);

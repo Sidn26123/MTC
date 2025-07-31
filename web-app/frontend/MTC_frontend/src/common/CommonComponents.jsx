@@ -249,7 +249,7 @@ const CustomDatePicker = ({value, onChange}) =>{
 }
 const FormattedContent = ({ content }) => {
     if (!content) return null; // Kiểm tra nếu content không tồn tại
-    const lines = content.split(/[\n|\\n]+/).filter(line => line.trim() !== '');
+    const lines = content.split(/[\n]+/).filter(line => line.trim() !== '');
     return (
         <>
             {lines.map((line, index) => (

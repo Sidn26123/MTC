@@ -95,6 +95,10 @@ export const uploadChapters = async (data) => {
 }
 
 export const getChapterByNovelSlugAndIdx = async (novelSlug, chapterIdx) => {
+    let url = `${API.CHAPTER}/truyen/${novelSlug}/chuong/${chapterIdx}`;
+    let response = await api.get(url);
+
+    return response;
 
 }
 

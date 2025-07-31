@@ -17,6 +17,7 @@ import { getNovels } from '../../services/novelService.js';
 import { useSetListNovel } from '../../stores/novelStore.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCoins } from '@fortawesome/free-solid-svg-icons';
+import { useMyWallet } from '../../stores/paymentStore.js';
 
 function Navbar() {
     const [isDropdownOpen, setDropdownOpen] = useState(false);
@@ -28,6 +29,7 @@ function Navbar() {
     const toggleNovelFilterPanel = useToggleNovelFilterPanel();
     const setNovelStatus = useSetNovelStatus();
     const setListNovel = useSetListNovel();
+    const myWallet = useMyWallet();
 
     const handleLogout = (event)=> {
         event.preventDefault();
@@ -232,7 +234,7 @@ function Navbar() {
                                                         className="bg-red-700 inline-flex items-center justify-center w-6 h-6 ms-2 text-xs font-semibold text-white rounded-full"
                                                         data-x-text="$store.account.userData.unread_notifications_count"
                                                     >
-                                                        20
+                                                        2
                                                     </Link>
                                                 </div>
                                             </div>
@@ -367,24 +369,27 @@ function Navbar() {
 
                                     <div className="flex flex-col list-none">
                                         <div>
-                                            <li className="block px-4 py-2 text-gray-200 hover:bg-gray-400">
-                                                Túi
-                                            </li>
+                                            <li className="block px-4 py-2 text-gray-200 hover:bg-gray-400">Túi</li>
                                         </div>
+
                                         <div className="flex flex-col w-full px-4">
-                                            <div className="flex flex-row justify-between ml-5 mr-10">
-                                                {/*<li>A:</li>*/}
-                                                <li className="pr-10">
-                                                    <FontAwesomeIcon icon={faCoins} />: 0
+                                            <div className="flex flex-col justify-between space-x-6">
+                                                {/* Xu */}
+                                                <li className="flex items-center space-x-2">
+                                                    <FontAwesomeIcon icon={faCoins} />
+                                                    <span>:</span>
+                                                    <span>
+          {myWallet?.find(w => w.currency.code === "XU")?.balance ?? 0}
+        </span>
                                                 </li>
-                                                <li className={"flex flex-row"}>
+
+                                                {/* Xu khoá */}
+                                                <li className="flex items-center space-x-2">
                                                     <svg
                                                         className="w-5 h-5 text-primary"
                                                         xmlns="http://www.w3.org/2000/svg"
                                                         viewBox="0 0 24 24"
                                                         fill="currentColor"
-                                                        aria-hidden="true"
-                                                        data-slot="icon"
                                                     >
                                                         <path
                                                             fillRule="evenodd"
@@ -392,7 +397,10 @@ function Navbar() {
                                                             clipRule="evenodd"
                                                         ></path>
                                                     </svg>
-                                                    :12
+                                                    <span>:</span>
+                                                    <span>
+                                                      {myWallet?.find(w => w.currency.code === "XUK")?.balance ?? 0}
+                                                    </span>
                                                 </li>
                                             </div>
                                         </div>

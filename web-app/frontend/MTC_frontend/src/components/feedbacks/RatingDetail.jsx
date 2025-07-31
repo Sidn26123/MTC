@@ -8,7 +8,7 @@ import { timeAgo } from '../../utils/DatetimeUtil.js';
 const RatingDetail = ({rating}) => {
     const [profile, setProfile] = useState({});
     const [isLoading, setIsLoading] = useState(true);
-
+    const [isOpenReply, setIsOpenReply] = useState(false);
     useEffect(() => {
         getProfileById(rating.ratedBy).then(r => {
             if (r.data.result) {
@@ -96,7 +96,7 @@ const RatingDetail = ({rating}) => {
                                     </path>
                                 </svg>
                                 <span>{rating.totalComments ? rating.totalComments : 0}</span>
-                                <span className="hidden md:inline-flex">Trả lời</span>
+                                <span className="hidden md:inline-flex" onClick={() => setIsOpenReply(!isOpenReply)}>Trả lời</span>
                             </div>
                         </div>
                         <div className="w-52 md:w-60 text-right">
@@ -106,12 +106,19 @@ const RatingDetail = ({rating}) => {
                 </article>
             </div>
             <div className={"ml-12"}>
-                {rating.totalComments > 0 && (
+
+
+                {isOpenReply && rating.totalComments > 0 && (
                     <Reply />
+                )}
+                {isOpenReply &&
+                (
+
+                    <UserReply />
 
                 )}
-                <UserReply />
             </div>
+            {/*<UserReply />*/}
             {/*<UserReply />*/}
 
         </>

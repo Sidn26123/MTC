@@ -43,12 +43,6 @@ function MyBookShelfPage() {
     return (
         <>
             <div className={"flex flex-col"}>
-                <div className={"mt-5"}>
-                    {/*Quang cao*/}
-                    <div className={"bg-gray-700 min-h-[120px]"}>
-
-                    </div>
-                </div>
 
                 <div className={"flex flex-row justify-between items-center pt-5 px-20"}>
                     <div className={"flex flex-row justify-left items-center"}>
@@ -203,14 +197,14 @@ function BookShelfNovelCard({data}) {
                 className={
                     'relative overflow-x-auto shadow-md sm:rounded-lg select-none'
                 }
-                onClick={handleGotoNovel}
+
             >
                 <div
                     className={
                         'w-full flex flex-1 flex-row border-b border-gray-500 border-dotted items-center'
                     }
                 >
-                    <div className={'w-1/10'}>
+                    <div className={'w-1/10'} onClick={handleGotoNovel}>
                         <div className={'flex'}>
                             {/*<img*/}
                             {/*    className={*/}
@@ -223,7 +217,7 @@ function BookShelfNovelCard({data}) {
                                                     alt={data.novel.name} />
                         </div>
                     </div>
-                    <div className={'w-7/10'}>
+                    <div className={'w-7/10'} onClick={handleGotoNovel}>
                         <div className={'flex flex-col'}>
                             <div className={'truncate'}>{data.novel.name}</div>
                             <div className={'text-gray-500 text-sm my-2'}>
@@ -270,7 +264,6 @@ function BookmarkNovels() {
 
 
     const handleChangePage = (page) => {
-        console.log("Changing page to:", page);
 
         setPageData((prev) => ({
             ...prev,
@@ -289,7 +282,6 @@ function BookmarkNovels() {
         getMyBookmarkedNovels(pageData).then((response) => {
             if (response.data.result) {
                 setBookmarkedNovels(response.data.result);
-                console.log("Fetched novels:", response.data.result);
 
             } else {
                 console.error('Failed to fetch bookmarked novels.');
@@ -337,6 +329,8 @@ function BookmarkNovels() {
 }
 
 function BookmarkNovelCard({ data }) {
+    const navigate = useNavigate();
+
     const handleDeleteBookmark = () => {
         deleteBookmarkedNovel(data.id).then((response) => {
             console.log("DE",response.data);
@@ -349,6 +343,9 @@ function BookmarkNovelCard({ data }) {
         });
     };
 
+    const handleNavigate = () => {
+        navigate(`/truyen/${data.slug}`);
+    }
 
     return (
         <>
@@ -356,9 +353,11 @@ function BookmarkNovelCard({ data }) {
                 <div
                     className={
                         'flex flex-row border-b border-gray-500 border-dotted items-center'
+
                     }
                 >
-                    <div className={'w-1/10'}>
+                    <div className={'w-1/10'} onClick={handleNavigate}
+                    >
                         <div className={'flex'}>
                             {/*<img*/}
                             {/*    className={*/}
@@ -373,7 +372,7 @@ function BookmarkNovelCard({ data }) {
                             />
                         </div>
                     </div>
-                    <div className={'w-7/10'}>
+                    <div className={'w-7/10'} onClick={handleNavigate}>
                         <div className={'flex flex-col'}>
                             <div className={'truncate'}>{data.novel.name}</div>
                             <div className={'text-gray-500 text-sm my-2'}>

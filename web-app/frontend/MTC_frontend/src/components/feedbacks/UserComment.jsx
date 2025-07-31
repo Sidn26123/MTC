@@ -8,25 +8,25 @@ import { getFullPathOfAvatar } from '../../utils/ProfileUtils.js';
 
 function UserComment({ comment }) {
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
-    const [isReplyOpen, setIsReplyOpen] = React.useState(true);
+    const [isReplyOpen, setIsReplyOpen] = React.useState(false);
     const [userCommentProfile, setUserCommentProfile] = React.useState(null);
     const [profile, setProfile] = useState({});
 
-    const sampleData = {
-        // onRemove: () => alert("Xóa bình luận"),
-        // onReport: () => alert("Báo cáo bình luận"),
-        // onSticky: (status) => alert(status ? "Ghim bình luận" : "Gỡ ghim bình luận"),
-        canSticky: false,
-        isOwner: false,
-    };
-    if (!comment) {
-        comment = sampleData;
-    } else {
-        comment = {
-            ...sampleData,
-            ...comment
-        }
-    }
+    // const sampleData = {
+    //     // onRemove: () => alert("Xóa bình luận"),
+    //     // onReport: () => alert("Báo cáo bình luận"),
+    //     // onSticky: (status) => alert(status ? "Ghim bình luận" : "Gỡ ghim bình luận"),
+    //     canSticky: false,
+    //     isOwner: false,
+    // };
+    // if (!comment) {
+    //     comment = sampleData;
+    // } else {
+    //     comment = {
+    //         ...sampleData,
+    //         ...comment
+    //     }
+    // }
 
     const childComments = [];
 
@@ -43,6 +43,11 @@ function UserComment({ comment }) {
             }
         })
     }, []);
+
+    function handleShowReply() {
+        setIsReplyOpen(!isReplyOpen);
+    }
+
     return (
         <>
             <div>
@@ -128,7 +133,7 @@ function UserComment({ comment }) {
                                           d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z"></path>
                                   </svg>
                                   <span>{comment.totalComments}</span>
-                                  <span className="hidden md:inline-flex">Trả lời</span>
+                                  <span className="hidden md:inline-flex" onClick={handleShowReply}>Trả lời</span>
                                 </span>
                             </div>
                         </div>
@@ -156,8 +161,12 @@ function UserComment({ comment }) {
                             </button>
                         </div>
                     </div>
-                )
-                }
+                )}
+                {isReplyOpen && (
+                    <div className="ml-12 mb-4">
+                        <UserReply />
+                    </div>
+                )}
             </div>
         </>
     )

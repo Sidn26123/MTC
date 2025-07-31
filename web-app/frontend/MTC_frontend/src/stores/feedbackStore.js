@@ -118,6 +118,7 @@ const useFeedbackStore = create((set, get) => ({
             console.error('Failed to fetch ratings:', err);
         }
     },
+    setCurrentNovelComments: (pagination) => set({ currentNovelComments: pagination }),
 
     // Reset store
     resetFeedback: () => {
@@ -139,7 +140,7 @@ export const useTicketsStatus = () => useFeedbackStore((state) => state.status);
 export const useIsLoading = () => useFeedbackStore((state) => state.isLoading);
 export const useFetchTickets = () => useFeedbackStore((state) => state.fetchTickets);
 export const useSetTickets = () => useFeedbackStore((state) => state.actions.setTickets);
-
+export const useSetCurrentNovelComments = () => useFeedbackStore((state) => state.actions.setCurrentNovelComments);
 // Actions
 export const fetchCommentPage = (novelId) => useFeedbackStore.getState().fetchComments(novelId);
 export const fetchRatingPage = (novelId) => useFeedbackStore.getState().fetchRatings(novelId);
