@@ -1,23 +1,36 @@
 package com.sidn.metruyenchu.paymentservice.dto.request.transactions;
 import com.sidn.metruyenchu.shared_library.enums.payment.TransactionType;
+import com.sidn.metruyenchu.shared_library.enums.payment.TransactionStatus;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-@Data
+
+@Getter
+@Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class TransactionsCreateRequest {
-    String transactionCode;
+public class TransactionSearchRequest {
     String userId;
     String walletId;
     TransactionType type;
-    Integer amount;
+    TransactionStatus status;
     String currencyId;
-    String referenceId; // Optional - for external reference
-
+    LocalDateTime fromDate;
+    LocalDateTime toDate;
+    
+    @Builder.Default
+    int page = 0;
+    
+    @Builder.Default
+    int size = 20;
+    
+    @Builder.Default
+    String sortBy = "createdAt";
+    
+    @Builder.Default
+    String sortDirection = "DESC";
 }
-

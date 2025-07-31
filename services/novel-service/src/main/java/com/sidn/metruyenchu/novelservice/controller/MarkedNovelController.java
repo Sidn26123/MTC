@@ -13,6 +13,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.query.Page;
 import org.springframework.web.bind.annotation.*;
 
 import static com.sidn.metruyenchu.novelservice.utils.TokenUtils.getTokenFromContext;
@@ -89,6 +90,14 @@ public class MarkedNovelController {
                 .build();
     }
 
+    @GetMapping("/user/{userId}/novel/{novelId}")
+    public ApiResponse<PageResponse<MarkedNovelResponse>> getMarkedNovelByUserIdAndNovelId(@PathVariable String userId,
+                                                                                  @PathVariable String novelId,
+                                                                                  @ModelAttribute BaseFilterRequest request) {
+        return ApiResponse.<PageResponse<MarkedNovelResponse>>builder()
+                .result(markedNovelService.getMarkedNovelByUserIdAndNovelId(userId, novelId, request))
+                .build();
+    }
 
 
     /**

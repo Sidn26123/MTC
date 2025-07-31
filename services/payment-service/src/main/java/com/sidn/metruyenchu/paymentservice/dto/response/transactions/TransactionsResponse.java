@@ -1,6 +1,6 @@
 package com.sidn.metruyenchu.paymentservice.dto.response.transactions;
-import com.sidn.metruyenchu.paymentservice.enums.TransactionStatus;
-import com.sidn.metruyenchu.paymentservice.enums.TransactionType;
+import com.sidn.metruyenchu.shared_library.enums.payment.TransactionStatus;
+import com.sidn.metruyenchu.shared_library.enums.payment.TransactionType;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 

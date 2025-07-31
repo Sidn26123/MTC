@@ -66,7 +66,6 @@ public class FileService {
 
     public FileManagement writeFile(MultipartFile file, String path) throws IOException {
         // Store file
-        log.info("Log");
         FileInfo fileInfo = fileRepository.store(file, path);
 
         // Create file management info

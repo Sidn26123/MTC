@@ -1,7 +1,7 @@
 package com.sidn.metruyenchu.paymentservice.entity;
 
-import com.sidn.metruyenchu.paymentservice.enums.TransactionStatus;
-import com.sidn.metruyenchu.paymentservice.enums.TransactionType;
+import com.sidn.metruyenchu.shared_library.enums.payment.TransactionType;
+import com.sidn.metruyenchu.shared_library.enums.payment.TransactionStatus;
 import jakarta.persistence.Entity;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -48,7 +48,7 @@ public class Transactions {
     TransactionType type;
 
     @Column(nullable = false)
-    Integer amount;
+    BigDecimal amount;
 
     @Column(name = "currency_id", nullable = false)
     String currencyId;

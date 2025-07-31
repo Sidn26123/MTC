@@ -9,6 +9,9 @@ import com.sidn.metruyenchu.paymentservice.entity.*;
 import com.sidn.metruyenchu.paymentservice.entity.PaymentMethod;
 import com.sidn.metruyenchu.paymentservice.enums.*;
 import com.sidn.metruyenchu.shared_library.exceptions.AppException;
+import com.sidn.metruyenchu.shared_library.enums.payment.TransactionType;
+import com.sidn.metruyenchu.shared_library.enums.payment.TransactionStatus;
+
 import com.sidn.metruyenchu.paymentservice.mapper.PaymentRequestsMapper;
 import com.sidn.metruyenchu.paymentservice.mapper.TransactionsMapper;
 import com.sidn.metruyenchu.paymentservice.mapper.WalletMapper;
@@ -153,7 +156,7 @@ public class WalletService {
                 .userId(userId)
                 .wallet(wallet)
                 .type(TransactionType.DEPOSIT)
-                .amount(amount.intValue())
+                .amount(BigDecimal.valueOf(amount.intValue()))
                 .currencyId(currencyId)
                 .status(TransactionStatus.PENDING)
 //                .transactionStatus(TransactionStatus.PENDING)
@@ -243,7 +246,7 @@ public class WalletService {
 
             // Update wallet balance
             Wallet wallet = transaction.getWallet();
-            wallet.setBalance(wallet.getBalance().add(BigDecimal.valueOf(transaction.getAmount())));
+            wallet.setBalance(wallet.getBalance().add((transaction.getAmount())));
             walletRepository.save(wallet);
 
 //            walletBalanceHistoryService.recordBalanceChange(WalletBalanceHistoryCreateRequest.builder()

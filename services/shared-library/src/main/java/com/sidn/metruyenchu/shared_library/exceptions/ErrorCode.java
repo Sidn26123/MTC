@@ -205,7 +205,10 @@ public enum ErrorCode {
     DRAFT_NOT_FOUND(4003, "Bản nháp không tồn tại", HttpStatus.NOT_FOUND),
     DRAFT_ALREADY_EXISTS(4004, "Bản nháp đã tồn tại", HttpStatus.BAD_REQUEST),
     POLICY_NOT_FOUND(4005, "Chính sách không tồn tại", HttpStatus.NOT_FOUND),
-    POLICY_ALREADY_EXISTS(4006, "Chính sách đã tồn tại", HttpStatus.BAD_REQUEST);
+    POLICY_ALREADY_EXISTS(4006, "Chính sách đã tồn tại", HttpStatus.BAD_REQUEST),
+    WALLET_NOT_BELONG_TO_USER(4033, "Ví không thuộc về người dùng này", HttpStatus.FORBIDDEN)
+
+    ;
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
         this.code = code;

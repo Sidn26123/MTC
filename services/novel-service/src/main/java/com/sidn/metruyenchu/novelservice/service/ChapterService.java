@@ -728,4 +728,10 @@ public class ChapterService {
         }
         return topChapters;
     }
+
+    public ChapterResponse getChapterByNovelSlugAndIdx(String slug, Integer idx) {
+        Chapter chapter = chapterRepository.findByNovelSlugAndChapterIdxAndIsDeletedIsFalse(slug, idx)
+                .orElseThrow(() -> new AppException(ErrorCode.CHAPTER_NOT_FOUND));
+        return chapterMapper.toChapterResponse(chapter);
+    }
 }

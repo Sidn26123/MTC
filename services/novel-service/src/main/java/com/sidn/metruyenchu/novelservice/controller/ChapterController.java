@@ -119,6 +119,13 @@ public class ChapterController {
                 .build();
     }
 
+    @GetMapping("/truyen/{novelSlug}/chuong/{chapterIdx}")
+    ApiResponse<ChapterResponse> getChapterContentBySlug(@PathVariable String novelSlug, @PathVariable Integer chapterIdx){
+        return ApiResponse.<ChapterResponse>builder()
+                .result(chapterService.getChapterByNovelSlugAndIdx(novelSlug, chapterIdx))
+                .build();
+    }
+
     @GetMapping("/truyen/{novelSlug}/chapterList")
     ApiResponse<PageResponse<ChapterListResponse>> getChapterList(@PathVariable String novelSlug, @ModelAttribute ChapterListGetRequest request){
 //        ChapterListGetRequest request = ChapterListGetRequest.builder().build();

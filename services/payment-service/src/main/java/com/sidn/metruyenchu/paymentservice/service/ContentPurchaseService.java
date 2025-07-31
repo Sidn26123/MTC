@@ -10,8 +10,8 @@ import com.sidn.metruyenchu.paymentservice.dto.response.contentPurchase.ContentP
 import com.sidn.metruyenchu.paymentservice.entity.ContentPurchase;
 import com.sidn.metruyenchu.paymentservice.entity.Transactions;
 import com.sidn.metruyenchu.paymentservice.entity.Wallet;
-import com.sidn.metruyenchu.paymentservice.enums.TransactionStatus;
-import com.sidn.metruyenchu.paymentservice.enums.TransactionType;
+import com.sidn.metruyenchu.shared_library.enums.payment.TransactionStatus;
+import com.sidn.metruyenchu.shared_library.enums.payment.TransactionType;
 import com.sidn.metruyenchu.paymentservice.enums.WalletStatus;
 import com.sidn.metruyenchu.paymentservice.exception.AppException;
 import com.sidn.metruyenchu.paymentservice.exception.ErrorCode;
@@ -101,7 +101,7 @@ public class ContentPurchaseService {
                 .userId(userId)
                 .wallet(wallet)
                 .type(TransactionType.PURCHASE)
-                .amount(finalPrice.intValue())
+                .amount(BigDecimal.valueOf(finalPrice.intValue()))
                 .currencyId(contentPurchaseRequest.getCurrencyId())
                 .status(TransactionStatus.PENDING)
                 .build();

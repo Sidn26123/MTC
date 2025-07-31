@@ -2,7 +2,11 @@ package com.sidn.metruyenchu.fileservice.service;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.sidn.metruyenchu.fileservice.dto.FileInfo;
 import com.sidn.metruyenchu.fileservice.dto.response.CloudinaryResponse;
+import com.sidn.metruyenchu.fileservice.entity.FileManagement;
+import com.sidn.metruyenchu.fileservice.mapper.FileManagementMapper;
+import com.sidn.metruyenchu.fileservice.repository.FileManagementRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -22,11 +26,14 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-@FieldDefaults(level  = AccessLevel.PRIVATE, makeFinal = true)
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 @Slf4j
 public class CloudinaryService {
-    @Autowired
-    private Cloudinary cloudinary;
+    Cloudinary cloudinary;
+
+    FileManagementRepository fileManagementRepository;
+    FileManagementMapper fileManagementMapper;
+
 
     @Transactional
     public CloudinaryResponse uploadFile(MultipartFile file, String fileName){
@@ -50,8 +57,17 @@ public class CloudinaryService {
                     .upload(file.getBytes(), mapObj);
             final String url = (String) result.get("url");
             publicId = (String) result.get("public_id");
-            log.info("File uploaded successfully");
-            log.info("Public id: {}", publicId);
+
+
+
+            FileInfo fileInfo = FileInfo.builder()
+                    .fileName(fileName)
+                    .path(url)
+                    .build();
+
+            FileManagement fileMgmt = fileManagementMapper.toFileManagement(fileInfo);
+            fileMgmt = fileManagementRepository.save(fileMgmt);
+
             return CloudinaryResponse.builder()
                     .publicId(publicId)
                     .url(url)

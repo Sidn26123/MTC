@@ -18,6 +18,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -215,6 +216,18 @@ public class MarkedNovelService {
 
         Pageable pageable = PageUtils.from(request);
         var pageData = markedNovelRepository.findAllByUserIdAndIsDeletedIsFalse(userId, pageable);
+        return PageUtils.toPageResponse(
+                pageData,
+                markedNovelMapper::toResponse,
+                request.getPage()
+        );
+    }
+
+    public PageResponse<MarkedNovelResponse> getMarkedNovelByUserIdAndNovelId(String userId, String novelId, BaseFilterRequest request) {
+        Pageable pageable = PageUtils.from(request);
+
+        Page<MarkedNovel> pageData = markedNovelRepository.findByUserIdAndNovelIdAndIsDeletedIsFalse(userId, novelId, pageable);
+
         return PageUtils.toPageResponse(
                 pageData,
                 markedNovelMapper::toResponse,
