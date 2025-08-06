@@ -1,20 +1,24 @@
 import React, { useState } from 'react';
+import { useEffect } from 'react';
+import { getAllWorldScene, addWorldScene, updateWorldScene } from '../../services/novelService';
 
 const WorldSceneManage = () => {
-    const [data, setData] = useState([
-        { id: 1, name: 'Thế giới mới' },
-        { id: 2, name: 'Cổ trang' },
-        { id: 3, name: 'Xuyên không' },
-        { id: 4, name: 'Hậu Cung' },
-        { id: 5, name: 'Vương quyền' },
-        { id: 6, name: 'Sản phẩm F' },
-        { id: 7, name: 'Sản phẩm I' },
-        { id: 8, name: 'Sản phẩm K' },
-        { id: 9, name: 'Sản phẩm L' },
-        { id: 10, name: 'Sản phẩm M' },
-        { id: 11, name: 'Sản phẩm N' },
-        { id: 12, name: 'Sản phẩm O' },
-    ]);
+    // const [data, setData] = useState([
+    //     { id: 1, name: 'Thế giới mới' },
+    //     { id: 2, name: 'Cổ trang' },
+    //     { id: 3, name: 'Xuyên không' },
+    //     { id: 4, name: 'Hậu Cung' },
+    //     { id: 5, name: 'Vương quyền' },
+    //     { id: 6, name: 'Sản phẩm F' },
+    //     { id: 7, name: 'Sản phẩm I' },
+    //     { id: 8, name: 'Sản phẩm K' },
+    //     { id: 9, name: 'Sản phẩm L' },
+    //     { id: 10, name: 'Sản phẩm M' },
+    //     { id: 11, name: 'Sản phẩm N' },
+    //     { id: 12, name: 'Sản phẩm O' },
+    // ]);
+
+    const [data, setData] = useState([]);
 
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
@@ -23,6 +27,23 @@ const WorldSceneManage = () => {
     const [showModal, setShowModal] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const [editId, setEditId] = useState(null);
+
+    const fetchWorldScenes = async () => {
+        try {
+            const sects = await getAllWorldScene();
+            setData(sects.result || []); // Assuming genres is an object with a 'result' property
+        } catch (error) {
+            console.error("Lỗi khi tải danh sách bối cảnh thế giới:", error);
+        }
+    };
+
+     useEffect(() => {
+    
+            fetchWorldScenes();
+        }, []);
+    
+
+
 
     const currentData = data.slice(
         (currentPage - 1) * itemsPerPage,
@@ -41,25 +62,56 @@ const WorldSceneManage = () => {
         setShowModal(true);
     };
 
-    const handleConfirm = () => {
+    // const handleConfirm = () => {
+    //     if (inputValue.trim() === '') return;
+
+    //     if (editId !== null) {
+    //         setData(prev =>
+    //             prev.map(item =>
+    //                 item.id === editId ? { ...item, name: inputValue } : item
+    //             )
+    //         );
+    //     } else {
+    //         const newItem = {
+    //             id: Date.now(),
+    //             name: inputValue,
+    //         };
+    //         setData(prev => [...prev, newItem]);
+    //     }
+
+    //     setShowModal(false);
+    //     setInputValue('');
+    // };
+
+
+    const handleConfirm = async () => {
         if (inputValue.trim() === '') return;
 
-        if (editId !== null) {
-            setData(prev =>
-                prev.map(item =>
-                    item.id === editId ? { ...item, name: inputValue } : item
-                )
-            );
-        } else {
-            const newItem = {
-                id: Date.now(),
-                name: inputValue,
-            };
-            setData(prev => [...prev, newItem]);
-        }
+        try {
+            if (editId !== null) {
+                // Gọi API cập nhật
+                console.log("Updating WorldScene with ID:", editId, "and name:", inputValue);
+                const updated = await updateWorldScene({ id: editId, name: inputValue });
+                // Cập nhật vào danh sách local
+                setData(prev =>
+                    prev.map(item =>
+                        item.id === editId ? { ...item, name: updated.name } : item
+                    )
+                );
+            } else {
+                // Gọi API tạo mới
+                const created = await addWorldScene({ name: inputValue });
+                // Thêm vào danh sách local
+                setData(prev => [...prev, created]);
+            }
+            await fetchWorldScenes();
 
-        setShowModal(false);
-        setInputValue('');
+            setShowModal(false);
+            setInputValue('');
+        } catch (error) {
+            console.error("Lỗi khi thêm/cập nhật lưu phái:", error);
+            alert("Đã xảy ra lỗi. Vui lòng thử lại.");
+        }
     };
 
     return (
@@ -77,8 +129,8 @@ const WorldSceneManage = () => {
             <table className="w-full table-auto border-collapse">
                 <thead>
                     <tr>
-                        <th className="border-b py-2 text-left text-gray-600">Tên</th>
-                        <th className="border-b py-2 text-left text-gray-600">Hành động</th>
+                        <th className="border-b py-2 text-left text-gray-100">Tên</th>
+                        <th className="border-b py-2 text-left text-gray-100">Hành động</th>
                     </tr>
                 </thead>
                 <tbody>
