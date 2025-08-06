@@ -2,7 +2,7 @@ import React from 'react';
 import dayjs from 'dayjs';
 
 const NotificationList = ({
-                              list = [],
+                              data = {},
                               markAllAsRead,
                               markAsRead,
                               remove,
@@ -24,7 +24,7 @@ const NotificationList = ({
             </div>
 
             <div className="table-row-group">
-                {list.map((item, index) => (
+                {data && data.totalElements && data.data.map((item, index) => (
                     <div key={index} className={`table-row ${!item.read_at ? 'highlight' : ''}`}>
                         <div onClick={() => goTo(item)} className="table-cell border-b border-auto p-4 cursor-pointer">
                             <div className="flex space-x-2 md:text-base">

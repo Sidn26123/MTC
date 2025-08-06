@@ -41,7 +41,6 @@ const App = () => {
             });
             getCurrentBookshelf().then((response) => {
                 if (response.data.result) {
-                    console.log("Current Bookshelf:", response.data.result);
                     // Lưu thông tin sách vào store hoặc state nếu cần
                     setCurrentBookshelf(response.data.result);
                 } else {
@@ -49,7 +48,6 @@ const App = () => {
                 }
             });
             getMyWallet(userId).then((response) => {
-                console.log("Wallet Data:", response.data.result);
                 setMyWallet(response.data.result);
             });
             setLoading(false); // Có token thì gọi API

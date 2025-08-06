@@ -6,32 +6,24 @@ import { faX } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useUser } from '../../stores/userStores.js';
 import { useCurrentBookshelf } from '../../stores/bookshelfStore.js';
+import { initPageData } from '../../utils/PageUtils.js';
 
 function JustReadNovel() {
     const navigate = useNavigate();
     const [data, setData] = React.useState([]);
     const user = useUser();
     const currentBookshelf = useCurrentBookshelf();
-    const page = {
-        page:0,
-        size:5,
-        sort: "updatedAt",
-        direction: "desc"
-    }
+    const page = initPageData();
 
     useEffect(() => {
         getBookshelfItems(currentBookshelf.id, page).then((response) => {
-            console.log("Bookshelf items:", response.data);
-            console.log("Current Bookshelf:", currentBookshelf);
             if (response.data.result) {
                 setData(response.data.result);
-
-
             } else {
                 console.error("Failed to fetch bookshelf items.");
             }
         })
-    }, []);
+    }, [currentBookshelf]);
 
     function handleDeleteItem(id, novelId) {
         deleteBookshelfItem(id, novelId).then((response) => {

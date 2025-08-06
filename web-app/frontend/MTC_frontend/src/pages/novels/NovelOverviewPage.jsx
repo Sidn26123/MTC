@@ -206,7 +206,7 @@ const NovelOverviewPage= () => {
 
 export default NovelOverviewPage;
 
-const NovelStat = ({novel, gotoRating, gotoComment}) => {
+export const NovelStat = ({novel, gotoRating, gotoComment}) => {
     const navigate = useNavigate();
     const currentBookshelf = useCurrentBookshelf();
     const [idx,setIdx] = useState(0);

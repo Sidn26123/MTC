@@ -64,16 +64,25 @@ import React, { useEffect, useState } from 'react';
 
 import { Search, ChevronDown, Lock, Image, Send, Paperclip } from "lucide-react";
 import { useParams } from 'react-router';
-import { getCommentListOfReport, getReportById } from '../../services/feedbackService.js';
+import {
+    commentOnReport,
+    getCommentListOfReport,
+    getReportById,
+    sendComment,
+    updateReportStatus,
+} from '../../services/feedbackService.js';
 import { ExpandableText } from '../../common/CommonComponents.jsx';
 import { getProfileById } from '../../services/userService.js';
 import { useUser } from '../../stores/userStores.js';
+import { getFullPathOfAvatar } from '../../utils/ProfileUtils.js';
+import { formatPublishDateTime } from '../../utils/DatetimeUtil.js';
 
 function ReportDetailPage() {
     const [searchTerm, setSearchTerm] = useState("");
     const [commentText, setCommentText] = useState("");
     const [reportData, setReportData] = useState(null);
     const [handlerProfile, setHandlerProfile] = useState(null);
+    const [requesterProfile, setRequesterProfile] = useState(null);
     const [commentList, setCommentList] = useState([]);
     const user = useUser();
     const { reportId } = useParams();
@@ -82,6 +91,9 @@ function ReportDetailPage() {
         getReportById(reportId).then(
             (response) => {
                 console.log("Report details:", response.data);
+                getProfileById(response.data.result.reporterId).then(r => {
+                    setRequesterProfile(r.data.result);
+                })
                 setReportData(response.data.result);
                 if (response.data.result.assignedTo) {
                     getProfileById(response.data.result.assignedTo).then(r => {
@@ -100,6 +112,68 @@ function ReportDetailPage() {
             }
         )
     }, [reportId]);
+
+    useEffect(() => {
+
+    }, [commentList]);
+
+    function handleSendComment(){
+        if (!commentText.trim()) {
+            return; // Không gửi nếu không có nội dung
+        }
+        // Gọi API gửi bình luận ở đây
+
+        commentOnReport(
+            {
+                reportId: reportId,
+                feedbackType: "REPORT",
+                content: commentText,
+                commenterRole: getCommenterRole(),
+            }
+        ).then(r => {
+            // console.log("Comment sent successfully:", r.data);
+            // commentList.data.unshift(r.data.result);
+            // commentList.totalElements += 1;
+            getCommentListOfReport(reportId).then(response => {
+                console.log("Updated comments:", response.data);
+                setCommentList(response.data.result || []);
+            });
+            setCommentText("");
+
+        })
+        // Sau khi gửi thành công, có thể cập nhật lại danh sách bình luận
+        setCommentText(""); // Xóa nội dung bình luận sau khi gửi
+    }
+
+    function getCommenterRole(){
+        if (user?.username === requesterProfile?.username) {
+            return "REPORTER";
+        }
+        if (user?.username === handlerProfile?.username) {
+            return "PUBLISHER";
+        }
+        else if (handlerProfile?.username){
+            return "ADMIN";
+        }
+    }
+
+    function handleCloseReport() {
+        updateReportStatus(reportId, {
+            status: "CLOSED"
+        }).then(
+            (response) => {
+                console.log("Report closed successfully:", response.data);
+                // Cập nhật trạng thái của reportData
+                setReportData((prevData) => ({
+                    ...prevData,
+                    status: "CLOSED",
+                }));
+            },
+            (error) => {
+                console.error("Error closing report:", error);
+            }
+        );
+    }
 
     return (
         <div className="min-h-screen bg-gray-900 text-gray-100">
@@ -198,58 +272,61 @@ function ReportDetailPage() {
                 <div className="flex-1 bg-gray-800 rounded-lg">
                     {/* Post Header */}
                     <div className="p-6 border-b border-gray-700">
+                        <span className="text-gray-400 text-sm">
+                            (ID: {reportId})
+                        </span>
                         <div className="flex items-center justify-between mb-4">
                             <div className="flex items-center gap-3">
-                                <Image
-                                    src="/placeholder.svg?height=40&width=40"
+                                <img
+                                    src={getFullPathOfAvatar(
+                                        requesterProfile?.avatarPath
+                                    )}
                                     alt="Sidnn avatar"
                                     className="w-10 h-10 rounded-full"
                                 />
                                 <div>
                                     <div className="flex items-center gap-2">
                                         <span className="font-semibold text-white">
-                                            Sidnn
-                                        </span>
-                                        <span className="text-gray-400 text-sm">
-                                            (ID: {user.id})
+                                            {requesterProfile?.email}
                                         </span>
                                     </div>
                                     <div className="text-gray-400 text-sm">
-                                        00:53 - 23/03/2025
+                                        {reportData
+                                            ? formatPublishDateTime(
+                                                  reportData.createdAt
+                                              )
+                                            : 'Đang tải...'}
                                     </div>
                                 </div>
                             </div>
 
-                            <button className="flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-md font-medium transition-colors">
-                                <Lock className="w-4 h-4" /> Mở Lại
+                            <button className="flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-md font-medium transition-colors"
+                                onClick={handleCloseReport}
+                            >
+                                <Lock className="w-4 h-4" /> Đang mở
                             </button>
                         </div>
 
                         <h2 className="text-xl font-semibold text-white mb-4">
-                            Yêu Cầu Hoặc Liên Hệ Khác
+                            {reportData ? reportData.title : 'Đang tải...'}
                         </h2>
 
                         <div className="text-gray-300 leading-relaxed">
-                            <p>
-                                E muốn góp ý 1 chút về phần lấy danh sách
-                                chương. Hiện tại thì web đang lấy 1 lần toàn bộ
-                                danh sách chương, nên dẫn đến hiện tượng UI phải
-                                chờ rất lâu để lấy được danh sách chương của các
-                                truyện nhiều chương, sau đó thì rất lạc thì phải
-                                load nhiều dữ liệu. E muốn góp ý các ad có thể
-                                paging nó ra hoặc 1 lần lấy 100 chương gì đó a.
-                            </p>
+                            <p>{reportData?.content}</p>
                         </div>
                         {/* Người xử lý report*/}
                         <div className="flex items-center gap-2 mt-4">
-                            <Image
-                                src= {handlerProfile ? handlerProfile.avatar : "/placeholder.svg?height=40&width=40"}
-
-                                alt="Avatar"
-                                className="w-6 h-6 rounded-full"
+                            <img
+                                src={getFullPathOfAvatar(
+                                    handlerProfile?.avatarPath
+                                )}
+                                alt="Sidnn avatar"
+                                className="w-10 h-10 rounded-full"
                             />
                             <span className="text-orange-400 text-sm">
-                                {handlerProfile ? handlerProfile.username : 'Đang chờ'}
+                                {handlerProfile
+                                    ? handlerProfile.username
+                                    : 'Đang chờ'}
                             </span>
                         </div>
                     </div>
@@ -261,12 +338,14 @@ function ReportDetailPage() {
                         </h3>
 
                         <div className="flex items-start gap-3 mb-6">
-                            <Image
-                                src="/placeholder.svg?height=40&width=40"
-                                alt="User avatar"
+                            <img
+                                src={getFullPathOfAvatar(
+                                    requesterProfile?.avatarPath
+                                )}
+                                alt="Sidnn avatar"
                                 className="w-10 h-10 rounded-full"
                             />
-                            <div className="flex-1">
+                            <div className="flex flex-row w-full gap-3">
                                 <textarea
                                     value={commentText}
                                     onChange={(e) =>
@@ -277,13 +356,14 @@ function ReportDetailPage() {
                                     rows={3}
                                 />
                                 <div className="flex items-center justify-between mt-3">
-                                    <button className="flex items-center gap-2 text-gray-400 hover:text-gray-300 transition-colors">
-                                        <Paperclip className="w-4 h-4" />
-                                        <span className="text-sm">
-                                            Đính kèm hình ảnh (tối đa 3)
-                                        </span>
-                                    </button>
-                                    <button className="bg-orange-600 hover:bg-orange-700 text-white p-2 rounded-full transition-colors">
+                                    {/*<button className="flex items-center gap-2 text-gray-400 hover:text-gray-300 transition-colors">*/}
+                                    {/*    <Paperclip className="w-4 h-4" />*/}
+                                    {/*    <span className="text-sm">*/}
+                                    {/*        Đính kèm hình ảnh (tối đa 3)*/}
+                                    {/*    </span>*/}
+                                    {/*</button>*/}
+                                    <button className="flex  bg-orange-600 hover:bg-orange-700 text-white p-2 rounded-full transition-colors"
+                                    onClick={handleSendComment}>
                                         <Send className="w-4 h-4" />
                                     </button>
                                 </div>
@@ -292,23 +372,34 @@ function ReportDetailPage() {
 
                         {/* Existing Comment */}
                         <div className="border-t border-gray-700 pt-4">
-                            <div className="flex items-start gap-3">
-                                <Image
-                                    src="/placeholder.svg?height=40&width=40"
-                                    alt="Clark avatar"
-                                    className="w-10 h-10 rounded-full"
-                                />
-                                <div className="flex-1">
-                                    <div className="flex items-center gap-2 mb-1">
-                                        <span className="font-semibold text-white">
-                                            Clark
-                                        </span>
-                                        <span className="text-gray-400 text-sm">
-                                            09:10 - 24/03/2025
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
+                            {commentList && commentList.data && commentList.data.length > 0 ? (
+                                commentList.data.map((comment) => (
+                                    <>
+                                        <div>
+                                            {comment && comment.id}
+                                        </div>
+                                    </>
+                                )
+                            )) : (
+                                <></>
+                            )}
+                            {/*<div className="flex items-start gap-3">*/}
+                            {/*    <Image*/}
+                            {/*        src="/placeholder.svg?height=40&width=40"*/}
+                            {/*        alt="Clark avatar"*/}
+                            {/*        className="w-10 h-10 rounded-full"*/}
+                            {/*    />*/}
+                            {/*    <div className="flex-1">*/}
+                            {/*        <div className="flex items-center gap-2 mb-1">*/}
+                            {/*            <span className="font-semibold text-white">*/}
+                            {/*                Clark*/}
+                            {/*            </span>*/}
+                            {/*            <span className="text-gray-400 text-sm">*/}
+                            {/*                09:10 - 24/03/2025*/}
+                            {/*            </span>*/}
+                            {/*        </div>*/}
+                            {/*    </div>*/}
+                            {/*</div>*/}
                         </div>
                     </div>
                 </div>

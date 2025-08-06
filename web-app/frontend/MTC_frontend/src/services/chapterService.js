@@ -59,7 +59,8 @@ export const getCurrentPublisherChapter = async (novelId, limit) => {
 }
 
 export const getChapterById = async (chapterId) => {
-    // return getCurrentPublisherChapter()
+    const response = await api.get(`${API.CHAPTER}/${chapterId}`);
+    return response;
 }
 
 export const getPublishedByPublisher = async (publisherId, limit) => {
@@ -117,6 +118,24 @@ export const getJustPublishedChapters = async (page, size) => {
         params: {
             page: page,
             size: size
+        }
+    });
+    return response;
+}
+
+export const checkCanReadChapter = async (chapterId) => {
+    const response = await api.get(`${API.CONTENT_PURCHASED}/can-read`,{
+        params: {
+            chapterId: chapterId
+        }
+    });
+    return response;
+}
+
+export const checkChapterReadable = async (chapterId) => {
+    const response = await api.get(`${API.CHAPTER}/chapter/readable`, {
+        params: {
+            chapterId: chapterId
         }
     });
     return response;

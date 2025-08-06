@@ -10,7 +10,6 @@ function TopRankNovel() {
 
     useEffect(() => {
         getTopPromotionNovels().then((r) => {
-            console.log('TopRankNovel', r.data.result);
             setData(r.data.result);
         });
     }, [])

@@ -2,13 +2,14 @@ import React, { useEffect } from 'react';
 import { useUser } from '../../stores/userStores.js';
 import { getPaymentHistory } from '../../services/paymentService.js';
 import { initPageData } from '../../utils/PageUtils.js';
-import { usePaymentHistory, useSetPaymentHistory } from '../../stores/paymentStore.js';
+import { useMyWallet, usePaymentHistory, useSetPaymentHistory } from '../../stores/paymentStore.js';
 import {
     getTokenFromLocalStorage,
     getUserIdFromContext,
     getUserIdFromToken,
 } from '../../services/authenticationService.js';
 import { formatDate, formatPublishDateTime } from '../../utils/DatetimeUtil.js';
+import { CoinIcon } from '../../components/payments/Currency.jsx';
 const getTypeColor = (type) => {
     switch (type) {
         case 'DEPOSIT':
@@ -55,6 +56,7 @@ function PaymentHistoryPage() {
     const token = getTokenFromLocalStorage(); // Lấy token từ localStorage
     const paymentHistory = usePaymentHistory();
     const setPaymentHistory = useSetPaymentHistory();
+    const wallet = useMyWallet();
     const [pageData, setPageData] = React.useState(initPageData());
     useEffect(() => {
         getPaymentHistory(getUserIdFromToken(token)).then((r) => {
@@ -65,23 +67,9 @@ function PaymentHistoryPage() {
         });
     }, []);
 
-    const sampleData = [
-        {
-            id: '1dec14d7-0f30-4622-86be-5753ec96ba79',
-            time: '14:23:45 25/07/2025',
-            type: 'Nạp tiền',
-            amount: 50000,
-            status: 'Hoàn tất',
-        },
-        {
-            id: 'a2e1b88c-93c6-4cd0-bb7b-96f7e880f8a4',
-            time: '16:52:57 25/07/2025',
-            type: 'Mua chương',
-            amount: -3000,
-            status: 'Hoàn tất',
-        },
-    ];
-
+    function getWallet() {
+        return wallet.find((item) => item.currency.code === 'XU');
+    }
     return (
         <>
             <div className="flex justify-between items-center bg-secondary text-black h-12">
@@ -91,16 +79,12 @@ function PaymentHistoryPage() {
                         data-x-bind:class="currentKey === 'default' &amp;&amp; 'bg-primary text-white'"
                         className="inline-flex items-center py-3 px-3 text-xs space-x-2 border-r bg-primary text-white"
                     >
-                        <img
-                            src="https://assets.metruyencv.com/build/assets/potato-3246efaf.png"
-                            alt="KNBs"
-                            className="w-auto h-5"
-                        />
+                        <CoinIcon />
                         <span
                             data-x-text="numberFormat($store.account.userData.balance_default)"
                             className="bg-red-700 inline-flex items-center justify-center min-w-6 h-6 ms-2 px-2 text-xs font-semibold text-white rounded-full"
                         >
-                            0
+                            {getWallet().balance.toLocaleString()}
                         </span>
                     </button>
                 </div>

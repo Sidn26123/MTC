@@ -190,6 +190,11 @@ const SpecItem = ({ data, novel }) => {
         navigate(`/bookhub/novels/${novel.slug}/upload-chapters`);
     }
 
+    function handleGotoManagePage(){
+        setCurrentPublishedNovel(novel);
+        navigate(`/bookhub/novels/${novel.slug}/manage`);
+    }
+
     return (
         <>
             <div>
@@ -212,10 +217,10 @@ const SpecItem = ({ data, novel }) => {
                             <FontAwesomeIcon icon={faFeather} />
                         </Link>
                     </div>
-                    <div className={"bg-gray-300 p-1 rounded-md px-2 hover:cursor-pointer hover:bg-gray-400"}>
-                        <Link to={`/bookhub/novels/${novel.slug}/analytics`}>
+                    <div className={"bg-gray-300 p-1 rounded-md px-2 hover:cursor-pointer hover:bg-gray-400"}
+                        onClick={handleGotoManagePage}
+                    >
                         <FontAwesomeIcon icon={faChartLine} />
-                        </Link>
 
                     </div>
                     <div className={"bg-gray-300 p-1 rounded-md px-2 hover:cursor-pointer hover:bg-gray-400"}>

@@ -1,7 +1,7 @@
 // const API_GATEWAY = 'http://localhost:8889/api/v1';
 // const API_GATEWAY = 'http://localhost:8100/';
 const API_GATEWAY = 'http://localhost:8889/api/v1';
-
+const MOMO_API = "http://localhost:5000"
 const IDENTITY_SERVICE = API_GATEWAY + '/identity';
 const NOVEL_SERVICE = API_GATEWAY + '/novel';
 const NOVEL_CATEGORY_PREFIX = '/categories';
@@ -9,6 +9,7 @@ const USER_SERVICE = API_GATEWAY + '/user';
 const FEEDBACK_SERVICE = API_GATEWAY + '/feedback';
 const FILE_SERVICE = API_GATEWAY + '/file';
 const PAYMENT_SERVICE = API_GATEWAY + '/payment';
+const NOTIFICATION_SERVICE = API_GATEWAY + '/notification';
 
 export const CONFIG = {
     API_GATEWAY: API_GATEWAY,
@@ -38,9 +39,11 @@ export const API = {
     BOOKSHELF: NOVEL_SERVICE + "/bookshelfs",
     BOOKMARKED: NOVEL_SERVICE + "/bookshelfs/marked-novels",
     PAYMENT: PAYMENT_SERVICE,
+    CONTENT_PURCHASED: PAYMENT_SERVICE + "/content-purchases",
     TRANSACTIONS: PAYMENT_SERVICE + "/transactions",
     WALLET: PAYMENT_SERVICE + "/wallets",
-
+    MOMO_PAYMENT: MOMO_API + "/payment",
+    NOTIFICATION: NOTIFICATION_SERVICE + "/notifications",
 
 }
 

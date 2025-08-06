@@ -18,6 +18,8 @@ import { useSetListNovel } from '../../stores/novelStore.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCoins } from '@fortawesome/free-solid-svg-icons';
 import { useMyWallet } from '../../stores/paymentStore.js';
+import { useSetUnreadCount, useUnreadCount } from '../../stores/notificationStore.js';
+import { getUnreadCount } from '../../services/notificationService.js';
 
 function Navbar() {
     const [isDropdownOpen, setDropdownOpen] = useState(false);
@@ -30,6 +32,9 @@ function Navbar() {
     const setNovelStatus = useSetNovelStatus();
     const setListNovel = useSetListNovel();
     const myWallet = useMyWallet();
+
+    const unreadCount = useUnreadCount();
+    const setUnreadCount = useSetUnreadCount();
 
     const handleLogout = (event)=> {
         event.preventDefault();
@@ -51,6 +56,11 @@ function Navbar() {
             const novel = await getNovels();
             setListNovel(novel.data.result); // Gọi action của Zustand
         };
+
+        getUnreadCount().then( r => {
+            console.log("Unread count: ", r.data.result);
+            setUnreadCount(r.data.result);
+        })
 
         fetchData().then(r => {});
     }, []);
@@ -234,7 +244,7 @@ function Navbar() {
                                                         className="bg-red-700 inline-flex items-center justify-center w-6 h-6 ms-2 text-xs font-semibold text-white rounded-full"
                                                         data-x-text="$store.account.userData.unread_notifications_count"
                                                     >
-                                                        2
+                                                        {unreadCount}
                                                     </Link>
                                                 </div>
                                             </div>
@@ -379,8 +389,8 @@ function Navbar() {
                                                     <FontAwesomeIcon icon={faCoins} />
                                                     <span>:</span>
                                                     <span>
-          {myWallet?.find(w => w.currency.code === "XU")?.balance ?? 0}
-        </span>
+                                                      {(myWallet?.find(w => w.currency.code === "XU")?.balance ?? 0).toLocaleString()}
+                                                    </span>
                                                 </li>
 
                                                 {/* Xu khoá */}

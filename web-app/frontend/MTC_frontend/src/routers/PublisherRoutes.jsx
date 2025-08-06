@@ -14,6 +14,8 @@ import ReportDetailPage from '../pages/publishers/ReportDetailPage.jsx';
 import DraftPage from '../pages/users/DraftPage.jsx';
 import ManageDraftPage from '../pages/users/ManageDraftPage.jsx';
 import ReportListPage from '../pages/users/ReportListPage.jsx';
+import { NovelManagementPage } from '../pages/publishers/NovelManagementPage.jsx';
+import ReportRequestPage from '../pages/publishers/ReportRequestPage.jsx';
 
 const publisherRoutesPrefix = "/bookhub";
 
@@ -21,13 +23,13 @@ const PublisherRoutes = ({ user }) => {
     const isAuthenticated = user && user.id;
 
     return (
-        <Route element={<ProtectedRoute isAllowed={isAuthenticated} redirectTo={"/a"}/>}>
+        <Route element={<ProtectedRoute isAllowed={isAuthenticated} redirectTo={"/"}/>}>
             <Route element={<PublisherLayout />}>
                 <Route path={`${publisherRoutesPrefix}/dashboard`} element={<PublisherDashboard />} />
                 <Route path={`${publisherRoutesPrefix}/published`} element={<PublishedNovelPage />} />
                 <Route path={`${publisherRoutesPrefix}/new`} element={<PublishNewNovel />} />
                 <Route path={`${publisherRoutesPrefix}/analytic`} element={<AnalyticsNovelPage />} />
-                <Route path={`${publisherRoutesPrefix}/bao-cao`} element={<ReportListPage />} />
+                <Route path={`${publisherRoutesPrefix}/bao-cao`} element={<ReportRequestPage />} />
                 <Route path={`${publisherRoutesPrefix}/bao-cao/:reportId`} element={<ReportDetailPage />} />
                 <Route path={`${publisherRoutesPrefix}/ho-tro`} element={<AnalyticsNovelPage />} />
                 <Route path={`${publisherRoutesPrefix}/ban-nhap`}>
@@ -38,6 +40,7 @@ const PublisherRoutes = ({ user }) => {
                 <Route path={`${publisherRoutesPrefix}/novels/:novelSlug/upload-chapters`} element={<AddChapterPage />} />
                 <Route path={`${publisherRoutesPrefix}/novels/:novelSlug/update`} element={<UpdateNovelInfoPage />} />
                 <Route path={`${publisherRoutesPrefix}/novels/:novelSlug/chapters`} element={<ChapterList />} />
+                <Route path={`${publisherRoutesPrefix}/novels/:novelSlug/manage`} element={<NovelManagementPage />} />
                 <Route path={`${publisherRoutesPrefix}/chapters/:chapterId/edit`} element={<ChapterEditPage />} />
             </Route>
         </Route>

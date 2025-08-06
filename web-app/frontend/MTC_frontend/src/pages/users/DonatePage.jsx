@@ -2,7 +2,8 @@ import React from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCoins } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from 'react-router';
-
+// import {vnpay_icon} from '../../assets/VNPAY/vnpay-icon.png';
+import vnpay_icon from '../../assets/VNPAY/vnpay_icon.png';
 const PotatoIcon = () => (
     <div className="w-auto h-4 mx-1 inline-flex pr-10">
         <FontAwesomeIcon icon={faCoins} />
@@ -40,97 +41,51 @@ function DonatePage() {
         </div>
 
                                   {/* Các phương thức thanh toán */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* Paypal / Visa / MasterCard */}
-            {/*<div className="col-span-1">*/}
-            {/*    <a*/}
-            {/*        href="https://metruyencv.com/tai-khoan/mua-khoai/paypal"*/}
-            {/*        className="border border-primary bg-secondary text-black px-auto py-5 w-full block rounded-3xl hover:bg-primary hover:text-white"*/}
-            {/*    >*/}
-            {/*        <div className="flex flex-col space-y-3">*/}
-            {/*            <div className="flex justify-center space-x-2">*/}
-            {/*                <img*/}
-            {/*                    src="https://assets.metruyencv.com/build/assets/paypal-99cbe9aa.png"*/}
-            {/*                    alt="paypal"*/}
-            {/*                    className="h-4"*/}
-            {/*                />*/}
-            {/*                <img*/}
-            {/*                    src="https://assets.metruyencv.com/build/assets/visa-2110653d.png"*/}
-            {/*                    alt="visa"*/}
-            {/*                    className="h-4"*/}
-            {/*                />*/}
-            {/*                <img*/}
-            {/*                    src="https://assets.metruyencv.com/build/assets/master-card-5219270a.png"*/}
-            {/*                    alt="master"*/}
-            {/*                    className="h-4"*/}
-            {/*                />*/}
-            {/*            </div>*/}
-            {/*            <div className="text-center font-medium">*/}
-            {/*                Thanh toán qua Paypal, Visa, Master Card*/}
-            {/*            </div>*/}
-            {/*        </div>*/}
-            {/*    </a>*/}
-            {/*</div>*/}
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-            {/*/!* Đổi Kẹo sang Khoai *!/*/}
-            {/*<div className="col-span-1">*/}
-            {/*    <button*/}
-            {/*        className="border border-primary bg-secondary text-black px-auto py-5 w-full block rounded-3xl hover:bg-primary hover:text-white disabled:bg-gray-500"*/}
-            {/*        onClick={() => alert("Đổi Kẹo sang Khoai")}*/}
-            {/*    >*/}
-            {/*        <div className="flex flex-col space-y-3">*/}
-            {/*            <div className="flex justify-center items-center space-x-2 font-medium text-lg">*/}
-            {/*                <img*/}
-            {/*                    src="https://assets.metruyencv.com/build/assets/candies-d5f42b83.png"*/}
-            {/*                    alt="candy"*/}
-            {/*                    className="w-auto h-6"*/}
-            {/*                />*/}
-            {/*                <svg*/}
-            {/*                    className="h-6"*/}
-            {/*                    xmlns="http://www.w3.org/2000/svg"*/}
-            {/*                    width="24"*/}
-            {/*                    height="24"*/}
-            {/*                    viewBox="0 0 24 24"*/}
-            {/*                    fill="currentColor"*/}
-            {/*                >*/}
-            {/*                    <path d="M12.089 3.634a2 2 0 0 0 -1.089 1.78l-.001 2.586h-6.999a2 2 0 0 0 -2 2v4l.005 .15a2 2 0 0 0 1.995 1.85l6.999 -.001l.001 2.587a2 2 0 0 0 3.414 1.414l6.586 -6.586a2 2 0 0 0 0 -2.828l-6.586 -6.586a2 2 0 0 0 -2.18 -.434l-.145 .068z" />*/}
-            {/*                </svg>*/}
-            {/*                <img*/}
-            {/*                    src="https://assets.metruyencv.com/build/assets/potato-3246efaf.png"*/}
-            {/*                    alt="KNBs"*/}
-            {/*                    className="w-auto h-6"*/}
-            {/*                />*/}
-            {/*            </div>*/}
-            {/*            <div className="text-center font-medium">*/}
-            {/*                Lưu ý không đổi ngược lại thành Kẹo được*/}
-            {/*            </div>*/}
-            {/*        </div>*/}
-            {/*    </button>*/}
-            {/*</div>*/}
+                <div className="col-span-1 sm:col-span-2" onClick={handleGotoChoosePage}>
+                    <a
+                        href=""
+                        className="border border-primary bg-secondary text-black px-auto py-5 w-full block rounded-3xl hover:bg-primary hover:text-white"
+                    >
+                        <div className="flex flex-col space-y-3">
+                            <div className="flex justify-center space-x-2">
 
-            {/* P2P */}
-            <div className="col-span-1 sm:col-span-2" onClick={handleGotoChoosePage}>
-                <a
-                    href=""
-                    className="border border-primary bg-secondary text-black px-auto py-5 w-full block rounded-3xl hover:bg-primary hover:text-white"
-                >
-                    <div className="flex flex-col space-y-3">
-                        <div className="flex justify-center space-x-2">
+                                <img
+                                    src="https://assets.metruyencv.com/build/assets/momo-icon-f8fdcda0.png"
+                                    alt="momo"
+                                    className="h-4"
+                                />
 
-                            <img
-                                src="https://assets.metruyencv.com/build/assets/momo-icon-f8fdcda0.png"
-                                alt="momo"
-                                className="h-4"
-                            />
-
+                            </div>
+                            <div className="text-center font-medium">
+                                Mua Xu: Momo
+                            </div>
                         </div>
-                        <div className="text-center font-medium">
-                            Mua Xu: Momo
+                    </a>
+                </div>
+                <div className="col-span-1 sm:col-span-2" onClick={handleGotoChoosePage}>
+                    <a
+                        href=""
+                        className="border border-primary bg-secondary text-black px-auto py-5 w-full block rounded-3xl hover:bg-primary hover:text-white"
+                    >
+                        <div className="flex flex-col space-y-3">
+                            <div className="flex justify-center space-x-2">
+
+                                <img
+                                    src={vnpay_icon}
+                                    alt="momo"
+                                    className="h-4"
+                                />
+
+                            </div>
+                            <div className="text-center font-medium">
+                                Mua Xu: Momo
+                            </div>
                         </div>
-                    </div>
-                </a>
+                    </a>
+                </div>
             </div>
-        </div>
         </>
     )
 };

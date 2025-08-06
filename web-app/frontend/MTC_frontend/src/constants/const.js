@@ -5,3 +5,5 @@ export const defaultPagination = {
     totalElements: 0,
     data: []
 };
+
+export const currencyIdForDonateRelate = "f846a93f-af91-4ad9-aaf6-926ecb88595f";

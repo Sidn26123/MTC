@@ -17,13 +17,13 @@ export const sendComment = async (comment) => {
     console.log("Sending comment:", comment);
     try{
         const response = await api.post(API.FEEDBACK_COMMENT, comment);
-        console.log("Comment sent successfully:", response);
+        return response;
+
     }
     catch (error) {
         console.error("Error sending comment:", error);
         throw error; // Re-throw the error for further handling if needed
     }
-    return response;
 }
 export const getRatingOfNovel = async (novelId) => {
     console.log("Fetching rating for novel with ID:", novelId);
@@ -124,6 +124,16 @@ export const fetchMyIssues = async () => {
     }
 }
 
+export const commentOnReport = async (data) => {
+    try {
+        const res = await api.post(API.REPORT + "/report-comments", data);
+        console.log("Comment on report response:", res);
+        return res;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
 export const getReportById = async (id) => {
     try {
         const res = await api.get(API.REPORT + "/" + id);
@@ -155,4 +165,14 @@ export const getNewestRatings = async (limit) => {
         throw error; // Re-throw the error for further handling if needed
     }
 
+}
+
+export const updateReportStatus = async (reportId, data) => {
+    try {
+        const res = await api.put(API.REPORT + "/" + reportId + "/status", data);
+        return res;
+    } catch (error) {
+        console.error("Error updating report status:", error);
+        throw error; // Re-throw the error for further handling if needed
+    }
 }

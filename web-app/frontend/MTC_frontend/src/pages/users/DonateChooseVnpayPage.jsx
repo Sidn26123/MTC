@@ -5,7 +5,6 @@ import { useUser } from '../../stores/userStores.js';
 import { currencyIdForDonateRelate } from '../../constants/const.js';
 import { paymentDeposit } from '../../services/paymentService.js';
 import { CoinIcon } from '../../components/payments/Currency.jsx';
-import { showError } from '../../utils/ToastUtils.js';
 
 const MOCK_PACKAGES = {
     50000: {},
@@ -24,18 +23,32 @@ const PotatoIcon = () => (
     )
 ;
 
-export const DonateChooseMomoPage = () => {
+export const DonateChooseVnpayPage = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(true); // giả định đăng nhập
+    const [userName, setUserName] = useState("Sidnn"); // mock tên user
     const [isLoading, setIsLoading] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [order, setOrder] = useState(null);
     const user = useUser();
+    const handleStore = (key) => {
+        setIsSubmitting(true);
+        // Giả lập xử lý order
+        setTimeout(() => {
+            setOrder({
+                method: "momo",
+                amount: key,
+                code: "ORD123456",
+                amount_usd: (key / 20000).toFixed(2),
+                checkout_url: "https://paypal.com/checkout?order=ORD123456",
+            });
+            setIsSubmitting(false);
+        }, 1000);
+    };
     const [selectedAmount, setSelectedAmount] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    const handlePaymentMomo = async () => {
+    const handlePaymentVnpay = async () => {
         const amount = Number(selectedAmount || Object.keys(MOCK_PACKAGES)[0]);
-
         // setSelectedAmount(amount);
         setLoading(true);
         try {
@@ -50,10 +63,11 @@ export const DonateChooseMomoPage = () => {
             if (response?.payUrl) {
                 window.open(response.payUrl, '_blank');
             } else {
-                showError("Gọi API thành công nhưng không nhận được URL thanh toán.");
+                alert("Gọi API thành công nhưng không nhận được URL thanh toán.");
             }
         } catch (error) {
-            showError("Đã xảy ra lỗi khi gọi API thanh toán.");
+            console.error("Lỗi khi gọi thanh toán:", error);
+            alert("Đã xảy ra lỗi khi gọi API thanh toán.");
         } finally {
             setLoading(false);
         }
@@ -61,7 +75,7 @@ export const DonateChooseMomoPage = () => {
 
     function handleSubmitPayment(key) {
         setSelectedAmount(key);
-        handlePaymentMomo().then(r => {});
+        handlePaymentVnpay().then(r => {});
     }
 
     const renderPackages = () => (
@@ -176,4 +190,4 @@ export const DonateChooseMomoPage = () => {
     );
 };
 
-export default DonateChooseMomoPage;
+export default DonateChooseVnpayPage;
