@@ -1,4 +1,4 @@
-import { API } from '../configurations/configuration';
+import { API, API_CATEGORY } from '../configurations/configuration';
 import api from '../middlewares/axios.js';
 import { useSetListNovel } from '../stores/novelStore.js';
 
@@ -57,5 +57,97 @@ export const getBestNovels = async () => {
             }
         });
     return response;
+}
+
+
+
+// genres
+
+export const getAllGenres = async () => {
+    const response = await api.get(API_CATEGORY.GENRES);
+    return response.data;
+}
+
+export const addGenre = async (genre) => {
+    const response = await api.post(API_CATEGORY.GENRES + "/create", genre);
+    return response.data;
+}
+
+export const updateGenre = async (genre) => {
+    const response = await api.put(`${API_CATEGORY.GENRES}/${genre.id}`, {
+        name: genre.name,
+    });
+    return response.data;
+};
+
+// sect
+
+export const getAllSect = async () => {
+    const response = await api.get(API_CATEGORY.SECTS);
+    return response.data;
+}
+
+export const addSect = async (sect) => {
+    const response = await api.post(API_CATEGORY.SECTS + "/create", sect);
+    return response.data;
+}
+
+export const updateSect = async (sect) => {
+    const response = await api.put(`${API_CATEGORY.SECTS}/${sect.id}`, {
+        name: sect.name,
+    });
+    return response.data;
+};
+
+
+// world scene
+
+export const getAllWorldScene = async () => {
+    const response = await api.get(API_CATEGORY.WORLD_SCENES);
+    return response.data;
+}
+
+export const addWorldScene = async (WorldScene) => {
+    const response = await api.post(API_CATEGORY.WORLD_SCENES + "/create", WorldScene);
+    return response.data;
+}
+
+export const updateWorldScene = async (WorldScene) => {
+    const response = await api.put(`${API_CATEGORY.WORLD_SCENES}/${WorldScene.id}`, {
+        name: WorldScene.name,
+    });
+    return response.data;
+};
+
+
+// main character traits
+export const getAllMainCharacterTraits = async () => {
+    const response = await api.get(API_CATEGORY.MAIN_CHARACTER_TRAITS);
+    return response.data;
+}
+
+export const addMainCharacterTrait = async (trait) => {
+    const response = await api.post(API_CATEGORY.MAIN_CHARACTER_TRAITS + "/create", trait);
+    return response.data;
+}
+
+export const updateMainCharacterTrait = async (trait) => {
+    const response = await api.put(`${API_CATEGORY.MAIN_CHARACTER_TRAITS}/${trait.id}`, {
+        name: trait.name,
+    });
+    return response.data;
+}
+
+// novel types
+export const getAllNovelState = async () => {
+    const response = await api.get(API_CATEGORY.NOVEL_STATE);
+    return response.data;
+}
+
+export const updateNovelState = async (novelId, newStatusId) => {
+    const response = await api.put(`${API.NOVEL}/novels/${novelId}`, {
+        novelState: newStatusId,
+    });
+    return response.data;
 }
 

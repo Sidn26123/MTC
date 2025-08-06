@@ -1,20 +1,11 @@
 import React, { useState } from 'react';
+import { useEffect } from 'react'; 
+import { getAllMainCharacterTraits, addMainCharacterTrait, updateMainCharacterTrait } from '../../services/novelService';
 
 const MainCharacterManage = () => {
-    const [data, setData] = useState([
-        { id: 1, name: 'Thế giới mới' },
-        { id: 2, name: 'Cổ trang' },
-        { id: 3, name: 'Xuyên không' },
-        { id: 4, name: 'Hậu Cung' },
-        { id: 5, name: 'Vương quyền' },
-        { id: 6, name: 'Sản phẩm F' },
-        { id: 7, name: 'Sản phẩm I' },
-        { id: 8, name: 'Sản phẩm K' },
-        { id: 9, name: 'Sản phẩm L' },
-        { id: 10, name: 'Sản phẩm M' },
-        { id: 11, name: 'Sản phẩm N' },
-        { id: 12, name: 'Sản phẩm O' },
-    ]);
+  
+
+    const [data, setData] = useState([]);
 
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 5;
@@ -23,6 +14,23 @@ const MainCharacterManage = () => {
     const [showModal, setShowModal] = useState(false);
     const [inputValue, setInputValue] = useState('');
     const [editId, setEditId] = useState(null);
+
+    const fetchMainCharacters = async () => {
+        try {
+            const MainCharacters = await getAllMainCharacterTraits();
+            setData(MainCharacters.result || []); // Assuming genres is an object with a 'result' property
+        } catch (error) {
+            console.error("Lỗi khi tải danh sách tính cách nhân vật chính:", error);
+        }
+    };
+
+    useEffect(() => {
+
+        fetchMainCharacters();
+    }, []);
+
+
+
 
     const currentData = data.slice(
         (currentPage - 1) * itemsPerPage,
@@ -41,26 +49,39 @@ const MainCharacterManage = () => {
         setShowModal(true);
     };
 
-    const handleConfirm = () => {
+
+
+    const handleConfirm = async () => {
         if (inputValue.trim() === '') return;
 
-        if (editId !== null) {
-            setData(prev =>
-                prev.map(item =>
-                    item.id === editId ? { ...item, name: inputValue } : item
-                )
-            );
-        } else {
-            const newItem = {
-                id: Date.now(),
-                name: inputValue,
-            };
-            setData(prev => [...prev, newItem]);
-        }
+        try {
+            if (editId !== null) {
+                // Gọi API cập nhật
+                console.log("Updating MainCharacter with ID:", editId, "and name:", inputValue);
+                const updated = await updateMainCharacterTrait({ id: editId, name: inputValue });
+                // Cập nhật vào danh sách local
+                setData(prev =>
+                    prev.map(item =>
+                        item.id === editId ? { ...item, name: updated.name } : item
+                    )
+                );
+            } else {
+                // Gọi API tạo mới
+                const created = await addMainCharacterTrait({ name: inputValue });
+                // Thêm vào danh sách local
+                setData(prev => [...prev, created]);
+            }
+            await fetchMainCharacters();
 
-        setShowModal(false);
-        setInputValue('');
+            setShowModal(false);
+            setInputValue('');
+        } catch (error) {
+            console.error("Lỗi khi thêm/cập nhật tính cách nhân vật chính:", error);
+            alert("Đã xảy ra lỗi. Vui lòng thử lại.");
+        }
     };
+
+
 
     return (
         <div className="max-w-md mx-auto rounded-xl border border-white p-4 mt-10">
@@ -77,8 +98,8 @@ const MainCharacterManage = () => {
             <table className="w-full table-auto border-collapse">
                 <thead>
                     <tr>
-                        <th className="border-b py-2 text-left text-gray-600">Tên</th>
-                        <th className="border-b py-2 text-left text-gray-600">Hành động</th>
+                        <th className="border-b py-2 text-left text-gray-100">Tên</th>
+                        <th className="border-b py-2 text-left text-gray-100">Hành động</th>
                     </tr>
                 </thead>
                 <tbody>
