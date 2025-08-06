@@ -295,7 +295,7 @@ const handlePageSelect = (page) => {
     };
 
     return (
-        <CustomCard className="w-full max-w-4xl mx-auto">
+        <CustomCard className="w-full max-w-4xl mx-auto bg-gray-800 ">
             <CustomCardHeader>
                 <CustomCardTitle>Quản lý Tài Khoản</CustomCardTitle>
                 <div className="relative w-48">

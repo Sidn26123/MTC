@@ -31,7 +31,7 @@ import CategoryManage from '../../components/admin/CategoryManage';
 
 const CategoryManagePage = () => {
   return (
-    <div className="max-w-6xl mx-auto p-4 sm:p-6 md:p-8 min-h-screen">
+    <div className="max-w-6xl mx-auto p-4 sm:p-6 md:p-8 min-h-screen bg-gray-800 ">
       <h2 className="text-lg font-bold mb-8 text-gray-100">Trang Quản Lý Danh Mục</h2>
 
       {/* Grid responsive */}

@@ -256,7 +256,7 @@ export default function NovelManagePage() {
   };
 
   return (
-    <CustomCard className="w-full max-w-4xl mx-auto">
+    <CustomCard className="w-full max-w-4xl mx-auto bg-gray-800 ">
       <CustomCardHeader>
         <CustomCardTitle>Quản lý Truyện</CustomCardTitle>
         <div className="flex gap-2">
