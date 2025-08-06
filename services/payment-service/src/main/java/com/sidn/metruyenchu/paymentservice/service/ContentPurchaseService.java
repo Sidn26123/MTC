@@ -2,19 +2,18 @@ package com.sidn.metruyenchu.paymentservice.service;
 
 import com.sidn.metruyenchu.paymentservice.dto.BaseFilterRequest;
 import com.sidn.metruyenchu.paymentservice.dto.PageResponse;
-import com.sidn.metruyenchu.paymentservice.dto.request.contentPurchase.CheckUserCanReadContentRequest;
-import com.sidn.metruyenchu.paymentservice.dto.request.contentPurchase.CheckUserPurchaseContentRequest;
-import com.sidn.metruyenchu.paymentservice.dto.request.contentPurchase.ContentPurchaseCreateRequest;
-import com.sidn.metruyenchu.paymentservice.dto.request.contentPurchase.ContentPurchaseRequest;
+import com.sidn.metruyenchu.paymentservice.dto.request.contentPurchase.*;
 import com.sidn.metruyenchu.paymentservice.dto.response.contentPurchase.ContentPurchaseResponse;
 import com.sidn.metruyenchu.paymentservice.entity.ContentPurchase;
+import com.sidn.metruyenchu.paymentservice.entity.Currency;
 import com.sidn.metruyenchu.paymentservice.entity.Transactions;
 import com.sidn.metruyenchu.paymentservice.entity.Wallet;
+import com.sidn.metruyenchu.paymentservice.repository.http.NovelClient;
 import com.sidn.metruyenchu.shared_library.enums.payment.TransactionStatus;
 import com.sidn.metruyenchu.shared_library.enums.payment.TransactionType;
 import com.sidn.metruyenchu.paymentservice.enums.WalletStatus;
-import com.sidn.metruyenchu.paymentservice.exception.AppException;
-import com.sidn.metruyenchu.paymentservice.exception.ErrorCode;
+import com.sidn.metruyenchu.shared_library.exceptions.AppException;
+import com.sidn.metruyenchu.shared_library.exceptions.ErrorCode;
 import com.sidn.metruyenchu.paymentservice.mapper.ContentPurchaseMapper;
 import com.sidn.metruyenchu.paymentservice.mapper.TransactionsMapper;
 import com.sidn.metruyenchu.paymentservice.repository.ContentPurchaseRepository;
@@ -49,6 +48,9 @@ public class ContentPurchaseService {
     ContentPurchaseRepository contentPurchaseRepository;
     TransactionsMapper transactionsMapper;
     ContentPurchaseMapper contentPurchaseMapper;
+    CurrencyService currencyService;
+
+//    NovelClient novelClient;
 
     /**
      * Purchase content using wallet balance
@@ -80,6 +82,15 @@ public class ContentPurchaseService {
             throw new IllegalStateException("Wallet is not active");
         }
 
+        boolean hasPur =  hasPurchasedContent(CheckUserPurchaseContentRequest.builder()
+                .userId(userId)
+                .itemId(contentPurchaseRequest.getItemId())
+                .itemType(contentPurchaseRequest.getItemType())
+                .build());
+
+        if (hasPur) {
+            throw new AppException(ErrorCode.CONTENT_PURCHASE_ALREADY_EXISTS);
+        }
         // Calculate final price
         BigDecimal finalPrice = contentPurchaseRequest.getPrice();
         if (contentPurchaseRequest.getDiscount() != null) {
@@ -94,6 +105,7 @@ public class ContentPurchaseService {
             throw new IllegalStateException("Insufficient balance");
         }
 
+        Currency currency = currencyService.getCurrencyEntityById(contentPurchaseRequest.getCurrencyId());
         // Create transaction
         String transactionCode = "PUR-" + UUID.randomUUID().toString().substring(0, 8);
         Transactions transaction = Transactions.builder()
@@ -102,7 +114,7 @@ public class ContentPurchaseService {
                 .wallet(wallet)
                 .type(TransactionType.PURCHASE)
                 .amount(BigDecimal.valueOf(finalPrice.intValue()))
-                .currencyId(contentPurchaseRequest.getCurrencyId())
+                .currency(currency)
                 .status(TransactionStatus.PENDING)
                 .build();
         transaction = transactionsRepository.save(transaction);
@@ -137,6 +149,12 @@ public class ContentPurchaseService {
             transactionsRepository.save(transaction);
             throw e;
         }
+    }
+
+    @Transactional
+    public ContentPurchaseResponse purchaseContents(BulkChapterPurchaseRequest request){
+
+        return null;
     }
 
     /**

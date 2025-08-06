@@ -1,6 +1,6 @@
 package com.sidn.metruyenchu.feedbackservice.entity;
 
-import com.sidn.metruyenchu.feedbackservice.enums.FeedbackType;
+import com.sidn.metruyenchu.shared_library.enums.feedback.FeedbackType;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;

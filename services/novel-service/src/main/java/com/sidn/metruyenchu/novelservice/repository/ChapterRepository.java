@@ -74,5 +74,8 @@ public interface ChapterRepository extends JpaRepository<Chapter, String>, JpaSp
             nativeQuery = true
     )
     List<Chapter> findTopNLatestPublishedChaptersPerNovel(@Param("limit") int limit);
+
+
+
 //    Optional<Chapter> findByNovelAndChapterIdxAndIsDeletedIsFalseAndPublishedAt
 }

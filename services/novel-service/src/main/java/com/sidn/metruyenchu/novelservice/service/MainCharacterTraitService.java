@@ -81,6 +81,12 @@ public class MainCharacterTraitService {
 
     }
 
+    public void hardDeleteMainCharacterTrait(String mainCharacterTraitId) {
+        MainCharacterTrait mainCharacterTrait = mainCharacterTraitRepository.findById(mainCharacterTraitId)
+                .orElseThrow(() -> new AppException(ErrorCode.MAIN_CHARACTER_TRAIT_NOT_FOUND));
+        mainCharacterTraitRepository.delete(mainCharacterTrait);
+    }
+
     public List<MainCharacterTraitResponse> getAllMainCharacterTrait() {
         return mainCharacterTraitRepository.findAllByIsActiveAndIsDeleted(true, false).stream()
                 .map(mainCharacterTraitMapper::toMainCharacterTraitResponse)

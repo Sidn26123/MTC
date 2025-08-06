@@ -21,13 +21,13 @@ public class PaymentServiceApplication {
 		SpringApplication.run(PaymentServiceApplication.class, args);
 	}
 
-	@EventListener(ApplicationReadyEvent.class)
-	public void sendMail(){
-		emailService.sendEmail(
-				"nguyenphammanuy1@gmail.com",
-				"abc",
-				"dasbd"
-		);
-	}
+//	@EventListener(ApplicationReadyEvent.class)
+//	public void sendMail(){
+//		emailService.sendEmail(
+//				"nguyenphammanuy1@gmail.com",
+//				"abc",
+//				"dasbd"
+//		);
+//	}
 
 }

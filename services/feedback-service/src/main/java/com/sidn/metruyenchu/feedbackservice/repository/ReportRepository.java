@@ -60,4 +60,6 @@ public interface ReportRepository extends JpaRepository<Report, String>, JpaSpec
     Page<Report> findByReporterId(String reporterId, Pageable pageable);
 
     Page<Report> findByTargetTypeAndTargetId(TargetType targetType, String commentId, Pageable pageable);
+
+    Page<Report> findAllByAssignedRole(AssigneeRole assigneeRole, Pageable pageable);
 }

@@ -16,8 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigInteger;
 import java.sql.Timestamp;
+import java.time.DayOfWeek;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,18 +36,30 @@ public class NovelStatisticService {
         log.info("accessing novel statistics from {} to {} with unit {}", start, end, unit);
         switch (unit) {
             case DAY -> raw = novelRepository.getCountByDay(start, end);
-            case WEEK -> raw = novelRepository.getCountByWeek(start, end);
+            case WEEK -> raw = novelRepository. getCountByWeek(start, end);
             case MONTH -> raw = novelRepository.getCountByMonth(start, end);
             default -> throw new IllegalArgumentException("Unsupported segment type");
         }
-
-        return raw.stream()
+        if (raw.isEmpty()) {
+            return List.of(new TimeRangeStatisticDto(start, end, 0L));
+        }
+//        return raw.stream()
+//                .map(row -> new TimeRangeStatisticDto(
+//                        ((Timestamp) row[0]).toLocalDateTime(),
+//                        ((Timestamp) row[1]).toLocalDateTime(),
+//                        (Long) row[2]
+//                ))
+//                .toList();
+        List<TimeRangeStatisticDto> existingData = raw.stream()
                 .map(row -> new TimeRangeStatisticDto(
                         ((Timestamp) row[0]).toLocalDateTime(),
                         ((Timestamp) row[1]).toLocalDateTime(),
                         (Long) row[2]
                 ))
                 .toList();
+
+        // Fill missing periods với count = 0
+        return fillMissingPeriods(existingData, start, end, unit);
     }
     public List<TimeRangeStatisticDto> getApprovedSegmentStat(LocalDateTime start, LocalDateTime end, TimeSegmentUnit unit) {
         List<Object[]> raw;
@@ -54,14 +70,24 @@ public class NovelStatisticService {
             case MONTH -> raw = novelRepository.getApprovedCountByMonth(start, end);
             default -> throw new IllegalArgumentException("Unsupported segment type");
         }
-
-        return raw.stream()
+//
+//        return raw.stream()
+//                .map(row -> new TimeRangeStatisticDto(
+//                        ((Timestamp) row[0]).toLocalDateTime(),
+//                        ((Timestamp) row[1]).toLocalDateTime(),
+//                        ((Number) row[2]).longValue()
+//                ))
+//                .collect(Collectors.toList());
+        List<TimeRangeStatisticDto> existingData = raw.stream()
                 .map(row -> new TimeRangeStatisticDto(
                         ((Timestamp) row[0]).toLocalDateTime(),
                         ((Timestamp) row[1]).toLocalDateTime(),
-                        ((Number) row[2]).longValue()
+                        (Long) row[2]
                 ))
-                .collect(Collectors.toList());
+                .toList();
+
+        // Fill missing periods với count = 0
+        return fillMissingPeriods(existingData, start, end, unit);
     }
 
     public List<NovelClassificationDto> getByProgressStatus() {
@@ -125,5 +151,68 @@ public class NovelStatisticService {
 
     public Long getWordCountBetween(LocalDateTime start, LocalDateTime end) {
         return novelRepository.getWordCountBetween(start, end);
+    }
+    private List<TimeRangeStatisticDto> fillMissingPeriods(List<TimeRangeStatisticDto> existingData,
+                                                           LocalDateTime start,
+                                                           LocalDateTime end,
+                                                           TimeSegmentUnit unit) {
+        // Tạo map để lookup nhanh existing data
+        Map<String, TimeRangeStatisticDto> existingMap = existingData.stream()
+                .collect(Collectors.toMap(
+                        dto -> formatPeriodKey(dto.getStartTime(), unit),
+                        dto -> dto
+                ));
+
+        List<TimeRangeStatisticDto> result = new ArrayList<>();
+        LocalDateTime current = truncateToUnit(start, unit);
+        LocalDateTime endTruncated = truncateToUnit(end, unit);
+
+        while (!current.isAfter(endTruncated)) {
+            String periodKey = formatPeriodKey(current, unit);
+            TimeRangeStatisticDto existing = existingMap.get(periodKey);
+
+            if (existing != null) {
+                result.add(existing);
+            } else {
+                // Tạo period mới với count = 0
+                LocalDateTime periodEnd = calculatePeriodEnd(current, unit);
+                result.add(new TimeRangeStatisticDto(current, periodEnd, 0L));
+            }
+
+            current = addPeriod(current, unit);
+        }
+
+        return result;
+    }
+    private String formatPeriodKey(LocalDateTime dateTime, TimeSegmentUnit unit) {
+        return switch (unit) {
+            case DAY -> dateTime.toLocalDate().toString();
+            case WEEK -> dateTime.with(DayOfWeek.MONDAY).toLocalDate().toString();
+            case MONTH -> dateTime.getYear() + "-" + String.format("%02d", dateTime.getMonthValue());
+        };
+    }
+
+    private LocalDateTime truncateToUnit(LocalDateTime dateTime, TimeSegmentUnit unit) {
+        return switch (unit) {
+            case DAY -> dateTime.truncatedTo(ChronoUnit.DAYS);
+            case WEEK -> dateTime.with(DayOfWeek.MONDAY).truncatedTo(ChronoUnit.DAYS);
+            case MONTH -> dateTime.withDayOfMonth(1).truncatedTo(ChronoUnit.DAYS);
+        };
+    }
+
+    private LocalDateTime addPeriod(LocalDateTime dateTime, TimeSegmentUnit unit) {
+        return switch (unit) {
+            case DAY -> dateTime.plusDays(1);
+            case WEEK -> dateTime.plusWeeks(1);
+            case MONTH -> dateTime.plusMonths(1);
+        };
+    }
+
+    private LocalDateTime calculatePeriodEnd(LocalDateTime periodStart, TimeSegmentUnit unit) {
+        return switch (unit) {
+            case DAY -> periodStart.plusDays(1).minusSeconds(1);
+            case WEEK -> periodStart.plusWeeks(1).minusSeconds(1);
+            case MONTH -> periodStart.plusMonths(1).minusSeconds(1);
+        };
     }
 }

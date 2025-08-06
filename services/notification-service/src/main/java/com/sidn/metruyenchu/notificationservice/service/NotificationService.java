@@ -403,4 +403,11 @@ public class NotificationService {
         preference.setUserId(userId);
         return preferenceRepository.save(preference);
     }
+
+    public void deleteNotification(String id, String userId) {
+        Notification notification = notificationRepository.findByIdAndRecipientId(id, userId)
+                .orElseThrow(() -> new AppException(ErrorCode.NOTIFICATION_NOT_FOUND));
+
+        notification.setIsArchived(true);
+    }
 }

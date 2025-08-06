@@ -62,6 +62,13 @@ public class ChapterController {
                 .build();
     }
 
+    @GetMapping("/novel/{novelSlug}/chapter/{chapterIdx}")
+    ApiResponse<ChapterResponse> getChapterByNovelSlugAndIdx(@PathVariable String novelSlug, @PathVariable Integer chapterIdx){
+        return ApiResponse.<ChapterResponse>builder()
+                .result(chapterService.getChapterByNovelSlugAndIdx(novelSlug, chapterIdx))
+                .build();
+    }
+
     @DeleteMapping("/{chapterId}")
     ApiResponse<String> deleteChapter(@PathVariable String chapterId){
         chapterService.deleteChapter(chapterId);
@@ -184,6 +191,16 @@ public class ChapterController {
                 .build();
     }
 
+    @GetMapping("/novel/{novelId}/from")
+    ApiResponse<List<ChapterResponse>> getFromChaptersByNovelId(
+            @PathVariable String novelId,
+            @RequestParam (value = "from", defaultValue = "0") int from,
+            @RequestParam (value = "size", defaultValue = "10") int size
+    ) {
+        return ApiResponse.<List<ChapterResponse>>builder()
+                .result(chapterService.getFromChaptersByNovelId(novelId, from, size))
+                .build();
+    }
 
 
 }

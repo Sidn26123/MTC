@@ -1,4 +1,4 @@
-package com.sidn.metruyenchu.feedbackservice.dto.request.like;
+package com.sidn.metruyenchu.feedbackservice.dto.request.feign;
 
 import com.sidn.metruyenchu.shared_library.enums.feedback.FeedbackType;
 import lombok.*;
@@ -9,14 +9,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class LikeCreationRequest {
-    String likedBy;
-
-    String parentId;
-
+public class CommentRequest {
     FeedbackType feedbackType;
-
-    Boolean isLiked;
-
-
+    String parentId;
 }

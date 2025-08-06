@@ -50,8 +50,12 @@ public class Transactions {
     @Column(nullable = false)
     BigDecimal amount;
 
-    @Column(name = "currency_id", nullable = false)
-    String currencyId;
+//    @Column(name = "currency_id", nullable = false)
+//    String currencyId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "currency_id", nullable = false)
+    Currency currency;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

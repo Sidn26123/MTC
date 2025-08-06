@@ -103,4 +103,9 @@ public class CurrencyService {
         currencyRepository.delete(currency);
 
     }
+
+//    public Currency getCurrencyEntityByCode(String code) {
+//        return currencyRepository.findByCode(code)
+//                .orElseThrow(() -> new AppException(ErrorCode.CURRENCY_NOT_FOUND));
+//    }
 }

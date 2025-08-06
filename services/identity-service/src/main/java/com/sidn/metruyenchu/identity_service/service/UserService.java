@@ -16,12 +16,17 @@ import com.sidn.metruyenchu.identity_service.repository.RoleRepository;
 import com.sidn.metruyenchu.identity_service.repository.UserRepository;
 import com.sidn.metruyenchu.identity_service.repository.httpclient.NovelClient;
 import com.sidn.metruyenchu.identity_service.repository.httpclient.UserClient;
+import com.sidn.metruyenchu.shared_library.dto.BaseFilterRequest;
+import com.sidn.metruyenchu.shared_library.dto.PageResponse;
+import com.sidn.metruyenchu.shared_library.utils.PageUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.experimental.NonFinal;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -96,8 +101,15 @@ public class UserService {
 
     //hasAuthority
     @PreAuthorize("hasRole('ADMIN')")
-    public List<UserResponse> getUsers(){
-        return userMapper.toUserResponses(userRepository.findAll());
+    public PageResponse<UserResponse> getUsers(BaseFilterRequest request){
+        Pageable pageable = PageUtils.from(request);
+        Page<User> pageData = userRepository.findAll(pageable);
+        return PageUtils.toPageResponse(
+                pageData,
+                userMapper::toUserResponse,
+                pageable.getPageNumber()
+        );
+//        return userMapper.toUserResponses(userRepository.findAll());
     }
 
     public UserResponse getUser(String userId){
@@ -111,7 +123,9 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         userMapper.updateUser(user, request);
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        if (request.getPassword() != null){
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
 
         var roles = roleRepository.findAllById(request.getRoles());
 

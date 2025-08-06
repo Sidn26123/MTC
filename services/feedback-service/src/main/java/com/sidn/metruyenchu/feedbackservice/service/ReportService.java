@@ -1,6 +1,9 @@
 package com.sidn.metruyenchu.feedbackservice.service;
 
 import com.sidn.metruyenchu.feedbackservice.dto.ApiResponse;
+import com.sidn.metruyenchu.feedbackservice.dto.response.CommentResponse;
+import com.sidn.metruyenchu.feedbackservice.entity.Comment;
+import com.sidn.metruyenchu.feedbackservice.entity.Rating;
 import com.sidn.metruyenchu.feedbackservice.spectifications.ReportSpecification;
 import com.sidn.metruyenchu.shared_library.dto.BaseFilterRequest;
 import com.sidn.metruyenchu.shared_library.dto.PageResponse;
@@ -24,6 +27,7 @@ import com.sidn.metruyenchu.feedbackservice.repository.ReportRepository;
 import com.sidn.metruyenchu.feedbackservice.repository.httpclient.NovelClient;
 import com.sidn.metruyenchu.shared_library.enums.feedback.ActorRole;
 import com.sidn.metruyenchu.shared_library.enums.feedback.AssigneeRole;
+import com.sidn.metruyenchu.shared_library.enums.feedback.ReportActionType;
 import com.sidn.metruyenchu.shared_library.enums.feedback.ReportType;
 import com.sidn.metruyenchu.shared_library.enums.user.UserRole;
 import com.sidn.metruyenchu.shared_library.utils.PageUtils;
@@ -38,12 +42,15 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.sidn.metruyenchu.feedbackservice.utils.FeignResponseUtils.callFeignGetChapterInfo;
 import static com.sidn.metruyenchu.feedbackservice.utils.FeignResponseUtils.callFeignGetNovelInfo;
 import static com.sidn.metruyenchu.feedbackservice.utils.GeneralUtils.getPageable;
+import static com.sidn.metruyenchu.feedbackservice.utils.TokenUtils.getTokenFromContext;
 import static com.sidn.metruyenchu.feedbackservice.utils.TokenUtils.getUserIdFromContext;
 import static com.sidn.metruyenchu.shared_library.utils.PageUtils.mapBaseFilter;
+import static com.sidn.metruyenchu.shared_library.utils.TokenUtils.getRolesFromToken;
 
 @Service
 @RequiredArgsConstructor
@@ -59,6 +66,8 @@ public class ReportService {
     ReportHandleDetailRepository reportHandleDetailRepository;
     ReportAssignmentService assignmentService;
     ReportActionService reportActionService;
+    private final CommentService commentService;
+    private final RatingService ratingService;
 
     public ReportResponse createReport(ReportCreationRequest request) {
         String userId = getUserIdFromContext();
@@ -76,7 +85,6 @@ public class ReportService {
 //            throw new AppException(ErrorCode.UNKNOWN_ERROR);
 //        }
         Report saved = reportRepository.save(report);
-        log.info("Report created: {} - {}", saved.getId(), saved.getReportType());
         autoAssignReport(saved);
         return reportMapper.toResponse(saved);
     }
@@ -320,8 +328,7 @@ public class ReportService {
 
         String publisherId = getPublisherByTarget(report.getTargetType(), report.getTargetId());
         if (publisherId == null) {
-            log.warn("No publisher found for target: {} - {}", report.getTargetType(), report.getTargetId());
-            publisherId = "as";
+            throw new AppException(ErrorCode.NOT_FOUND);
         }
         if (publisherId != null) {
 
@@ -331,6 +338,11 @@ public class ReportService {
                     .assigneeRole(AssigneeRole.PUBLISHER)
                     .isPrimary(false)
                     .build());
+            report.setAssignedTo(publisherId);
+            report.setAssignedRole(AssigneeRole.PUBLISHER);
+
+            log.info("Assigned report {} to publisher {}", report, publisherId);
+            reportRepository.save(report);
         }
     }
 
@@ -342,6 +354,18 @@ public class ReportService {
             ChapterResponse chapter = callFeignGetChapterInfo(novelClient, targetId).getResult();
             return chapter != null ? chapter.getPublisher() : null;
         }
+        else if (TargetType.COMMENT.equals(targetType)){
+            Comment comment = commentService.getCommentById(targetId);
+            NovelResponse novel = callFeignGetNovelInfo(novelClient, comment.getNovelId()).getResult();
+            return novel != null ? novel.getCurrentPublisher() : null;
+        }
+        else if (TargetType.RATING.equals(targetType)) {
+            // Assuming ratings are linked to novels, we can fetch the novel's publisher
+            Rating rating = ratingService.getRatingById(targetId);
+            NovelResponse novel = callFeignGetNovelInfo(novelClient, targetId).getResult();
+            return novel != null ? novel.getCurrentPublisher() : null;
+        }
+
 
         return null;
     }
@@ -354,9 +378,12 @@ public class ReportService {
 //        };
 //    }
 
-    public PageResponse<ReportResponse> getReportsForUser(String userId, AssigneeRole role, Pageable pageable) {
+    public PageResponse<ReportResponse> getReportsForUser(String userId, AssigneeRole role, BaseFilterRequest request) {
+        Pageable pageable = PageUtils.from(request);
+
+
         Page<Report> reports = switch (role) {
-            case ADMIN -> reportRepository.findAll(pageable);
+            case ADMIN -> reportRepository.findByAssignedToAndAssignedRole(userId, AssigneeRole.ADMIN, pageable);
             case PUBLISHER -> reportRepository.findByAssignedToAndAssignedRole(userId, AssigneeRole.PUBLISHER, pageable);
             default -> reportRepository.findByReporterId(userId, pageable);
         };
@@ -364,16 +391,19 @@ public class ReportService {
         return PageUtils.toPageResponse(
                 reports,
                 reportMapper::toResponse,
-                pageable.getPageNumber() + 1
+                pageable.getPageNumber()
         );
     }
 
     public ReportResponse updateReportStatus(String reportId, ReportUpdateRequest request) {
+
         Report report = reportRepository.findById(reportId)
                 .orElseThrow(() -> new AppException(ErrorCode.UNKNOWN_ERROR));
 
         ReportStatus oldStatus = report.getStatus();
         ReportStatus newStatus = request.getStatus();
+
+        log.info("Updating report {} status from {} to {}", reportId, oldStatus, newStatus);
         report.setStatus(newStatus);
 
         if (newStatus == ReportStatus.RESOLVED || newStatus == ReportStatus.REJECTED) {
@@ -383,14 +413,23 @@ public class ReportService {
 
         Report updatedReport = reportRepository.save(report);
         String userId = getUserIdFromContext();
-        ActorRole actorRole = ActorRole.ADMIN;
+        String token = getTokenFromContext();
+        log.info("Token: {}", token);
+        List<String> roles = getRolesFromToken(token).stream()
+                .filter(r -> r.startsWith("ROLE_"))
+                .map(role -> role.substring("ROLE_".length()))
+                .collect(Collectors.toList());
+        log.info("Token: {}", roles);
+
+        assert roles != null;
+        ActorRole actorRole = ActorRole.valueOf(roles.get(0).toUpperCase());
 
 
         reportActionService.createReportAction(ReportActionRequest.builder()
                 .reportId(reportId)
                 .actorId(userId)
                 .actorRole(actorRole)
-                .actionType(request.getActionType())
+                .actionType(ReportActionType.STATUS_CHANGE)
                 .note(request.getResolutionNote())
                         .oldValue(oldStatus.name())
                         .newValue(newStatus.name())
@@ -477,4 +516,14 @@ public class ReportService {
                 pageable.getPageNumber() + 1
         );
     }
+
+//    public void closeReport(String reportId) {
+//        Report report = reportRepository.findById(reportId)
+//                .orElseThrow(() -> new AppException(ErrorCode.REPORT_NOT_FOUND));
+//
+//
+//        report.setStatus(ReportStatus.CLOSED);
+//        reportRepository.save(report);
+//
+//        // Notify reporter
 }

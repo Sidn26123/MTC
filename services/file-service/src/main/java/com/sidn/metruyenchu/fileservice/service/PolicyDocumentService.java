@@ -13,6 +13,7 @@ import com.sidn.metruyenchu.fileservice.repository.PolicyDocumentRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,7 @@ import static com.sidn.metruyenchu.shared_library.utils.TokenUtils.getUserIdFrom
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Slf4j
 public class PolicyDocumentService {
 
     PolicyDocumentRepository repository;
@@ -54,6 +56,8 @@ public class PolicyDocumentService {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     @Transactional
     public PolicyDocumentResponse update(String slug, PolicyDocumentUpdateRequest request) {
+        log.info("Updating policy document with slug: {}", request);
+
         PolicyDocument document = repository.findBySlug(slug)
                 .orElseThrow(() -> new AppException(ErrorCode.POLICY_NOT_FOUND));
         String adminUser = getUserIdFromToken(getTokenFromContext());

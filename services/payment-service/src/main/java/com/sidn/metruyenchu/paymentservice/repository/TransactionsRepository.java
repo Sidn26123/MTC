@@ -33,7 +33,7 @@ public interface TransactionsRepository extends JpaRepository<Transactions, Stri
            "(:walletId IS NULL OR t.wallet.id = :walletId) AND " +
            "(:type IS NULL OR t.type = :type) AND " +
            "(:status IS NULL OR t.status = :status) AND " +
-           "(:currencyId IS NULL OR t.currencyId = :currencyId) AND " +
+           "(:currencyId IS NULL OR t.currency.id = :currencyId) AND " +
            "(:fromDate IS NULL OR t.createdAt >= :fromDate) AND " +
            "(:toDate IS NULL OR t.createdAt <= :toDate)")
     Page<Transactions> searchTransactions(

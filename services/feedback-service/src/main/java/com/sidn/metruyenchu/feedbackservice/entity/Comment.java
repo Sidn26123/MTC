@@ -37,6 +37,10 @@ public class Comment {
     String chapterId;
 
     @Builder.Default
+    @Column(columnDefinition = "integer default 0")
+    Integer totalReplies = 0;
+
+    @Builder.Default
     Integer totalLikes = 0;
 
     @Builder.Default

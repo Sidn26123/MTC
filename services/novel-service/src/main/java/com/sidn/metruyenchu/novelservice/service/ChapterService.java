@@ -537,27 +537,23 @@ public class ChapterService {
      * Kiểm tra user có tể truy cập nội dung chương hay không
      */
     public boolean checkUserCanReadChapter(CanUserReadChapterCheckRequest request){
+        if (request.getUserId() == null){
+            request.setUserId(getUserIdFromContext());
+        }
         Chapter chapter = chapterRepository.findByIdAndIsDeletedIsFalse(request.getChapterId())
                 .orElseThrow(() -> new AppException(ErrorCode.CHAPTER_NOT_FOUND));
 
         boolean canRead = true;
-
-        //Nếu public thì có thể đọc
-        if (chapter.getNovel().getNovelVisibility() == NovelVisibility.PUBLIC) {
-            return true;
-        }
-
         //Nếu là tác giả thì có thể đọc
         if (chapter.getNovel().getAuthor().getId().equals(request.getUserId())) {
             return true;
         }
-
-        if (chapter.getNovel().getNovelVisibility() == NovelVisibility.PRIVATE) {
-            return false;
+        //Nếu public thì có thể đọc
+        if (chapter.getNovel().getNovelVisibility() == NovelVisibility.PUBLIC && chapter.getIsPublished()) {
+            return true;
         }
 
-
-        return true;
+        return false;
     }
 
     public boolean checkUserCanReadChapterThrow(Chapter chapter, String userId) {
@@ -688,12 +684,12 @@ public class ChapterService {
         String userId = getUserIdFromContext();
 
 //        checkUserCanReadChapterThrow(chapter, userId);
-        boolean isFinished = false;
-        if (request.getDuration() < 20 || request.getProgress() < 0.1f) {
+        boolean isFinished = true;
+        if (request.getDuration() < 20 || request.getProgress() < 0.8f) {
             isFinished = false;
-        } else if (request.getProgress() >= 0.9f) {
-            isFinished = true;
         }
+
+
         readingLogService.create(
                 ReadingLogCreateRequest.builder()
                         .chapterId(chapter.getId())
@@ -734,4 +730,27 @@ public class ChapterService {
                 .orElseThrow(() -> new AppException(ErrorCode.CHAPTER_NOT_FOUND));
         return chapterMapper.toChapterResponse(chapter);
     }
+
+    public List<Chapter> getChapterFromIndex(String novelId, int startIndex, int limit) {
+        Novel novel = novelRepository.findById(novelId)
+                .orElseThrow(() -> new AppException(ErrorCode.NOVEL_NOT_FOUND));
+        return chapterRepository.findByNovelAndChapterIdxAndIsDeletedIsFalse(novel, startIndex)
+                .stream()
+                .limit(limit)
+                .collect(Collectors.toList());
+    }
+
+    public List<ChapterResponse> getFromChaptersByNovelId(String novelId, int from, int size){
+        Novel novel = novelRepository.findById(novelId)
+                .orElseThrow(() -> new AppException(ErrorCode.NOVEL_NOT_FOUND));
+        Pageable pageable = PageRequest.of(from, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+        var pageData = chapterRepository.findByNovel(novel, pageable);
+
+        return pageData.getContent()
+                .stream()
+                .map(chapterMapper::toChapterResponse)
+                .toList();
+    }
+
+//    public List<Chapter> getChapter
 }

@@ -78,4 +78,11 @@ public class NotificationController {
         service.archiveNotification(id, userId);
         return ApiResponse.<Void>builder().build();
     }
+    @DeleteMapping("/{id}")
+    public ApiResponse<Void> deleteNotification(@PathVariable String id) {
+        String userId = getUserIdFromContext();
+
+        service.deleteNotification(id, userId);
+        return ApiResponse.<Void>builder().build();
+    }
 }

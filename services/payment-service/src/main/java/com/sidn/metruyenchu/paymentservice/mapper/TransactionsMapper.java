@@ -14,6 +14,8 @@ import java.util.List;
          uses = {WalletMapper.class})
 public interface TransactionsMapper {
     @Mapping(source = "wallet.id", target = "walletId")
+    @Mapping(source = "currency.id", target = "currencyId")
+    @Mapping(target = "currency", ignore = true)
     TransactionsResponse toResponse(Transactions transactions);
 
     Transactions toEntity(TransactionsCreateRequest request);

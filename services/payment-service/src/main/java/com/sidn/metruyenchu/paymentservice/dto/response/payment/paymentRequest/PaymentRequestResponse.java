@@ -1,4 +1,5 @@
 package com.sidn.metruyenchu.paymentservice.dto.response.payment.paymentRequest;
+import com.sidn.metruyenchu.shared_library.enums.payment.PaymentRequestStatus;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -23,4 +24,5 @@ public class PaymentRequestResponse {
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
     LocalDateTime completedAt;
+    PaymentRequestStatus status;
 }

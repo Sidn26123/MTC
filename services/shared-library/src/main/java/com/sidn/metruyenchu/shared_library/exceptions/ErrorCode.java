@@ -206,9 +206,13 @@ public enum ErrorCode {
     DRAFT_ALREADY_EXISTS(4004, "Bản nháp đã tồn tại", HttpStatus.BAD_REQUEST),
     POLICY_NOT_FOUND(4005, "Chính sách không tồn tại", HttpStatus.NOT_FOUND),
     POLICY_ALREADY_EXISTS(4006, "Chính sách đã tồn tại", HttpStatus.BAD_REQUEST),
-    WALLET_NOT_BELONG_TO_USER(4033, "Ví không thuộc về người dùng này", HttpStatus.FORBIDDEN)
+    WALLET_NOT_BELONG_TO_USER(4033, "Ví không thuộc về người dùng này", HttpStatus.FORBIDDEN),
 
-    ;
+    PAYMENT_METHOD_NOT_FOUND(6008, "Phương thức thanh toán không tồn tại", HttpStatus.NOT_FOUND),
+    PAYMENT_REQUEST_FAILED(6009, "Yêu cầu thanh toán không thành công", HttpStatus.BAD_REQUEST),
+    PAYMENT_REQUEST_NOT_FOUND(6010, "Yêu cầu thanh toán không tồn tại", HttpStatus.NOT_FOUND),
+    CONTENT_PURCHASE_ALREADY_EXISTS(6011, "Nội dung đã được mua trước đó", HttpStatus.BAD_REQUEST),
+    CONTENT_PURCHASE_NOT_FOUND(6012, "Nội dung mua không tồn tại", HttpStatus.NOT_FOUND);
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
         this.code = code;

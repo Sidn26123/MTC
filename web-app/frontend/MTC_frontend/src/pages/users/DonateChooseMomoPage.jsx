@@ -2,6 +2,9 @@ import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCoins } from '@fortawesome/free-solid-svg-icons';
 import { useUser } from '../../stores/userStores.js';
+import { currencyIdForDonateRelate } from '../../constants/const.js';
+import { paymentDeposit } from '../../services/paymentService.js';
+import { CoinIcon } from '../../components/payments/Currency.jsx';
 
 const MOCK_PACKAGES = {
     50000: {},
@@ -32,7 +35,7 @@ export const DonateChoosePage = () => {
         // Giả lập xử lý order
         setTimeout(() => {
             setOrder({
-                method: "paypal",
+                method: "momo",
                 amount: key,
                 code: "ORD123456",
                 amount_usd: (key / 20000).toFixed(2),
@@ -41,13 +44,48 @@ export const DonateChoosePage = () => {
             setIsSubmitting(false);
         }, 1000);
     };
+    const [selectedAmount, setSelectedAmount] = useState(null);
+    const [loading, setLoading] = useState(false);
+
+    const handlePaymentMomo = async () => {
+        const amount = Number(selectedAmount || Object.keys(MOCK_PACKAGES)[0]);
+        // setSelectedAmount(amount);
+        setLoading(true);
+        try {
+            const data = {
+                "customer": user.id,
+                "amount": 50000,
+                "userId": user.id,
+                "currencyId": currencyIdForDonateRelate
+            }
+            console.log("Calling paymentDeposit with data:", data);
+            const response = await paymentDeposit(data);
+            console.log("Response from paymentDeposit:", response);
+            // Nếu gọi thành công, redirect đến MoMo
+            if (response?.payUrl) {
+                window.open(response.payUrl, '_blank');
+            } else {
+                alert("Gọi API thành công nhưng không nhận được URL thanh toán.");
+            }
+        } catch (error) {
+            console.error("Lỗi khi gọi thanh toán:", error);
+            alert("Đã xảy ra lỗi khi gọi API thanh toán.");
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    function handleSubmitPayment(key) {
+        setSelectedAmount(key);
+        handlePaymentMomo().then(r => {});
+    }
 
     const renderPackages = () => (
         <div className="space-y-4">
             {Object.keys(MOCK_PACKAGES).map((key) => (
                 <button
                     key={key}
-                    onClick={() => handleStore(Number(key))}
+                    onClick={() => handleSubmitPayment(key)}
                     className="border border-primary bg-secondary text-black px-auto py-5 w-full block rounded-3xl hover:bg-primary hover:text-white"
                 >
                     <div className="flex justify-center space-x-2">
@@ -119,28 +157,24 @@ export const DonateChoosePage = () => {
                                     </div>
                                     {renderPackages()}
                                 </>
-                            ) : order.method === "paypal" ? (
+                            ) : order.method === "momo" ? (
                                 <div>
                                     <div className="text-center items-center mb-6">
                                         Bạn đang mua{" "}
                                         <span className="font-bold">{numberFormat(order.amount)}</span>
-                                        <img
-                                            src="https://assets.metruyencv.com/build/assets/potato-3246efaf.png"
-                                            alt="KNBs"
-                                            className="w-auto h-4 mx-1 inline-flex"
-                                        />
+                                        <CoinIcon />
                                         (đơn hàng: <strong>{order.code}</strong>), số tiền cần thanh toán là{" "}
-                                        <strong>{order.amount_usd}$</strong>. Ấn vào nút thanh toán bên dưới để
-                                        thanh toán qua paypal.
+                                        <strong>{order.amount}$</strong>. Ấn vào nút thanh toán bên dưới để
+                                        thanh toán qua Momo.
                                     </div>
                                     <div className="flex justify-center">
                                         {order.checkout_url ? (
-                                            <a
-                                                href={order.checkout_url}
+                                            <div
+                                                onClick={() => handlePaymentMomo()}
                                                 className="bg-primary text-white px-5 py-2 rounded"
                                             >
-                                                Thanh toán {order.amount_usd}$
-                                            </a>
+                                                Thanh toán {order.amount}$
+                                            </div>
                                         ) : (
                                             <div className="text-center italic text-red-500 font-bold">
                                                 Có lỗi trong quá trình thanh toán, vui lòng thử lại hoặc Yêu cầu hỗ

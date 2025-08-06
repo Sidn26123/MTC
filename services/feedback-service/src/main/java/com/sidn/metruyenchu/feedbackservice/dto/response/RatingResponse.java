@@ -19,6 +19,7 @@ public class RatingResponse {
     Integer totalLikes;
     Integer totalDislikes;
     Integer totalComments;
+    Integer totalReplies;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;
     Boolean isDeleted;

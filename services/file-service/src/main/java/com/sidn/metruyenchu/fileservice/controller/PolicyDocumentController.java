@@ -65,4 +65,14 @@ public class PolicyDocumentController {
                 .result(service.update(slug, request))
                 .build();
     }
+
+    @DeleteMapping("/{slug}")
+    public ApiResponse<Void> delete(
+            @PathVariable String slug
+    ) {
+        service.delete(slug);
+        return ApiResponse.<Void>builder()
+                .result(null)
+                .build();
+    }
 }

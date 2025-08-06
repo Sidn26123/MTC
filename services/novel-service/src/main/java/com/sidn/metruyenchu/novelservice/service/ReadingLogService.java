@@ -18,17 +18,27 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Transactional(readOnly = true)
 public class ReadingLogService {
 
     ReadingLogRepository readingLogRepository;
     ReadingLogMapper readingLogMapper;
 
+    @Transactional
     public ReadingLogResponse create(ReadingLogCreateRequest request) {
         ReadingLog log = readingLogMapper.toReadingLog(request);
-        log.setReadAt(LocalDateTime.now());
+        // readAt sẽ được set tự động trong @PrePersist
         return readingLogMapper.toReadingLogResponse(readingLogRepository.save(log));
     }
 
@@ -38,35 +48,36 @@ public class ReadingLogService {
                 .toList();
     }
 
-    public List<ReadingLogResponse> getByStory(String storyId) {
-        return readingLogRepository.findByStoryId(storyId).stream()
+    public List<ReadingLogResponse> getByNovel(String novelId) {
+        return readingLogRepository.findByNovelId(novelId).stream()
                 .map(readingLogMapper::toReadingLogResponse)
                 .toList();
     }
 
-    public List<ReadingLogResponse> getByUserAndStory(String userId, String storyId) {
-        return readingLogRepository.findByUserIdAndStoryId(userId, storyId).stream()
+    public List<ReadingLogResponse> getByUserAndNovel(String userId, String novelId) {
+        return readingLogRepository.findByUserIdAndNovelId(userId, novelId).stream()
                 .map(readingLogMapper::toReadingLogResponse)
                 .toList();
     }
 
     public List<ReadingLogResponse> getLogsInTimeRange(LocalDateTime start, LocalDateTime end) {
-        return readingLogRepository.findAllByReadAtBetween(start, end).stream()
+        return readingLogRepository.findByReadAtBetween(start, end).stream()
                 .map(readingLogMapper::toReadingLogResponse)
                 .toList();
     }
 
-    public Map<String, Object> statistic(LocalDateTime start, LocalDateTime end) {
-        List<ReadingLog> logs = readingLogRepository.findAllByReadAtBetween(start, end);
+    public Map<String, Object> getStatistics(LocalDateTime start, LocalDateTime end) {
+        Object[] stats = readingLogRepository.getOverallStats(start, end);
 
-        long totalLogs = logs.size();
-        long totalDuration = logs.stream().mapToLong(ReadingLog::getDuration).sum();
-        long finishedCount = logs.stream().filter(ReadingLog::getIsFinished).count();
+        Long totalLogs = ((Number) stats[0]).longValue();
+        Long totalDuration = ((Number) stats[1]).longValue();
+        Long finishedCount = ((Number) stats[2]).longValue();
 
         return Map.of(
                 "totalLogs", totalLogs,
                 "totalDurationSeconds", totalDuration,
-                "finishedCount", finishedCount
+                "finishedCount", finishedCount,
+                "averageDuration", totalLogs > 0 ? (double) totalDuration / totalLogs : 0.0
         );
     }
 
@@ -76,6 +87,35 @@ public class ReadingLogService {
 
     public List<UserReadingStat> getUserStats(LocalDateTime start, LocalDateTime end) {
         return readingLogRepository.getUserReadingStats(start, end);
+    }
+
+    public Optional<LocalDateTime> getNearestReadAt(String userId, String novelId) {
+        return readingLogRepository.findTopByUserIdAndNovelIdOrderByReadAtDesc(userId, novelId)
+                .map(ReadingLog::getReadAt);
+    }
+
+    // Thêm một số phương thức tiện ích
+    public boolean hasUserReadChapter(String userId, String chapterId) {
+        return readingLogRepository.findByUserId(userId).stream()
+                .anyMatch(log -> chapterId.equals(log.getChapterId()) &&
+                        Boolean.TRUE.equals(log.getIsFinished()));
+    }
+
+    public long countReadingsByNovel(String novelId) {
+        return readingLogRepository.findByNovelId(novelId).size();
+    }
+
+    public double getAverageProgressByUserAndNovel(String userId, String novelId) {
+        List<ReadingLog> logs = readingLogRepository.findByUserIdAndNovelId(userId, novelId);
+        return logs.stream()
+                .filter(log -> log.getProgress() != null)
+                .mapToDouble(ReadingLog::getProgress)
+                .average()
+                .orElse(0.0);
+    }
+
+    public LocalDateTime getNearestUserRead(String userId, String chapterId){
+        return null;
     }
 }
 

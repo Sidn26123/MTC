@@ -82,9 +82,11 @@ public class PublishRequestActionLogService {
 
     }
 
-    public PublishRequestActionLogResponse approvePublishRequest(String id) {
-        PublishRequestActionLog publishRequestActionLog = publishRequestActionLogRepository.findById(id)
-                .orElseThrow(() -> new AppException(ErrorCode.PUBLISH_REQUEST_ACTION_LOG_NOT_FOUND));
+    public PublishRequestActionLogResponse approvePublishRequest(NovelPublishRequest request) {
+//        PublishRequestActionLog publishRequestActionLog = publishRequestActionLogRepository.findById(id)
+//                .orElseThrow(() -> new AppException(ErrorCode.PUBLISH_REQUEST_ACTION_LOG_NOT_FOUND));
+        PublishRequestActionLog publishRequestActionLog = new PublishRequestActionLog();
+        publishRequestActionLog.setNovelPublishRequest(request);
         publishRequestActionLog.setAction(PublishRequestAction.APPROVED);
         String userApproved = getUserIdFromContext();
         publishRequestActionLog.setActionBy(userApproved);

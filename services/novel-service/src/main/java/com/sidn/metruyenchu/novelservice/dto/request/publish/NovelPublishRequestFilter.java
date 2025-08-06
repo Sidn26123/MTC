@@ -1,7 +1,7 @@
 package com.sidn.metruyenchu.novelservice.dto.request.publish;
 
 import com.sidn.metruyenchu.novelservice.dto.BaseFilterRequest;
-import jakarta.persistence.Entity;
+import com.sidn.metruyenchu.novelservice.enums.PublishRequestStatus;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -11,8 +11,8 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class NovelPublishRequestCreationRequest extends BaseFilterRequest {
+public class NovelPublishRequestFilter extends BaseFilterRequest {
     String novelId;
-    String message;
-    String requestedBy;
+    PublishRequestStatus status;
+    String requestedBy; // Người yêu cầu xuất bản
 }

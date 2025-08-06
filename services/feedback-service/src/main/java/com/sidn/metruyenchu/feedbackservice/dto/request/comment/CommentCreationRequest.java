@@ -1,6 +1,6 @@
 package com.sidn.metruyenchu.feedbackservice.dto.request.comment;
 
-import com.sidn.metruyenchu.feedbackservice.enums.FeedbackType;
+import com.sidn.metruyenchu.shared_library.enums.feedback.FeedbackType;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 import reactor.util.annotation.NonNull;

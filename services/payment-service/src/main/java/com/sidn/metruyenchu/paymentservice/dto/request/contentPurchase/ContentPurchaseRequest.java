@@ -17,7 +17,6 @@ import java.math.BigDecimal;
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
 public class ContentPurchaseRequest {
-    @NotBlank(message = "Item type is required")
     ContentType itemType;
     
     @NotBlank(message = "Item ID is required")

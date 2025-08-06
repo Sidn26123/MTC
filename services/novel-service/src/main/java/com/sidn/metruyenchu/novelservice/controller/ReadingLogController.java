@@ -43,7 +43,7 @@ public class ReadingLogController {
     @GetMapping("/story/{storyId}")
     public ApiResponse<List<ReadingLogResponse>> getByStory(@PathVariable String storyId) {
         return ApiResponse.<List<ReadingLogResponse>>builder()
-                .result(readingLogService.getByStory(storyId))
+                .result(readingLogService.getByNovel(storyId))
                 .build();
     }
 
@@ -52,7 +52,7 @@ public class ReadingLogController {
             @PathVariable String userId,
             @PathVariable String storyId) {
         return ApiResponse.<List<ReadingLogResponse>>builder()
-                .result(readingLogService.getByUserAndStory(userId, storyId))
+                .result(readingLogService.getByUserAndNovel(userId, storyId))
                 .build();
     }
 
@@ -70,7 +70,7 @@ public class ReadingLogController {
             @RequestParam LocalDateTime start,
             @RequestParam LocalDateTime end) {
         return ApiResponse.<Map<String, Object>>builder()
-                .result(readingLogService.statistic(start, end))
+                .result(readingLogService.getStatistics(start, end))
                 .build();
     }
 

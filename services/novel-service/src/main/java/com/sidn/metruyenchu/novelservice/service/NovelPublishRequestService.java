@@ -3,6 +3,7 @@ package com.sidn.metruyenchu.novelservice.service;
 import com.sidn.metruyenchu.novelservice.dto.BaseFilterRequest;
 import com.sidn.metruyenchu.novelservice.dto.PageResponse;
 import com.sidn.metruyenchu.novelservice.dto.request.publish.NovelPublishRequestCreationRequest;
+import com.sidn.metruyenchu.novelservice.dto.request.publish.NovelPublishRequestFilter;
 import com.sidn.metruyenchu.novelservice.dto.response.publish.NovelPublishRequestResponse;
 import com.sidn.metruyenchu.novelservice.entity.Novel;
 import com.sidn.metruyenchu.novelservice.entity.NovelPublishRequest;
@@ -17,6 +18,7 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.query.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -61,15 +63,19 @@ public class NovelPublishRequestService {
         return PageUtils.toPageResponse(pageData, novelPublishRequestMapper::toResponse, request.getPage());
     }
 
-    public PageResponse<NovelPublishRequestResponse> getByRequestedBy(String username, int page, int size) {
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(Sort.Direction.DESC, "createdAt"));
+    public PageResponse<NovelPublishRequestResponse> getByRequestedBy(String username, BaseFilterRequest request) {
+        Pageable pageable = PageRequest.of(request.getPage() - 1, request.getSize(), Sort.by(Sort.Direction.DESC, "createdAt"));
         var pageData = novelPublishRequestRepository.findAllByRequestedBy(username, pageable);
-        return PageUtils.toPageResponse(pageData, novelPublishRequestMapper::toResponse, page);
+        return PageUtils.toPageResponse(pageData, novelPublishRequestMapper::toResponse, request.getPage());
     }
 
-    public PageResponse<NovelPublishRequestResponse> getByPublishingStatus(BaseFilterRequest request) {
+    public PageResponse<NovelPublishRequestResponse> getByPublishingStatus(String status, BaseFilterRequest request) {
         Pageable pageable = PageUtils.from(request);
-        var pageData = novelPublishRequestRepository.findAllByStatus(PublishRequestStatus.PENDING, pageable);
+        PublishRequestStatus publishRequestStatus = PublishRequestStatus.valueOf(status.toUpperCase());
+        if (publishRequestStatus == null) {
+            throw new RuntimeException("Invalid publish request status: " + status);
+        }
+        var pageData = novelPublishRequestRepository.findAllByStatus(publishRequestStatus, pageable);
         return PageUtils.toPageResponse(pageData, novelPublishRequestMapper::toResponse, request.getPage());
     }
 
@@ -88,5 +94,32 @@ public class NovelPublishRequestService {
         }
         novelPublishRequestRepository.deleteById(id);
     }
+
+//    public NovelPublishRequestResponse update(String id, NovelPublishRequestUpdateRequest request) {
+//
+//        return null;
+//    }
+
+    public NovelPublishRequestResponse approveRequest(String id) {
+        NovelPublishRequest request = novelPublishRequestRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.REQUEST_NOT_FOUND));
+        request.setStatus(PublishRequestStatus.APPROVED);
+        request = novelPublishRequestRepository.save(request);
+        return novelPublishRequestMapper.toResponse(request);
+    }
+
+    public NovelPublishRequest approve(String id) {
+        NovelPublishRequest request = novelPublishRequestRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.REQUEST_NOT_FOUND));
+        request.setStatus(PublishRequestStatus.APPROVED);
+        request = novelPublishRequestRepository.save(request);
+        return request;
+    }
+
+
+//    public PageResponse<NovelPublishRequestResponse> filter(NovelPublishRequestFilter request) {
+//        Pageable pageable = PageUtils.from(request);
+//        var pageData = novelPublishRequestRepository.findAllBy(novelId, pageable);
+//        return PageUtils.toPageResponse(pageData, novelPublishRequestMapper::toResponse, request.getPage());
 }
 

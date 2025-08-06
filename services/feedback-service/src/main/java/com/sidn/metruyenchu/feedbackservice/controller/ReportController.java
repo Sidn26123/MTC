@@ -37,14 +37,12 @@ public class ReportController {
     @GetMapping("/user/{userId}")
     ApiResponse<PageResponse<ReportResponse>> getReportByUserId(
             @PathVariable String userId,
-            @RequestParam(value = "role", defaultValue = "USER") String role,
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size
+            @RequestParam(value = "role", defaultValue = "PUBLISHER") String role,
+            @ModelAttribute BaseFilterRequest filterRequest
     ) {
-        Pageable pageable = PageRequest.of(page, size);
         AssigneeRole userRole = AssigneeRole.valueOf(role.toUpperCase());
         return ApiResponse.<PageResponse<ReportResponse>>builder()
-                .result(reportService.getReportsForUser(userId, userRole, pageable))
+                .result(reportService.getReportsForUser(userId, userRole, filterRequest))
                 .build();
     }
 
@@ -110,10 +108,11 @@ public class ReportController {
     @PutMapping("/{reportId}/status")
     ApiResponse<ReportResponse> updateReportStatus(
             @PathVariable String reportId,
-            @ModelAttribute ReportUpdateRequest status
+            @RequestBody ReportUpdateRequest request
     ) {
+        log.info("Received status update for {}: {}", reportId, request.getStatus());
         return ApiResponse.<ReportResponse>builder()
-                .result(reportService.updateReportStatus(reportId, status))
+                .result(reportService.updateReportStatus(reportId, request))
                 .build();
     }
 
@@ -174,6 +173,7 @@ public class ReportController {
                 .result("Report deleted")
                 .build();
     }
+
 
 
 

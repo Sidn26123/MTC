@@ -116,10 +116,9 @@ public interface NovelStatisticsRepository extends JpaRepository<Novel, String> 
         SELECT DATE_TRUNC('day', n.updated_at) AS start_time,
                DATE_TRUNC('day', n.updated_at) + INTERVAL '1 day' - INTERVAL '1 second' AS end_time,
                COUNT(*) AS total
-        FROM novel n
-        WHERE n.novel_state = 'APPROVED'
+        FROM novel_publish_request n
+        WHERE n.status = 'APPROVED'
           AND n.updated_at BETWEEN :start AND :end
-          AND n.is_deleted = false
         GROUP BY start_time
         ORDER BY start_time
     """, nativeQuery = true)
@@ -130,10 +129,9 @@ public interface NovelStatisticsRepository extends JpaRepository<Novel, String> 
         SELECT DATE_TRUNC('week', n.updated_at) AS start_time,
                DATE_TRUNC('week', n.updated_at) + INTERVAL '1 week' - INTERVAL '1 second' AS end_time,
                COUNT(*) AS total
-        FROM novel n
-        WHERE n.novel_state = 'APPROVED'
+        FROM novel_publish_request n
+        WHERE n.status = 'APPROVED'
           AND n.updated_at BETWEEN :start AND :end
-          AND n.is_deleted = false
         GROUP BY start_time
         ORDER BY start_time
     """, nativeQuery = true)
@@ -185,7 +183,7 @@ public interface NovelStatisticsRepository extends JpaRepository<Novel, String> 
 //    List<TopNovelDto> getTopNovelsByBookmarks(Pageable pageable);
 
     @Query(value = """
-    SELECT n.id, n.name, n.slug,n.novel_cover_image, n.total_bookmarks, n.total_views, n.avg_rate, n.total_promotions
+    SELECT n.id, n.name, n.slug,n.novel_cover_image, n.total_bookmarks, n.total_views, n.avg_rate, n.total_promotions,
            ROW_NUMBER() OVER (ORDER BY n.total_bookmarks DESC) AS rank
     FROM novel n
     WHERE n.is_deleted = false

@@ -47,8 +47,8 @@ public class WalletService {
     WalletMapper walletMapper;
     TransactionsMapper transactionsMapper;
     PaymentRequestsMapper paymentRequestsMapper;
-    private final CurrencyService currencyService;
-    private final WalletBalanceHistoryService walletBalanceHistoryService;
+    CurrencyService currencyService;
+    WalletBalanceHistoryService walletBalanceHistoryService;
 
     /**
      * Find or create a wallet for a user
@@ -118,8 +118,7 @@ public class WalletService {
         }
 
         // Validate currency
-        Currency currency = currenciesRepository.findById(currencyId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid currency ID"));
+        Currency currency = currencyService.getCurrencyEntityById(currencyId);
 
         if (currency.getStatus() == CurrencyStatus.INACTIVE) {
             throw new IllegalArgumentException("Currency is inactive");
@@ -157,7 +156,7 @@ public class WalletService {
                 .wallet(wallet)
                 .type(TransactionType.DEPOSIT)
                 .amount(BigDecimal.valueOf(amount.intValue()))
-                .currencyId(currencyId)
+                .currency(currency)
                 .status(TransactionStatus.PENDING)
 //                .transactionStatus(TransactionStatus.PENDING)
 //                .transactionType(TransactionType.DEPOSIT)

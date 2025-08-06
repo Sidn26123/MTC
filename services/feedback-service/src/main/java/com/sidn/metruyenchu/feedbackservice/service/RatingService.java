@@ -30,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.sidn.metruyenchu.feedbackservice.utils.FeignResponseUtils.callFeignGetChapterInfo;
@@ -62,10 +63,10 @@ public class RatingService {
         );
     }
 
-    public Rating getRating(String ratingId) {
-        return (
-                ratingRepository.findById(ratingId).orElseThrow(() -> new RuntimeException("Review not found"))
-        );
+    public Optional<Rating> getRatingEntity(String ratingId) {
+        Optional<Rating> rating = ratingRepository.findById(ratingId);
+
+        return rating;
     }
 
 
@@ -190,5 +191,15 @@ public class RatingService {
         return ratings.getContent().stream()
                 .map(ratingMapper::toResponse)
                 .collect(Collectors.toList());
+    }
+
+    public void saveRating(Rating rating) {
+        try {
+            ratingRepository.save(rating);
+        } catch (DataIntegrityViolationException e) {
+            throw new AppException(ErrorCode.RATING_ALREADY_EXISTS);
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
     }
 }
