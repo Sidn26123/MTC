@@ -5,6 +5,7 @@ import { parseJwt, getScopeArray } from '../../utils/JWTUtils.js';
 import {showSuccess} from '../../utils/ToastUtils.js';
 import useUserStore from '../../stores/userStores.js';
 import { googleCallback } from '../../services/authenticationService.js';
+import { getProfileById , getProfileById1} from '../../services/userService.js';
 
 import { API } from '../../configurations/configuration.js';
 import api from '../../middlewares/axios.js';
@@ -17,9 +18,23 @@ function GoogleCallbackComponent() {
   const location = useLocation();
   const setUser = useUserStore((state) => state.setUser);
   const calledRef = useRef(false); // ✅ Đảm bảo chỉ gọi 1 lần
-  const login = useAuthActions().login;
+  const { login: loginAccount } = useAuthActions();
+  // const [userInfo, setUserInfo] = React.useState({
+  //         email: "",
+  //         password: "",
+  //     })
 
   debugger;
+
+  const fetchUserInfo = async (email) => {
+          try {
+              var myInfoStr = API.MY_INFO + "?username=" + email;
+              const response = await api.get(myInfoStr);
+              return response.data;
+          } catch (err) {
+              console.error('Lỗi khi lấy user info:', err);
+          }
+      };
 
   useEffect(() => {
     debugger;
@@ -41,8 +56,13 @@ function GoogleCallbackComponent() {
         debugger;
         // const response = await axios.get(`http://localhost:8100/identity/auth/social/callback?code=${code}`);
         const response = await googleCallback(code);
+        console.log('response', response);
+        console.log('token user', response.data);
+        debugger;
         const { token, refreshToken, authenticated } = response.data.data;
         console.log("token: ", token);
+
+        // const scope = getScopeArray(token);
         debugger;
         if (!authenticated || !token) {
           console.error('Xác thực thất bại!');
@@ -57,6 +77,7 @@ function GoogleCallbackComponent() {
         const email = jwtPayload?.email;
         const userId = jwtPayload?.user_id;
         debugger;
+        
         if (!email) {
           console.error('Không thể đọc email từ token!');
           navigate('/login');
@@ -75,16 +96,37 @@ function GoogleCallbackComponent() {
         //     }
         //   }
         // );
+
+// getProfileById1
+
+        const profileResponse = await getProfileById(userId); 
+        // const profileResponse = await getProfileById1(userId); 
+        console.log('profileResponse', profileResponse);
         debugger;
-        const user = profileResponse.data?.result;
-        console.log('user', user);
-        console.log(profileResponse);
-        debugger;
-        setUser(user);
 
         const jwtData = parseJwt(token);
         const scope = getScopeArray(token);
         console.log('scope', scope);
+
+        debugger;
+        const user = profileResponse.data?.result;
+        console.log('user', user);
+        // console.log(profileResponse); 
+        // const profile = fetchUserInfo(user.email)
+        // const profile = await getProfileById(userId) 
+        // console.log('profile', profile);
+
+        loginAccount({
+                token: token,
+                refreshToken: null,
+                roles: scope,
+                userId: userId,
+            })
+          debugger;
+        debugger;
+        setUser(user);
+
+        
         // login({
         //   token: response.data.token,
         //   refreshToken: null,
@@ -114,7 +156,7 @@ function GoogleCallbackComponent() {
     };
 
     handleGoogleCallback().then(r => {});
-  }, [location, navigate]);
+  }, [location, navigate ]);
 
   return <div>Đang xử lý đăng nhập...</div>;
 }

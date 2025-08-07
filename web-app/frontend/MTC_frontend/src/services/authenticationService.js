@@ -22,8 +22,11 @@ export const logIn = async (username, password) => {
 // };
 
 export const googleCallback = async (code) => {
-    const response = await httpClient.get(API.LOGIN_GOOGLE + `?code=${code}`);
-    // setToken(response.data?.result?.token);
+    const response = await httpClient.get(API.GOOGLE_CALLBACK + `?code=${code}`);
+    console.log("Google Callback Response:", response.data?.data?.token);
+    setToken(response.data?.data?.token);
+
+    console.log("get token", getToken());
     return response;
 };
 
@@ -46,6 +49,8 @@ export const getUserIdFromContext = () => {
     const payload = parseJwt(token);
     return payload ? payload.userId : null;
 }
+
+
 export const logInWithGoogle = async () => {
     const response = await httpClient.get(API.LOGIN_GOOGLE);
     setToken(response.data?.result?.token);
