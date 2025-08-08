@@ -74,7 +74,7 @@ const AdminSidebar = ({ isOpen, onClose }) => {
       {isOpen && (
         <>
           <div
-            className="fixed inset-0 bg-black bg-opacity-50 z-30 backdrop-blur-sm"
+            className="fixed inset-0 z-30 backdrop-blur-sm"
             onClick={onClose}
           />
           <div className="fixed top-0 left-0 w-64 h-screen bg-gray-800 text-white p-4 z-40 transition-transform">
@@ -89,6 +89,7 @@ const AdminSidebar = ({ isOpen, onClose }) => {
 
 const SidebarLinks = ({onLinkClick} ) => (
   <nav className="flex flex-col gap-2">
+    <Link to="/" onClick={onLinkClick} >Mê Truyện Chữ</Link>
     <Link to="/admin/dashboard" onClick={onLinkClick} >Dashboard</Link>
     <Link to="/admin/users" onClick={onLinkClick}>Hồ sơ</Link>
     <Link to="/admin/novels" onClick={onLinkClick}>Quản lý truyện</Link>
