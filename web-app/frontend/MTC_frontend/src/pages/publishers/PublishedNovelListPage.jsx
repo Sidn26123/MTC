@@ -16,7 +16,7 @@ import { usePublishedByPublisher, useSetPublishedByPublisher } from '../../store
 import { DefaultNavigator, PageNavigator } from '../../components/global/Navigators.jsx';
 import {
     useMyPublishedNovels,
-    usePublisherStore,
+    usePublisherStore, useSetCurrentChosenPublishedNovel,
     useSetCurrentPublishedNovel,
     useSetMyPublishedNovels,
 } from '../../stores/publisherStore.js';
@@ -175,17 +175,17 @@ const PublishedNovelTable = ({ novels, pageData, setPageData, fetchNovels }) => 
 
 const SpecItem = ({ data, novel }) => {
     const navigate = useNavigate();
-    const setCurrentChosenPublishedNovel = useSetPublishedByPublisher();
+    const setCurrentChosenPublishedNovel = useSetCurrentChosenPublishedNovel();
     const setCurrentPublishedNovel = useSetCurrentPublishedNovel();
 
     function handleGotoChapterList() {
-        setCurrentChosenPublishedNovel(novel.id);
+        setCurrentChosenPublishedNovel(novel);
         setCurrentPublishedNovel(novel);
         navigate(`/bookhub/novels/${novel.slug}/chapters`);
     }
 
     function handleGotoUploadChapter(){
-        setCurrentChosenPublishedNovel(novel.id);
+        setCurrentChosenPublishedNovel(novel);
         setCurrentPublishedNovel(novel);
         navigate(`/bookhub/novels/${novel.slug}/upload-chapters`);
     }

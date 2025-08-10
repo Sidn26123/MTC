@@ -46,10 +46,20 @@
 
 import React from "react";
 import { Link } from 'react-router-dom';
+import { logOut } from '../../services/authenticationService.js';
+import { showSuccess } from '../../utils/ToastUtils.js';
+import { useSetUser } from '../../stores/userStores.js';
 
 const adminRoutesPrefix = "/admin";
 
 const AdminSidebar = ({ isOpen, onClose }) => {
+    const setUser = useSetUser();
+    const handleLogout = (event)=> {
+        event.preventDefault();
+        setUser(null);
+        logOut();
+        showSuccess("Đăng xuất thành công");
+    }
   return (
     <>
       {/* Desktop sidebar */}
@@ -79,7 +89,7 @@ const AdminSidebar = ({ isOpen, onClose }) => {
           />
           <div className="fixed top-0 left-0 w-64 h-screen bg-gray-800 text-white p-4 z-40 transition-transform">
             <button onClick={onClose} className="text-right w-full text-white text-lg mb-4">✕</button>
-            <SidebarLinks onLinkClick={onClose} />
+            <SidebarLinks onLinkClick={onClose} logout = {handleLogout}/>
           </div>
         </>
       )}
@@ -88,16 +98,18 @@ const AdminSidebar = ({ isOpen, onClose }) => {
 };
 
 const SidebarLinks = ({onLinkClick} ) => (
+
+
   <nav className="flex flex-col gap-2">
-    <Link to="/admin/dashboard" onClick={onLinkClick} >Dashboard</Link>
-    <Link to="/admin/users" onClick={onLinkClick}>Hồ sơ</Link>
+    {/*<Link to="/admin/dashboard" onClick={onLinkClick} >Dashboard</Link>*/}
+    {/*<Link to="/admin/users" onClick={onLinkClick}>Hồ sơ</Link>*/}
     <Link to="/admin/novels" onClick={onLinkClick}>Quản lý truyện</Link>
     <Link to="/admin/accounts" onClick={onLinkClick}>Quản lý tài khoản</Link>
     <Link to={`${adminRoutesPrefix}/category`} onClick={onLinkClick}>Quản lý Danh Mục</Link>
     <Link to={`${adminRoutesPrefix}/analytics`} onClick={onLinkClick}>Thống Kê</Link>
     <Link to={`${adminRoutesPrefix}/policies`} onClick={onLinkClick}>Quản lý Điều Khoản Dịch Vụ</Link>
     {/* <Link to="/admin/settings" onClick={onLinkClick}>Cài đặt</Link> */}
-    <Link to="/admin/settings" onClick={onLinkClick}>Cài đặt</Link>
+    <span onClick={logOut}>Đăng xuất</span>
   </nav>
 );
 

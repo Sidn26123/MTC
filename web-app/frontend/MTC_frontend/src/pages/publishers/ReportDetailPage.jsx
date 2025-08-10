@@ -76,6 +76,18 @@ import { getProfileById } from '../../services/userService.js';
 import { useUser } from '../../stores/userStores.js';
 import { getFullPathOfAvatar } from '../../utils/ProfileUtils.js';
 import { formatPublishDateTime } from '../../utils/DatetimeUtil.js';
+import CommentInReportItem from '../../components/feedbacks/CommentInReport.jsx';
+
+function getNameReportStatus(status){
+    const dataStatus = {
+        CLOSED: "Đóng",
+        PENDING: "Đang xử lý",
+        OPEN: "Mở",
+    }
+
+    return dataStatus[status] || "Không xác định";
+}
+
 
 function ReportDetailPage() {
     const [searchTerm, setSearchTerm] = useState("");
@@ -303,7 +315,7 @@ function ReportDetailPage() {
                             <button className="flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-md font-medium transition-colors"
                                 onClick={handleCloseReport}
                             >
-                                <Lock className="w-4 h-4" /> Đang mở
+                                <Lock className="w-4 h-4" /> {getNameReportStatus(reportData?.status)}
                             </button>
                         </div>
 
@@ -351,6 +363,7 @@ function ReportDetailPage() {
                                     onChange={(e) =>
                                         setCommentText(e.target.value)
                                     }
+                                    disabled={reportData && reportData.status === 'CLOSED'}
                                     placeholder="Viết bình luận..."
                                     className="w-full bg-gray-700 border border-gray-600 rounded-md p-3 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
                                     rows={3}
@@ -376,7 +389,11 @@ function ReportDetailPage() {
                                 commentList.data.map((comment) => (
                                     <>
                                         <div>
-                                            {comment && comment.id}
+                                            {comment && (
+                                                <>
+                                                    <CommentInReportItem comment={comment} isLock={true} />
+                                                </>
+                                            )}
                                         </div>
                                     </>
                                 )

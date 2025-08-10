@@ -10,6 +10,7 @@ import com.sidn.metruyenchu.feedbackservice.exception.AppException;
 import com.sidn.metruyenchu.feedbackservice.exception.ErrorCode;
 import com.sidn.metruyenchu.feedbackservice.mapper.NovelPromotionMapper;
 import com.sidn.metruyenchu.feedbackservice.repository.NovelPromotionRepository;
+import com.sidn.metruyenchu.feedbackservice.repository.httpclient.PaymentClient;
 import com.sidn.metruyenchu.feedbackservice.utils.PageUtils;
 import com.sidn.metruyenchu.feedbackservice.utils.TokenUtils;
 import lombok.AccessLevel;
@@ -20,6 +21,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level  = AccessLevel.PRIVATE, makeFinal = true)
@@ -27,6 +30,7 @@ import org.springframework.stereotype.Service;
 public class NovelPromotionService {
     NovelPromotionRepository novelPromotionRepository;
     NovelPromotionMapper novelPromotionMapper;
+    PaymentClient paymentClient;
 
     // Add methods for creating, updating, deleting, and retrieving novel promotions
 
@@ -47,6 +51,12 @@ public class NovelPromotionService {
             String userId = TokenUtils.getUserIdFromContext();
             request.setUserId(userId);
         }
+        BigDecimal balance = paymentClient.getWalletXuK();
+        if (balance.compareTo(BigDecimal.ONE) < 0) {
+            throw new AppException(ErrorCode.INSUFFICIENT_BALANCE);
+        }
+
+
         novelPromotion = novelPromotionRepository.save(novelPromotion);
         return novelPromotionMapper.toResponse(novelPromotion);
     }

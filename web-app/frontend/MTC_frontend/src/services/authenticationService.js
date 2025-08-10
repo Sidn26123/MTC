@@ -18,8 +18,11 @@ export const logIn = async (username, password) => {
 
 
 export const googleCallback = async (code) => {
-    const response = await httpClient.get(API.LOGIN_GOOGLE + `?code=${code}`);
-    // setToken(response.data?.result?.token);
+    const response = await httpClient.get(API.GOOGLE_CALLBACK + `?code=${code}`);
+    console.log("Google Callback Response:", response.data?.data?.token);
+    setToken(response.data?.data?.token);
+
+    console.log("get token", getToken());
     return response;
 };
 
@@ -54,3 +57,11 @@ export const logInWithGoogle = async () => {
     setToken(response.data?.result?.token);
     return response;
 };
+
+export const isLoggedIn = () => {
+    const token = getToken();
+    if (!token) return false;
+
+    const payload = parseJwt(token);
+    return payload && payload.exp > Date.now() / 1000; // Check if token is not expired
+}

@@ -23,8 +23,7 @@ function TopRankNovel() {
                 {/*<NovelCard isBol={1}/>*/}
                 {/*<NovelCard/>*/}
                 <div data-x-data="realtime" id="real-time">
-                    <a
-                        href="https://metruyencv.com/thoi-gian-thuc"
+                    <div
                         title="Đang đọc theo thời gian thực"
                         className="box-title flex justify-between items-center"
                     >
@@ -39,7 +38,7 @@ function TopRankNovel() {
                         >
                             <use href="#icon-45dfdae75c66f6db1091e91efb93d2f4"></use>
                         </svg>
-                    </a>
+                    </div>
                     <div
                         data-x-show="isLoading"
                         className="flex justify-center items-center min-h-[490px]"
@@ -467,10 +466,10 @@ const RankedBookItem = ({ index, item }) => {
     const navigate = useNavigate();
 
     function handleNavigate(novelSlug) {
-        navigate(getNovelUrlWithSlug(novelSlug));
+        navigate(`/truyen/${novelSlug}`);
     }
     return (
-        <div className="box-content divide-y divide-dotted divide-auto">
+        <div className="box-content divide-y divide-dotted divide-auto" onClick={() => handleNavigate(item.slug)}>
             {isTop && item ? (
                 <div className="flex space-x-2 pt-3 px-3">
                     <img

@@ -4,15 +4,12 @@ import com.sidn.metruyenchu.user_service.dto.request.UserProfile.UserProfileCrea
 import com.sidn.metruyenchu.user_service.dto.request.UserProfile.UserProfileUpdateRequest;
 import com.sidn.metruyenchu.user_service.dto.response.UserProfile.UserProfileResponse;
 import com.sidn.metruyenchu.user_service.entity.UserProfile;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.ReportingPolicy;
+import org.mapstruct.*;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
+@Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 @EnableJpaAuditing
 public interface UserProfileMapper {
     UserProfile toUserProfile(UserProfileCreationRequest request);

@@ -10,7 +10,7 @@ import {
     useNovelState, useNovelType, useNovelVisibility, useSects, useSetNovelStatus, useSetPage, useWorldScene,
 } from '../../stores/selectors/novelFilterSelector.js';
 import api from '../../middlewares/axios.js';
-import { createNovel, uploadNovelCover } from '../../services/publisherService.js';
+import { createNovel, updateNovel, uploadNovelCover } from '../../services/publisherService.js';
 import { showSuccess } from '../../utils/ToastUtils.js';
 import { useSetMyPublishedNovels } from '../../stores/publisherStore.js';
 import { getPolicyBySlug } from '../../services/policyService.js';
@@ -93,10 +93,19 @@ function PublishNewNovel() {
             }
             const uploadFileRes = await uploadNovelCover(res.data.result.id, file);
             console.log("Upload file response:", uploadFileRes);
+            if (uploadFileRes.status === 200) {
+                updateNovel(res.data.result.id, {
+                    novelCoverImage: uploadFileRes.data.result.url,
+                }).then(() => {
+                    console.log("Cập nhật ảnh bìa thành công");
+                }).catch((error) => {
+                    console.error("Lỗi khi cập nhật ảnh bìa:", error);
+                })
+            }
             navigate(`/bookhub/published`);
             showSuccess("Đăng truyện thành công!");
         } catch (e) {
-            alert("Lỗi khi gửi dữ liệu!");
+            // alert("Lỗi khi gửi dữ liệu!");
             console.error(e);
         }
     };

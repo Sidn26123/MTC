@@ -7,21 +7,36 @@ export const createNovel = async (data) => {
     return response;
 }
 
+export const updateNovel = async (novelId, data) => {
+    const response = await api.put(API.NOVEL +"/novels/" + novelId, data);
+    return response;
+}
 export const uploadNovelCover = async (novelId, file) => {
     const formData = new FormData();
     formData.append('file', file);
-    console.log("Uploading novel cover for novelId:", novelId);
-    console.log("File details:", file);
+
+    // const response = await api.post(
+    //     API.FILES + `/novel/${novelId}/image/cover`,
+    //     formData,
+    //     {
+    //         headers: {
+    //             'Content-Type': 'multipart/form-data',
+    //         },
+    //     }
+    // );
     const response = await api.post(
-        API.FILES + `/novel/${novelId}/image/cover`,
+        API.FILES_CLOUDINARY + '/upload',
         formData,
         {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
+            params: {
+                type: 'novel-cover',
+                novelId: novelId
+            }
         }
-    );
-
+    )
     console.log("Upload novel cover response:", response);
     return response;
 };

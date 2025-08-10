@@ -7,7 +7,7 @@ import PublisherRoutes from './routers/PublisherRoutes.jsx';
 import { useEffect, useState } from 'react';
 import api, { setupInterceptors } from './middlewares/axios.js';
 import { API } from './configurations/configuration.js';
-import useUserStore from './stores/userStores.js';
+import useUserStore, { useProfile, useSetProfile, useSetUser, useUser } from './stores/userStores.js';
 import LoadingSpinning from './components/global/LoadingSpinning.jsx';
 import { getTokenFromLocalStorage, getUserIdFromToken } from './services/authenticationService.js';
 import Page404 from './components/global/Page404.jsx';
@@ -26,8 +26,9 @@ import { useSetMyWallet } from './stores/paymentStore.js';
 
 const App = () => {
     const [loading, setLoading] = useState(true);
-    const user = useUserStore((state => state.user));
-    const setUser = useUserStore((state => state.setUser));
+    const user = useUser();
+    const setUser = useSetUser();
+    const setProfile = useSetProfile();
     const userRoles = useAuthRoles();
     const setCurrentBookshelf = useSetCurrentBookshelf();
     const setMyWallet = useSetMyWallet();
@@ -38,6 +39,7 @@ const App = () => {
 
             api.get(API.INFO_ME).then(r => {
                     setUser(r.data.result);
+                    setProfile(r.data.result);
             });
             getCurrentBookshelf().then((response) => {
                 if (response.data.result) {

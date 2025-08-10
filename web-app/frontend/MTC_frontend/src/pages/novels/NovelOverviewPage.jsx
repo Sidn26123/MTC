@@ -31,7 +31,7 @@ import {
     useCurrentNovelRatings, useSetCurrentNovelComments, useSetCurrentNovelRating,
 } from '../../stores/feedbackStore.js';
 import { UserReply } from '../../components/feedbacks/Reply.jsx';
-import { getUserIdFromContext } from '../../services/authenticationService.js';
+import { getUserIdFromContext, isLoggedIn } from '../../services/authenticationService.js';
 import { getItemOfBookshelfByNovelId } from '../../services/bookshelfService.js';
 import {
     useCurrentBookshelf, useCurrentNovelReadingChapter,
@@ -240,21 +240,26 @@ export const NovelStat = ({novel, gotoRating, gotoComment}) => {
             })
 
         }
-        getPublishedByPublisher(novel.currentPublisher.id, 6).then(r => {
-            setPublishedByPublisher(r.data.result);
-        })
 
-        getProfileById(novel.currentPublisher).then(r => {
-            setCurrentNovelPublisher(r.data.result);
-        })
+        if (isLoggedIn()){
+            getPublishedByPublisher(novel.currentPublisher.id, 6).then(r => {
+                setPublishedByPublisher(r.data.result);
+            })
 
-        getItemOfBookshelfByNovelId(currentBookshelf.id, novel.id).then(r => {
+            getProfileById(novel.currentPublisher).then(r => {
+                setCurrentNovelPublisher(r.data.result);
+            })
 
-            if (r.data.result) {
-                setIdx(r.data.result.currentChapterIdx);
-                setCurrent(r.data.result);
-            }
-        });
+            getItemOfBookshelfByNovelId(currentBookshelf.id, novel.id).then(r => {
+
+                if (r.data.result) {
+                    setIdx(r.data.result.currentChapterIdx);
+                    setCurrent(r.data.result);
+                }
+            });
+        }
+
+
     }, []);
 
 
@@ -639,7 +644,7 @@ export const NovelStat = ({novel, gotoRating, gotoComment}) => {
 
                     </div>
                     {showReport && (
-                        <UserReport onClose={()=>setShowReport(false)}/>
+                        <UserReport targetId = {novel.id} targetType="NOVEL" onClose={()=>setShowReport(false)}/>
                     )}
                     {showChapterList && (
                         <ChapterListPanel onClose={() => setShowChapterList(false)}/>
@@ -673,7 +678,6 @@ const NovelRating = (novel) => {
     const handleChangeSlider = (value) => {
         setRatingValue(parseFloat(value));
     };
-
     const handleCheckboxChange = (e) => {
         setIsOnlyRating(e.target.checked);
     };
@@ -935,8 +939,6 @@ function CommentPart({ totalComment }) {
     const user = useUser();
     const currentReadingChapter = useCurrentNovelReadingChapter();
     const currentNovel = useCurrentNovel();
-    console.log("currentReadingChapter", currentReadingChapter);
-    console.log("currentNovel", currentNovel);
     useEffect(() => {
         if (currentReadingChapter){
 
@@ -959,12 +961,14 @@ function CommentPart({ totalComment }) {
             {
                 "content": content,
                 "commentedBy": user.id,
-                "chapterId": currentReadingChapter.id,
+                // "chapterId": currentReadingChapter.id,
                 "novelId": currentNovel.id,
                 "feedbackType": "COMMENT",
                 "commentedInNovelId": currentNovel.id,
             }
-        ).then( r => {})
+        ).then( r => {
+            console.log("Comment sent successfully", r);
+        })
     }
 
     return (

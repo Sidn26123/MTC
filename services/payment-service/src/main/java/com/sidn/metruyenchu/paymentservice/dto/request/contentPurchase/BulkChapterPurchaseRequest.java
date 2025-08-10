@@ -1,8 +1,10 @@
 package com.sidn.metruyenchu.paymentservice.dto.request.contentPurchase;
 
+import jakarta.validation.constraints.AssertTrue;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 @Data
 public class BulkChapterPurchaseRequest {
@@ -12,4 +14,11 @@ public class BulkChapterPurchaseRequest {
     String userId;
     String currencyId;
     BigDecimal discount;
+    List<String> chapterIds;
+
+    // Validation
+    @AssertTrue(message = "Chapter IDs cannot be empty")
+    public boolean isChapterIdsValid() {
+        return chapterIds != null && !chapterIds.isEmpty();
+    }
 }

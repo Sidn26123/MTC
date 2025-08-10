@@ -18,6 +18,14 @@ export const getProfileById = async (userId) => {
 
 }
 
+export const getProfileById1 = async (userId) => {
+    return await api.get(API.USER + "/" + userId);
+}
+
+export const getProfileByUserId = async (userId) => {
+    return await api.get(API.USER + "/users/" + userId);
+}
+
 // export const getAllUsers = async () => {
 //     return await api.get(CONFIG.IDENTITY_SERVICE + "/users");
 // }

@@ -2,8 +2,10 @@ package com.sidn.metruyenchu.feedbackservice.service;
 
 import com.sidn.metruyenchu.feedbackservice.dto.ApiResponse;
 import com.sidn.metruyenchu.feedbackservice.dto.response.CommentResponse;
+import com.sidn.metruyenchu.feedbackservice.dto.response.feign.UserResponse;
 import com.sidn.metruyenchu.feedbackservice.entity.Comment;
 import com.sidn.metruyenchu.feedbackservice.entity.Rating;
+import com.sidn.metruyenchu.feedbackservice.repository.httpclient.IdentityClient;
 import com.sidn.metruyenchu.feedbackservice.spectifications.ReportSpecification;
 import com.sidn.metruyenchu.shared_library.dto.BaseFilterRequest;
 import com.sidn.metruyenchu.shared_library.dto.PageResponse;
@@ -41,7 +43,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static com.sidn.metruyenchu.feedbackservice.utils.FeignResponseUtils.callFeignGetChapterInfo;
@@ -61,7 +65,7 @@ public class ReportService {
     ReportMapper reportMapper;
     ReportHandleDetailMapper reportHandleDetailMapper;
     NovelClient novelClient;
-
+    IdentityClient identityClient;
     ReportRepository reportRepository;
     ReportHandleDetailRepository reportHandleDetailRepository;
     ReportAssignmentService assignmentService;
@@ -222,6 +226,9 @@ public class ReportService {
                 .orElseThrow(() -> new AppException(ErrorCode.REPORT_NOT_FOUND));
 
         String userId = getUserIdFromContext();
+        if (!Objects.equals(userId, report.getAssignedTo())){
+            throw new AppException(ErrorCode.REPORT_NOT_ASSIGNED_TO_YOU);
+        }
 
         if (report.getStatus().equals(ReportStatus.PENDING)){
             report.setStatus(ReportStatus.ACCEPTED);
@@ -240,6 +247,13 @@ public class ReportService {
         }
 
         return null;
+    }
+
+    public long countActiveReportsAssignedTo(String adminId) {
+        return reportRepository.countByAssignedToAndStatusIn(
+                adminId,
+                List.of(ReportStatus.PENDING, ReportStatus.ACCEPTED)
+        );
     }
 
     /**
@@ -298,15 +312,17 @@ public class ReportService {
 
 
     private void autoAssignReport(Report report) {
-        log.info("Auto-assigning report: {} - {}", report.getId(), report.getReportType() == ReportType.COMMENT);
 
         switch (report.getReportType()) {
             case NOVEL_CONTENT:
                 assignToPublisher(report);
                 break;
             case NOVEL_VIOLATION:
-
+                assignToAdmin(report);
+                break;
             case BUG:
+                assignToAdmin(report);
+                break;
             case SUPPORT:
                 assignToAdmin(report);
                 break;
@@ -316,13 +332,40 @@ public class ReportService {
                 break;
             case RATING:
 //                assignToBoth(report);
+                assignToPublisher(report);
                 break;
         }
     }
 
     private void assignToAdmin(Report report) {
-//        String userId =
+        List<UserResponse> admins = identityClient.getAdmins().getResult();
+        log.info("Available admins: {}", admins);
+        if (admins.isEmpty()) {
+            throw new AppException(ErrorCode.NO_ADMIN_AVAILABLE);
+        }
+
+        // Tìm admin có số lượng report đang xử lý ít nhất
+        String leastBusyAdminId = admins.stream()
+                .min(Comparator.comparingLong(admin ->
+                        countActiveReportsAssignedTo(admin.getId())  // Đếm số report đang xử lý
+                ))
+                .map(UserResponse::getId)
+                .orElseThrow(() -> new AppException(ErrorCode.NO_ADMIN_AVAILABLE));
+
+        assignmentService.assignReport(ReportAssignmentRequest.builder()
+                .reportId(report.getId())
+                .assigneeId(leastBusyAdminId)
+                .assigneeRole(AssigneeRole.ADMIN)
+                .isPrimary(true)
+                .build());
+
+        report.setAssignedTo(leastBusyAdminId);
+        report.setAssignedRole(AssigneeRole.ADMIN);
+
+        log.info("Assigned report {} to admin {}", report.getId(), leastBusyAdminId);
+        reportRepository.save(report);
     }
+
 
     private void assignToPublisher(Report report) {
 

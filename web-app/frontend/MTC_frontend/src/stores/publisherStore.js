@@ -60,10 +60,15 @@ export const usePublisherStore = create((set) => ({
     currentPublishedNovel: {},
     myPublishedNovels: [],
     chapterPrepareForPublish: [],
+    currentChapterList: [],
+    currentChoseChapter: {},
     drafts: [],
     actions: {
         setMyPublishedNovels: (paginationData) => set((state) => ({
             myPublishedNovels: paginationData
+        })),
+        setCurrentChapterList: (paginationData) => set((state) => ({
+            currentChapterList: paginationData
         })),
         setCurrentChosenPublishedNovel: (novelId) => set(() => ({
             currentChosenPublishedNovel: novelId
@@ -79,6 +84,9 @@ export const usePublisherStore = create((set) => ({
         })),
         setDrafts: (drafts) => set((state) => ({
             drafts: drafts
+        })),
+        setCurrentChosenChapter: (chapter) => set((state) => ({
+            currentChoseChapter: chapter
         })),
     },
     // --- Pagination States ---
@@ -100,9 +108,14 @@ export const useCurrentChosenPublishedNovel = () => usePublisherStore((state) =>
 export const useCurrentPublishedNovel = () => usePublisherStore((state) => state.currentPublishedNovel);
 export const useChapterPrepareForPublish = () => usePublisherStore((state) => state.chapterPrepareForPublish);
 export const useDrafts = () => usePublisherStore((state) => state.drafts);
+export const useCurrentChapterList = () => usePublisherStore((state) => state.currentChapterList);
+export const useCurrentChosenChapter = () => usePublisherStore((state) => state.currentChoseChapter);
+
 
 export const useSetMyPublishedNovels = () => usePublisherStore((state) => state.actions.setMyPublishedNovels);
 export const useSetCurrentChosenPublishedNovel = () => usePublisherStore((state) => state.actions.setCurrentChosenPublishedNovel);
 export const useSetCurrentPublishedNovel = () => usePublisherStore((state) => state.actions.setCurrentPublishedNovel);
 export const useSetChapterPrepareForPublish = () => usePublisherStore((state) => state.actions.setChapterPrepareForPublish);
 export const useSetDrafts = () => usePublisherStore((state) => state.actions.setDrafts);
+export const useSetCurrentChapterList = () => usePublisherStore((state) => state.actions.setCurrentChapterList);
+export const useSetCurrentChosenChapter = () => usePublisherStore((state) => state.actions.setCurrentChosenChapter);

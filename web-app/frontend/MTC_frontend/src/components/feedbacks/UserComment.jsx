@@ -5,13 +5,14 @@ import { Reply, UserReply } from './Reply.jsx';
 import { getProfileById } from '../../services/userService.js';
 import { timeAgo } from '../../utils/DatetimeUtil.js';
 import { getFullPathOfAvatar } from '../../utils/ProfileUtils.js';
+import { UserReport } from './Report.jsx';
 
 function UserComment({ comment }) {
     const [isMenuOpen, setIsMenuOpen] = React.useState(false);
     const [isReplyOpen, setIsReplyOpen] = React.useState(false);
     const [userCommentProfile, setUserCommentProfile] = React.useState(null);
     const [profile, setProfile] = useState({});
-
+    const [showReportPanel, setShowReportPanel] = useState(false);
     // const sampleData = {
     //     // onRemove: () => alert("Xóa bình luận"),
     //     // onReport: () => alert("Báo cáo bình luận"),
@@ -46,6 +47,11 @@ function UserComment({ comment }) {
 
     function handleShowReply() {
         setIsReplyOpen(!isReplyOpen);
+    }
+
+    function handleShowReport() {
+        console.log("D");
+        setShowReportPanel(!showReportPanel);
     }
 
     return (
@@ -99,8 +105,8 @@ function UserComment({ comment }) {
                                     <li className="hover:bg-gray-100" style={{ display: 'true' }}>
                                         <button className="block py-2 px-4">Xóa</button>
                                     </li>
-                                    <li className="hover:bg-gray-100">
-                                        <button className="block py-2 px-4">Báo cáo</button>
+                                    <li className="hover:bg-gray-100" onClick={()=>handleShowReport()}>
+                                        <button className="block py-2 px-4" >Báo cáo</button>
                                     </li>
                                     <li className="hover:bg-gray-100" style={{ display: 'none' }}>
                                         <button className="block py-2 px-4">Ghim</button>
@@ -166,6 +172,9 @@ function UserComment({ comment }) {
                     <div className="ml-12 mb-4">
                         <UserReply />
                     </div>
+                )}
+                {showReportPanel && (
+                    <UserReport targetId = {comment.id} targetType="COMMENT" onClose={()=>setShowReportPanel(false)}/>
                 )}
             </div>
         </>

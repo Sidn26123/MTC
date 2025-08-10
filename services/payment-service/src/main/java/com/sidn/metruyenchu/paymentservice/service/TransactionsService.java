@@ -83,6 +83,7 @@ public class TransactionsService {
         // Create transaction
         Transactions transaction = transactionsMapper.toEntity(request);
         transaction.setWallet(wallet);
+        transaction.setCurrency(wallet.getCurrency());
         transaction.setTransactionCode(generateTransactionCode(request.getType()));
         transaction.setStatus(TransactionStatus.PENDING);
 
@@ -288,5 +289,6 @@ public class TransactionsService {
 
         return prefix + "-" + System.currentTimeMillis() + "-" + String.format("%04d", (int) (Math.random() * 10000));
     }
+
 
 }

@@ -99,6 +99,7 @@ public class UserService {
         return userMapper.toUserResponse(user);
     }
 
+
     //hasAuthority
     @PreAuthorize("hasRole('ADMIN')")
     public PageResponse<UserResponse> getUsers(BaseFilterRequest request){
@@ -117,19 +118,29 @@ public class UserService {
                 userRepository.findById(userId).orElseThrow(() -> new RuntimeException("User not found")));
     }
 
+    public boolean checkPassword(String userId, String password) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        return passwordEncoder.matches(password, user.getPassword());
+    }
 
     public UserResponse updateUser(String userId, UserUpdateRequest request) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
         userMapper.updateUser(user, request);
+
         if (request.getPassword() != null){
             user.setPassword(passwordEncoder.encode(request.getPassword()));
         }
 
-        var roles = roleRepository.findAllById(request.getRoles());
 
-        user.setRoles(new HashSet<>(roles));
+        if (request.getRoles() != null){
+            var roles = roleRepository.findAllById(request.getRoles());
+
+            user.setRoles(new HashSet<>(roles));
+        }
+
 
 
         return userMapper.toUserResponse(userRepository.save(user));
@@ -194,4 +205,11 @@ public class UserService {
     }
 
 
+    public List<UserResponse> getAdminUsers() {
+        Role adminRole = roleRepository.findByName("ADMIN")
+                .orElseThrow(() -> new AppException(ErrorCode.ROLE_NOT_EXISTED));
+
+        List<User> users = userRepository.findByRolesContaining(adminRole);
+        return userMapper.toUserResponses(users);
+    }
 }

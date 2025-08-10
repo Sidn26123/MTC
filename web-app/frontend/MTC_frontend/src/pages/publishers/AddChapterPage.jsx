@@ -59,7 +59,9 @@ const AddChapterPage = () => {
                 name: ch.title,
             };
         });
-        uploadChapters(updatedList).then(r => {})
+        updatedList.forEach((ch, i) => {
+            uploadChapter(ch).then(r => {})
+        })
         showSuccess("Đăng chương thành công");
         navigate("/bookhub/published");
     }

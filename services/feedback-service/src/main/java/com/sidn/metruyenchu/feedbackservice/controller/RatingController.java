@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/ratings")
@@ -70,5 +71,14 @@ public class RatingController {
                 .result(reviewService.getTopRecentRatings(size))
                 .build();
     }
+
+    @GetMapping("/novel/{novelId}/stats")
+    public ApiResponse<Map<Integer, Long>> getRatingStats(@PathVariable String novelId) {
+        return ApiResponse.<Map<Integer,Long>>
+                builder()
+                .result(reviewService.getRatingCountGroupedByStar(novelId))
+                .build();
+    }
+
 
 }

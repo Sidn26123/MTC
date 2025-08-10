@@ -76,6 +76,11 @@ public interface ChapterRepository extends JpaRepository<Chapter, String>, JpaSp
     List<Chapter> findTopNLatestPublishedChaptersPerNovel(@Param("limit") int limit);
 
 
+    @Query("SELECT c FROM Chapter c WHERE c.publishedAt <= :currentTime AND c.isPublished = false AND c.isDeleted = false")
+    List<Chapter> findChaptersToPublish(@Param("currentTime") LocalDateTime currentTime);
 
+    @Modifying
+    @Query("UPDATE Chapter c SET c.isPublished = true, c.updatedAt = :updateTime WHERE c.id IN :chapterIds")
+    int bulkUpdatePublishStatus(@Param("chapterIds") List<String> chapterIds, @Param("updateTime") LocalDateTime updateTime);
 //    Optional<Chapter> findByNovelAndChapterIdxAndIsDeletedIsFalseAndPublishedAt
 }

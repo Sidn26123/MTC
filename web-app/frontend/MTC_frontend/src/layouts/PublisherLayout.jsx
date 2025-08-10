@@ -13,7 +13,8 @@ const PublisherLayout = () => {
             </div>
             <div className="w-10/12">
                 <div className={"flex flex-col p-5"}>
-                    <div className={"pb-3 w-full"}>
+                    <div className={"pb-3 w-full flex justify-between items-center"}>
+                        <div></div>
                         <Navbar />
                     </div>
                     <div className="">

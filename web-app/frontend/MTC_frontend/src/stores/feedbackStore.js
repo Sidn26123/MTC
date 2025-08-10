@@ -17,24 +17,25 @@ const useFeedbackStore = create((set, get) => ({
     tickets: [],
     status: [
         {
-            name: "Tất cả",
-            id: "ALL",
-        },
-        {
-            name: "Đang xử lý",
-            id: "PROCESSING",
-        },
-        {
             name: "Đã gửi yêu cầu",
             id: "PENDING",
         },
         {
+            name: "Đang xử lý",
+            id: "ACCEPTED",
+        },
+        {
+            name: "Bị từ chối",
+            id: "REJECTED",
+        },
+
+        {
             name: "Đã xử lý",
-            id: "DONE",
+            id: "RESOLVED",
         },
         {
             name: "Đã hủy",
-            id: "CANCELED",
+            id: "CLOSED",
         },
     ],
     isLoading: false,

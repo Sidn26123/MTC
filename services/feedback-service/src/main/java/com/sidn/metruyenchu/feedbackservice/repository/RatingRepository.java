@@ -38,6 +38,11 @@ public interface RatingRepository extends JpaRepository<Rating, String> {
     Page<Rating> findALlByNovelId(String ratingInNovelId,
                                   Pageable pageable);
 
+    @Query("SELECT FLOOR(r.rate) as star, COUNT(r) as total " +
+            "FROM Rating r " +
+            "WHERE r.novelId = :novelId AND r.isDeleted = false " +
+            "GROUP BY FLOOR(r.rate)")
+    List<Object[]> countRatingsGroupedByStar(@Param("novelId") String novelId);
 
     Page<Rating> findAllByIsDeletedFalseAndIsHiddenFalseOrderByCreatedAtDesc(Pageable pageable);
 }

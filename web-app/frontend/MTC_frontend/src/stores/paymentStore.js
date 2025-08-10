@@ -19,7 +19,13 @@ const usePaymentStore = create((set) => ({
         setMyWallet: (walletData) => set(() => ({
             myWallet: walletData
         })),
-
+        updateWalletBalance: (currencyCode, delta) => set((state) => ({
+            myWallet: state.myWallet.map(wallet =>
+                wallet.currency.code === currencyCode
+                    ? { ...wallet, balance: wallet.balance + delta }
+                    : wallet
+            )
+        })),
         resetPaymentHistory: () => set(() => ({
             paymentHistory: { ...defaultPagination }
         }))
@@ -31,3 +37,4 @@ export const useSetPaymentHistory = () => usePaymentStore((state) => state.actio
 
 export const useMyWallet = () => usePaymentStore((state) => state.myWallet);
 export const useSetMyWallet = () => usePaymentStore((state) => state.actions.setMyWallet);
+export const useUpdateWalletBalance = () => usePaymentStore((state) => state.actions.updateWalletBalance);

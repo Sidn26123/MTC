@@ -21,7 +21,11 @@ const MyReportPage = () => {
 
     const handleStatusChange = (e) => {
         // useTicketStore.setState({ status: e.target.value });
-        fetchTickets(e.target.value).then(r => {});
+        console.log(e)
+        fetchTickets(e.id).then(r => {
+            console.log("Tickets fetched after status change:", r);
+            setTickets(r.data.result || []);
+        });
     };
 
     return (

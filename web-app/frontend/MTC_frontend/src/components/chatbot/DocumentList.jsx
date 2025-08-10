@@ -49,13 +49,13 @@ const DocumentList = () => {
                 <div className="text-center py-4 text-gray-500">No documents found</div>
             ) : (
                 <ul className="divide-y">
-                    {documents.map((doc) => (
+                    {documents && documents.results.map((doc) => (
                         <li key={doc.id} className="py-3">
                             <div className="flex justify-between">
                                 <div>
-                                    <h3 className="font-medium">{doc.title}</h3>
+                                    <h3 className="font-medium">{doc.name}</h3>
                                     <p className="text-sm text-gray-500">
-                                        Uploaded: {new Date(doc.created_at).toLocaleDateString()}
+                                        Uploaded: {new Date(doc.uploaded_at).toLocaleDateString()}
                                     </p>
                                 </div>
                             </div>

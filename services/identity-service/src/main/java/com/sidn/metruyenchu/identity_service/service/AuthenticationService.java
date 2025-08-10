@@ -160,6 +160,7 @@ public class AuthenticationService {
                 User newUser = User.builder()
                         .username(Optional.ofNullable(googleLoginRequest.getUsername()).orElse("") )
                         .email(Optional.ofNullable(googleLoginRequest.getEmail()).orElse(""))
+                        .roles(new HashSet<>(Collections.singletonList(Role.builder().name("USER").build())))
 //                        .role(roleUser)
                         .googleId(googleLoginRequest.getGoogleId())
                         .password("") // Mật khẩu trống cho đăng nhập mạng xã hội

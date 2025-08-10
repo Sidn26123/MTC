@@ -175,6 +175,14 @@ public class ReportController {
     }
 
 
+    @PostMapping("/{reportId}/accept")
+    ApiResponse<ReportResponse> acceptReport(
+            @PathVariable String reportId
+    ) {
+        return ApiResponse.<ReportResponse>builder()
+                .result(reportService.acceptReport(reportId))
+                .build();
+    }
 
 
 

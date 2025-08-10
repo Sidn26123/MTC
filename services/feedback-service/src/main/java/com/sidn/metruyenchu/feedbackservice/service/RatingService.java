@@ -28,9 +28,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.sidn.metruyenchu.feedbackservice.utils.FeignResponseUtils.callFeignGetChapterInfo;
@@ -202,4 +200,25 @@ public class RatingService {
             throw new AppException(ErrorCode.INTERNAL_SERVER_ERROR);
         }
     }
+
+    public Map<Integer, Long> getRatingCountGroupedByStar(String novelId) {
+        List<Object[]> results = ratingRepository.countRatingsGroupedByStar(novelId);
+        Map<Integer, Long> ratingStats = new HashMap<>();
+
+        // Khởi tạo mặc định 0 cho từng sao từ 1 -> 5
+        for (int i = 1; i <= 5; i++) {
+            ratingStats.put(i, 0L);
+        }
+
+        for (Object[] row : results) {
+            Integer star = ((Number) row[0]).intValue();
+            Long count = ((Number) row[1]).longValue();
+            if (star >= 1 && star <= 5) {
+                ratingStats.put(star, count);
+            }
+        }
+
+        return ratingStats;
+    }
+
 }

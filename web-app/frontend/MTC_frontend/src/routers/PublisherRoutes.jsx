@@ -25,7 +25,7 @@ const PublisherRoutes = ({ user }) => {
     return (
         <Route element={<ProtectedRoute isAllowed={isAuthenticated} redirectTo={"/"}/>}>
             <Route element={<PublisherLayout />}>
-                <Route path={`${publisherRoutesPrefix}/dashboard`} element={<PublisherDashboard />} />
+                <Route path={`${publisherRoutesPrefix}/dashboard`} element={<PublishedNovelPage />} />
                 <Route path={`${publisherRoutesPrefix}/published`} element={<PublishedNovelPage />} />
                 <Route path={`${publisherRoutesPrefix}/new`} element={<PublishNewNovel />} />
                 <Route path={`${publisherRoutesPrefix}/analytic`} element={<AnalyticsNovelPage />} />

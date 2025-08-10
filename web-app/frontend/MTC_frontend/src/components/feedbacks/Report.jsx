@@ -124,7 +124,7 @@ const NovelReport = ({onClose}) => {
     )
 }
 
-const UserReport = ({ onClose, reporterId, targetId, reportEntityId }) => {
+const UserReport = ({ onClose, targetId, targetType }) => {
     const [title, setTitle] = useState("")
     const [description, setDescription] = useState("")
     const [loading, setLoading] = useState(false)
@@ -136,17 +136,17 @@ const UserReport = ({ onClose, reporterId, targetId, reportEntityId }) => {
         }
 
         const data = {
-            title,
-            description,
+            title: title,
+            description: description,
             content: description,
-            reporterId,
-            targetId,
-            reportEntityId,
+            targetId: targetId,
+            targetType: "COMMENT",
         }
 
         try {
             setLoading(true)
-            await reportNovel(data)
+            const res = await reportNovel(data);
+            console.log("Response from reportNovel:", res);
             showSuccess("Báo cáo đã được gửi thành công!")
             onClose()
         } catch (error) {

@@ -214,7 +214,7 @@ public class NovelSpecification {
                 .and(NovelSpecification.hasNovelAttributes(request.getNovelAttributes()))
                 .and(NovelSpecification.notDeleted())
                 .and(NovelSpecification.isActive(true))
-                .and(NovelSpecification.isPublished(true))
+//                .and(NovelSpecification.isPublished(true))
                 ;
     }
 

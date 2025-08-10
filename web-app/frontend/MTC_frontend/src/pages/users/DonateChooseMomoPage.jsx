@@ -33,7 +33,7 @@ export const DonateChooseMomoPage = () => {
     const [selectedAmount, setSelectedAmount] = useState(null);
     const [loading, setLoading] = useState(false);
 
-    const handlePaymentMomo = async () => {
+    const handlePaymentMomo = async (key) => {
         const amount = Number(selectedAmount || Object.keys(MOCK_PACKAGES)[0]);
 
         // setSelectedAmount(amount);
@@ -41,11 +41,12 @@ export const DonateChooseMomoPage = () => {
         try {
             const data = {
                 "customer": user.id,
-                "amount": amount,
+                "amount": key,
                 "userId": user.id,
                 "currencyId": currencyIdForDonateRelate
             }
             const response = await paymentDeposit(data);
+            console.log("Payment response:", response);
             // Nếu gọi thành công, redirect đến MoMo
             if (response?.payUrl) {
                 window.open(response.payUrl, '_blank');
@@ -61,7 +62,7 @@ export const DonateChooseMomoPage = () => {
 
     function handleSubmitPayment(key) {
         setSelectedAmount(key);
-        handlePaymentMomo().then(r => {});
+        handlePaymentMomo(key).then(r => {});
     }
 
     const renderPackages = () => (

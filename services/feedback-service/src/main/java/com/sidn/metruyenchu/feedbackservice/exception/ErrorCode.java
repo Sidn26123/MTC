@@ -143,7 +143,9 @@ public enum ErrorCode {
     REVIEW_NOT_FOUND(3006, "Đánh giá không tồn tại", HttpStatus.NOT_FOUND),
     COMMENT_ALREADY_DELETED(3007, "Bình luận đã bị xóa", HttpStatus.NOT_FOUND),
     COMMENT_STATUS_ALREADY_EXISTED(3014, "Trạng thái bình luận đã tồn tại", HttpStatus.BAD_REQUEST),
-    DATA_INTEGRITY_VIOLATION(10, "Lỗi vi phạm toàn vẹn dữ liệu", HttpStatus.INTERNAL_SERVER_ERROR);
+    DATA_INTEGRITY_VIOLATION(10, "Lỗi vi phạm toàn vẹn dữ liệu", HttpStatus.INTERNAL_SERVER_ERROR),
+    NO_ADMIN_AVAILABLE(11, "Không có quản trị viên nào khả dụng để xử lý yêu cầu này", HttpStatus.SERVICE_UNAVAILABLE),
+    REPORT_NOT_ASSIGNED_TO_YOU(12, "Báo cáo này không được giao cho bạn", HttpStatus.FORBIDDEN);
 
 
 //    // 1. General Errors

@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useUser } from '../../stores/userStores.js';
 import { useCurrentBookshelf } from '../../stores/bookshelfStore.js';
 import { initPageData } from '../../utils/PageUtils.js';
+import { isLoggedIn } from '../../services/authenticationService.js';
 
 function JustReadNovel() {
     const navigate = useNavigate();
@@ -16,13 +17,17 @@ function JustReadNovel() {
     const page = initPageData();
 
     useEffect(() => {
-        getBookshelfItems(currentBookshelf.id, page).then((response) => {
-            if (response.data.result) {
-                setData(response.data.result);
-            } else {
-                console.error("Failed to fetch bookshelf items.");
-            }
-        })
+
+        if (isLoggedIn()){
+            getBookshelfItems(currentBookshelf.id, page).then((response) => {
+                if (response.data.result) {
+                    setData(response.data.result);
+                } else {
+                    console.error("Failed to fetch bookshelf items.");
+                }
+            })
+        }
+
     }, [currentBookshelf]);
 
     function handleDeleteItem(id, novelId) {

@@ -321,6 +321,7 @@ public class ChapterService {
     public ChapterResponse updateChapter(String chapterId, ChapterUpdateRequest request) {
         var chapter = chapterRepository.findById(chapterId).
                 orElseThrow(() -> new AppException(ErrorCode.CHAPTER_NOT_FOUND));
+        log.info("Chapter ID: {}", request);
         chapterMapper.update(chapter, request);
 //        chapterMapper.updateChapterFromRequest(chapter, request);
         try {
@@ -461,6 +462,19 @@ public class ChapterService {
 
         return chapterMapper.toChapterContentResponse(chapter);
     }
+    public ChapterContentResponse getChapterContentById(ChapterContentGetRequest request) {
+        Chapter chapter = chapterRepository.findById(
+                request.getChapterId()
+        ).orElseThrow(() -> new AppException(ErrorCode.CHAPTER_NOT_FOUND));
+
+        String userId = getUserIdFromContext();
+
+        checkUserCanReadChapterThrow(chapter, userId);
+
+
+
+        return chapterMapper.toChapterContentResponse(chapter);
+    }
 
     /**
      * Kiểm tra xem một chương có phù hợp các điều kiện để xuất bản hay không.
@@ -557,7 +571,7 @@ public class ChapterService {
     }
 
     public boolean checkUserCanReadChapterThrow(Chapter chapter, String userId) {
-
+        log.info("user: {}", userId);
         boolean canRead = false;
         log.info(String.valueOf(chapter.getNovel().getNovelVisibility()));
         //Nếu public thì có thể đọc

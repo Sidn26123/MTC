@@ -32,15 +32,11 @@ public class ReportHandleDetail {
     ReportHandleStatus status;
     @Builder.Default
     boolean isDeleted = false;
-    @Column(nullable = false, updatable = false)
     @CreationTimestamp
     LocalDateTime createdAt;
-    @Column(nullable = false)
     LocalDateTime completedAt;
-    @Column(nullable = false)
     @UpdateTimestamp
     LocalDateTime updatedAt;
-    @Column()
     LocalDateTime deletedAt;
 
 }

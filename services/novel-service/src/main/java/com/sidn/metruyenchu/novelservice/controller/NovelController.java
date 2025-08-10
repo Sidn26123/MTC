@@ -336,4 +336,5 @@ public class NovelController {
                 .result(novelService.getTopRatedNovelsByBayesian(limit))
                 .build();
     }
+
 }

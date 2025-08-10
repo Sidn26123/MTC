@@ -22,7 +22,7 @@ import {
     useCurrentChapterIdx, useDecreaseChapterIdx, useIncreaseChapterIdx,
 } from '../../stores/chapterStore.js';
 import {
-    checkCanReadChapter, checkChapterReadable, getChapterByNovelSlugAndIdx,
+    checkCanReadChapter, checkCanReadChapterOrNovel, checkChapterReadable, getChapterByNovelSlugAndIdx,
     getChapterContentByChapterId,
     getCurrentChapterContent,
     startReadChapter,
@@ -30,345 +30,299 @@ import {
 import { useLocation, useNavigate, useParams } from 'react-router';
 import { useCurrentNovel, useCurrentNovelSlug } from '../../stores/novelStore.js';
 import { getProfileById } from '../../services/userService.js';
-import { getUserIdFromContext } from '../../services/authenticationService.js';
+import { getUserIdFromContext, isLoggedIn } from '../../services/authenticationService.js';
 import ReaderConfigModal from '../../components/common/ReadingConfigModel.jsx';
 import LockedChapterNotice from '../../components/payments/LockedChapterNotice.jsx';
 import { useSetCurrentNovelReadingChapter } from '../../stores/bookshelfStore.js';
+import { useMyWallet, useSetMyWallet, useUpdateWalletBalance } from '../../stores/paymentStore.js';
+import { showError, showSuccess } from '../../utils/ToastUtils.js';
+import { promotion } from '../../services/paymentService.js';
 
 
+
+// const ReadingPage = () => {
+//     const navigate = useNavigate();
+//     const { slug, id } = useParams();
+//     const curChapterContent = useCurrentChapterContent();
+//     const currentChapter = useCurrentChapter();
+//     const actions = useChapterActions();
+//     let novelSlug = useCurrentNovelSlug();
+//     const currentNovel = useCurrentNovel();
+//     // let chapterIdx = useCurrentChapterIdx();
+//     // const [chapterIdx, setChapterIdx] = useState(id.split('-')[1]);
+//     const chapterIdx = useMemo(() => parseInt(id.split('-')[1]), [id]);
+//     const [error, setError] = useState(null);
+//     const [showModal, setShowModal] = useState(false);
+//     const [canRead, setCanRead] = useState(null); // null = checking, true = can read, false = cannot read
+//     const [purchased, setPurchased] = useState(true);
+//     const setCurrentChapter = useSetCurrentNovelReadingChapter();
+//
+//
+//     useEffect(() => {
+//         console.log("Islogged: ", isLoggedIn());
+//
+//         let isMounted = true;
+//         getChapterByNovelSlugAndIdx(slug, chapterIdx).then(r => {
+//             if (!isMounted) return;
+//             const chapterData = r.data.result;
+//             console.log('Chapter Data:', chapterData);
+//
+//             actions.setCurrentChapter({...chapterData}); // Gọi hàm cập nhật Zustand
+//
+//             checkChapterReadable(chapterData.id).then((response) => {
+//                 if (!isMounted) return;
+//                 setCanRead(response.data.result);
+//             });
+//             // if (chapterData.amountToUnlock > 0 && )
+//             if (chapterData.amountToUnlock > 0) {
+//                 checkCanReadChapterOrNovel("novel", currentNovel.id).then((canReadResponse) => {
+//                     if (!isMounted) return;
+//                     setPurchased(canReadResponse.data.result || false);
+//                     if (!canReadResponse.data.result){
+//                         checkCanReadChapterOrNovel("chapter", chapterData.id).then((canReadResponse) => {
+//                             if (!isMounted) return;
+//                             setPurchased(canReadResponse.data.result || false);
+//                         });
+//                     }
+//                 });
+//
+//             }
+//
+//         });
+//
+//         return () => {
+//             isMounted = false;
+//         };
+//     }, [slug, chapterIdx]);
+//
+//
+//     useEffect(() => {
+//         console.log("b");
+//         if (!currentChapter || purchased === false) return;
+//
+//         getCurrentChapterContent({
+//             novelSlug: slug,
+//             chapterIdx: chapterIdx,
+//         }).then((r) => {
+//             console.log('r.data:', r.data);
+//             if (r.status === 400) {
+//                 setError(r.data.message);
+//                 return;
+//             }
+//             if (r.data.result.length === 0) {
+//                 navigate('/404');
+//                 return;
+//             }
+//             console.log("Chapter content fetched:");
+//
+//             // setChapterContent(r.data.result).then(r => {});
+//
+//             actions.setCurrentChapter({
+//                 chapterId: r.data.result.id,
+//                 content: r.data.result.content,
+//             });
+//
+//             // setCurrentChapter({
+//             //     ...currentChapter,
+//             //     chapterId: r.data.result.id,
+//             //     content: r.data.result.content
+//             // })
+//
+//             // startRead logic dời vào đây
+//             if (currentNovel?.id) {
+//                 startReadChapter(currentNovel.id, {
+//                     userId: getUserIdFromContext(),
+//                     chapterId: r.data.result.id,
+//                     chapterIdx: chapterIdx,
+//                     novelId: currentNovel.id,
+//                 }).then(r => {});
+//             }
+//         });
+//     }, [currentChapter.id, chapterIdx, purchased]);
+//
+//     const sampleBook = { kind: 1 };
+//     const sampleChapter = { id: 123 };
+//
+//     const handleReviewSubmit = (score) => {
+//         console.log('Review Score Submitted:', score);
+//     };
+//
+//     const handleTranslationSubmit = (score) => {
+//         console.log('Translation Score Submitted:', score);
+//     };
+//
+//     const [functionMode, setFunctionMode] = useState('none');
+//     const [showReport, setShowReport] = useState(false);
+//     function changeFunctionModel(mode) {
+//         if (mode === functionMode) {
+//             setFunctionMode('none');
+//         } else {
+//             setFunctionMode(mode);
+//         }
+//     }
+//
+//     function closeReport() {
+//         setFunctionMode('none');
+//         setShowReport(false);
+//     }
+//
+//     function handleGoPreviousChapter() {
+//         const newIdx = parseInt(chapterIdx) - 1;
+//         navigate(`/truyen/${slug}/chuong-${newIdx}`);
+//     }
+//
+//     function handleGoNextChapter() {
+//         const newIdx = parseInt(chapterIdx) + 1;
+//         navigate(`/truyen/${slug}/chuong-${newIdx}`);
+//     }
+//
+//     // useEffect(() => {
+//     //     if (!currentNovel || !currentChapter || !chapterIdx) return;
+//     //
+//     //     console.log('Current Novel:', currentNovel);
+//     //
+//     //     startReadChapter(currentNovel.id, {
+//     //         userId: getUserIdFromContext(),
+//     //         chapterId: currentChapter.chapterId,
+//     //         chapterIdx: chapterIdx,
+//     //         currentChapterIdx: chapterIdx,
+//     //         novelId: currentNovel.id,
+//     //     }).then(r => {
+//     //         console.log('Start reading chapter response:', r);
+//     //     });
+//     // }, [currentNovel, currentChapter, chapterIdx]);
+//
+//     // Show loading while checking permission
+//     if (canRead === null) {
+//         return (
+//             <div className="flex justify-center items-center h-64">
+//                 <div>Đang kiểm tra quyền đọc...</div>
+//             </div>
+//         );
+//     }
+//
+//     // Show ComponentA if user cannot read
+//     if (canRead === false && purchased === false || canRead === true && purchased === false) {
+//         return <LockedChapterNotice itemId={currentChapter.id} itemType="CHAPTER" amount = {currentChapter.amountToUnlock}/>;
+//     }
 
 const ReadingPage = () => {
-    // const navigate = useNavigate();
-    // const { slug, id } = useParams();
-    // const curChapterContent = useCurrentChapterContent();
-    // const currentChapter = useCurrentChapter();
-    // const actions = useChapterActions();
-    // let novelSlug = useCurrentNovelSlug();
-    // const currentNovel = useCurrentNovel();
-    // const [canRead, setCanRead] = useState(null);
-    // // let chapterIdx = useCurrentChapterIdx();
-    // // const [chapterIdx, setChapterIdx] = useState(id.split('-')[1]);
-    // const chapterIdx = useMemo(() => parseInt(id.split('-')[1]), [id]);
-    // const [error, setError] = useState(null);
-    // const [showModal, setShowModal] = useState(false);
-    //
-    // useEffect(() => {
-    //     getCurrentChapterContent({
-    //         novelSlug: slug,
-    //         chapterIdx: chapterIdx,
-    //     }).then((r) => {
-    //         console.log(r);
-    //         if (r.status === 400) {
-    //             setError(r.data.message);
-    //             return;
-    //         }
-    //         if (r.data.result.length === 0) {
-    //             navigate('/404');
-    //             return;
-    //         }
-    //         console.log('data: ', r.data);
-    //
-    //         actions.setCurrentChapter({
-    //             chapterId: 'bca',
-    //             content: r.data.result.content,
-    //         });
-    //     });
-    //     console.log('Current Novel:', currentNovel);
-    //     startReadChapter(currentNovel.id, {
-    //         userId: getUserIdFromContext(),
-    //         chapterId: currentChapter.chapterId,
-    //         chapterIdx: chapterIdx,
-    //         novelId: currentNovel.id,
-    //     }).then(r => {
-    //         console.log('Start reading chapter response:', r);
-    //     })
-    // }, [novelSlug, chapterIdx]);
-    //
-    // const sampleBook = { kind: 1 };
-    // const sampleChapter = { id: 123 };
-    //
-    // const handleReviewSubmit = (score) => {
-    //     console.log('Review Score Submitted:', score);
-    // };
-    //
-    // const handleTranslationSubmit = (score) => {
-    //     console.log('Translation Score Submitted:', score);
-    // };
-    // const sampleUser = { isLoggedIn: true, balance: 100000 };
-    // const sampleDonations = [
-    //     {
-    //         user: { name: 'NVhung23' },
-    //         amount: 5000,
-    //         created_at: '2024-03-01T15:56',
-    //         chapter: {
-    //             name: 'Chương 501: Hoàng cung thay đổi, thủ vọng giả buông xuống!',
-    //         },
-    //     },
-    //     {
-    //         user: { name: 'Nhất Diệp' },
-    //         amount: 5000,
-    //         created_at: '2024-02-15T10:30',
-    //         chapter: {
-    //             name: 'Chương 67: Lãnh chúa phòng nhỏ thăng cấp! (cầu đặt mua)',
-    //         },
-    //     },
-    // ];
-    //
-    // const handleDonate = (amount) => {
-    //     console.log('Đã tặng:', amount);
-    // };
-    //
-    // const [functionMode, setFunctionMode] = useState('none');
-    // const [showReport, setShowReport] = useState(false);
-    // function changeFunctionModel(mode) {
-    //     if (mode === functionMode) {
-    //         setFunctionMode('none');
-    //     } else {
-    //         setFunctionMode(mode);
-    //     }
-    // }
-    //
-    // function test() {
-    //     alert('Báo cáo bình luận');
-    // }
-    //
-    // function closeReport() {
-    //     setFunctionMode('none');
-    //     setShowReport(false);
-    // }
-    //
-    //
-    // function handleGoPreviousChapter() {
-    //     const newIdx = parseInt(chapterIdx) - 1;
-    //     navigate(`/truyen/${slug}/chuong-${newIdx}`);
-    // }
-    //
-    // function handleGoNextChapter() {
-    //     const newIdx = parseInt(chapterIdx) + 1;
-    //     navigate(`/truyen/${slug}/chuong-${newIdx}`);
-    // }
-    //
-    //
-    // useEffect(() => {
-    //     if (!currentNovel || !currentChapter || !chapterIdx) return;
-    //
-    //     console.log('Current Novel:', currentNovel);
-    //
-    //     startReadChapter(currentNovel.id, {
-    //         userId: getUserIdFromContext(),
-    //         chapterId: currentChapter.chapterId,
-    //         chapterIdx: chapterIdx,
-    //         currentChapterIdx: chapterIdx,
-    //         novelId: currentNovel.id,
-    //     }).then(r => {
-    //         console.log('Start reading chapter response:', r);
-    //     });
-    // }, [currentNovel, currentChapter, chapterIdx]);
     const navigate = useNavigate();
     const { slug, id } = useParams();
+
+    const chapterIdx = useMemo(() => parseInt(id.split('-')[1]), [id]);
+
     const curChapterContent = useCurrentChapterContent();
     const currentChapter = useCurrentChapter();
     const actions = useChapterActions();
-    let novelSlug = useCurrentNovelSlug();
     const currentNovel = useCurrentNovel();
-    // let chapterIdx = useCurrentChapterIdx();
-    // const [chapterIdx, setChapterIdx] = useState(id.split('-')[1]);
-    const chapterIdx = useMemo(() => parseInt(id.split('-')[1]), [id]);
+
     const [error, setError] = useState(null);
-    const [showModal, setShowModal] = useState(false);
-    const [canRead, setCanRead] = useState(null); // null = checking, true = can read, false = cannot read
+    const [canRead, setCanRead] = useState(null);
     const [purchased, setPurchased] = useState(true);
-    const setCurrentChapter = useSetCurrentNovelReadingChapter();
-    // useEffect(() => {
-    //     console.log("A");
-    //     getChapterByNovelSlugAndIdx(slug, chapterIdx).then(r => {
-    //         setCurrentChapter(r.data.result);
-    //         checkChapterReadable(r.data.result.id).then((response) => {
-    //             setCanRead(response.data.result);
-    //         })
-    //         if (r.data.result.amountToUnlock > 0) {
-    //             checkCanReadChapter(r.data.result.id).then((canReadResponse) => {
-    //                 console.log('Can read chapter response:', canReadResponse);
-    //                 setPurchased(canReadResponse.data.result || canReadResponse.data.result || false);
-    //             })
-    //         }
-    //     })
-    // },[novelSlug, chapterIdx])
-    //
-    // useEffect(() => {
-    //     if (purchased === false) return;
-    //     getCurrentChapterContent({
-    //         novelSlug: slug,
-    //         chapterIdx: chapterIdx,
-    //     }).then((r) => {
-    //         console.log(r);
-    //         if (r.status === 400) {
-    //             setError(r.data.message);
-    //             return;
-    //         }
-    //         if (r.data.result.length === 0) {
-    //             navigate('/404');
-    //             return;
-    //         }
-    //         console.log('data: ', r.data);
-    //
-    //         const chapterId = r.data.result.id || 'bca'; // Use actual chapter ID from response
-    //
-    //         actions.setCurrentChapter({
-    //             chapterId: chapterId,
-    //             content: r.data.result.content,
-    //         });
-    //         // checkChapterReadable(currentChapter.id).then((response) => {
-    //         //     setCanRead(response.data.canRead || response.data.result || false);
-    //         // })
-    //         // if (currentChapter.amountToUnlock && currentChapter.amountToUnlock > 0) {
-    //         //     checkCanReadChapter(chapterId).then((canReadResponse) => {
-    //         //         console.log('Can read chapter response:', canReadResponse);
-    //         //         setCanRead(canReadResponse.data.canRead || canReadResponse.data.result || false);
-    //         //     }).catch((error) => {
-    //         //         console.error('Error checking can read chapter:', error);
-    //         //         setCanRead(false); // Default to false if check fails
-    //         //     });
-    //         // }
-    //         // Check if user can read this chapter
-    //
-    //     });
-    //     console.log('Current Novel:', currentNovel);
-    //     startReadChapter(currentNovel.id, {
-    //         userId: getUserIdFromContext(),
-    //         chapterId: currentChapter.chapterId,
-    //         chapterIdx: chapterIdx,
-    //         novelId: currentNovel.id,
-    //     }).then(r => {
-    //         console.log('Start reading chapter response:', r);
-    //     })
-    // }, [currentChapter]);
-
-    useEffect(() => {
-        let isMounted = true;
-        getChapterByNovelSlugAndIdx(slug, chapterIdx).then(r => {
-            if (!isMounted) return;
-            const chapterData = r.data.result;
-            console.log('Chapter Data:', chapterData);
-
-            actions.setCurrentChapter({...chapterData}); // Gọi hàm cập nhật Zustand
-
-            checkChapterReadable(chapterData.id).then((response) => {
-                if (!isMounted) return;
-                setCanRead(response.data.result);
-            });
-
-            if (chapterData.amountToUnlock > 0) {
-                checkCanReadChapter(chapterData.id).then((canReadResponse) => {
-                    if (!isMounted) return;
-                    setPurchased(canReadResponse.data.result || false);
-                });
-            }
-        });
-
-        return () => {
-            isMounted = false;
-        };
-    }, [slug, chapterIdx]);
-
-
-    useEffect(() => {
-        console.log("b");
-        if (!currentChapter || purchased === false) return;
-
-        getCurrentChapterContent({
-            novelSlug: slug,
-            chapterIdx: chapterIdx,
-        }).then((r) => {
-            console.log('r.data:', r.data);
-            if (r.status === 400) {
-                setError(r.data.message);
-                return;
-            }
-            if (r.data.result.length === 0) {
-                navigate('/404');
-                return;
-            }
-            console.log("Chapter content fetched:");
-
-            // setChapterContent(r.data.result).then(r => {});
-
-            actions.setCurrentChapter({
-                chapterId: r.data.result.id,
-                content: r.data.result.content,
-            });
-
-            // setCurrentChapter({
-            //     ...currentChapter,
-            //     chapterId: r.data.result.id,
-            //     content: r.data.result.content
-            // })
-
-            // startRead logic dời vào đây
-            if (currentNovel?.id) {
-                startReadChapter(currentNovel.id, {
-                    userId: getUserIdFromContext(),
-                    chapterId: r.data.result.id,
-                    chapterIdx: chapterIdx,
-                    novelId: currentNovel.id,
-                }).then(r => {});
-            }
-        });
-    }, [currentChapter.id, chapterIdx, purchased]);
-
-    const sampleBook = { kind: 1 };
-    const sampleChapter = { id: 123 };
-
-    const handleReviewSubmit = (score) => {
-        console.log('Review Score Submitted:', score);
-    };
-
-    const handleTranslationSubmit = (score) => {
-        console.log('Translation Score Submitted:', score);
-    };
 
     const [functionMode, setFunctionMode] = useState('none');
     const [showReport, setShowReport] = useState(false);
-    function changeFunctionModel(mode) {
-        if (mode === functionMode) {
-            setFunctionMode('none');
-        } else {
-            setFunctionMode(mode);
-        }
-    }
+    const [showModal, setShowModal] = useState(false);
 
-    function closeReport() {
+    // Hàm kiểm tra quyền đọc và mua
+    const checkReadPermission = async (chapterData) => {
+        const canReadRes = await checkChapterReadable(chapterData.id);
+        setCanRead(canReadRes.data.result);
+
+        if (chapterData.amountToUnlock > 0 && !isLoggedIn()){
+            setPurchased(false);
+            setError("Bạn cần đăng nhập để đọc chương này.");
+            return;
+        }
+
+        if (chapterData.amountToUnlock > 0) {
+            let purchasedRes = await checkCanReadChapterOrNovel("novel", currentNovel.id);
+            if (!purchasedRes.data.result) {
+                purchasedRes = await checkCanReadChapterOrNovel("chapter", chapterData.id);
+            }
+            setPurchased(purchasedRes.data.result || false);
+        }
+    };
+
+    // Lấy dữ liệu chapter
+    useEffect(() => {
+        let ignore = false;
+        const fetchChapter = async () => {
+            try {
+                const r = await getChapterByNovelSlugAndIdx(slug, chapterIdx);
+                if (ignore) return;
+
+                const chapterData = r.data.result;
+                actions.setCurrentChapter({ ...chapterData });
+                await checkReadPermission(chapterData);
+            } catch (err) {
+                console.error("Fetch chapter error:", err);
+                if (!ignore) setError("Không thể tải chương.");
+            }
+        };
+        fetchChapter();
+        return () => { ignore = true; };
+    }, [slug, chapterIdx]);
+
+    // Lấy nội dung chapter
+    useEffect(() => {
+        if (!currentChapter?.id || purchased === false) return;
+
+        let ignore = false;
+        const fetchContent = async () => {
+            try {
+                const r = await getCurrentChapterContent({ novelSlug: slug, chapterIdx });
+                if (ignore) return;
+
+                if (r.status === 400) {
+                    setError(r.data.message);
+                    return;
+                }
+                if (!r.data.result || r.data.result.length === 0) {
+                    navigate('/404');
+                    return;
+                }
+
+                actions.setCurrentChapter({
+                    chapterId: r.data.result.id,
+                    content: r.data.result.content,
+                });
+
+                if (currentNovel?.id) {
+                    await startReadChapter(currentNovel.id, {
+                        userId: getUserIdFromContext(),
+                        chapterId: r.data.result.id,
+                        chapterIdx,
+                        novelId: currentNovel.id,
+                    });
+                }
+            } catch (err) {
+                console.error("Fetch content error:", err);
+            }
+        };
+        fetchContent();
+        return () => { ignore = true; };
+    }, [currentChapter.id, chapterIdx, purchased]);
+
+    const changeFunctionModel = (mode) => {
+        setFunctionMode(mode === functionMode ? 'none' : mode);
+    };
+
+    const closeReport = () => {
         setFunctionMode('none');
         setShowReport(false);
-    }
+    };
 
-    function handleGoPreviousChapter() {
-        const newIdx = parseInt(chapterIdx) - 1;
-        navigate(`/truyen/${slug}/chuong-${newIdx}`);
-    }
+    const handleGoPreviousChapter = () => {
+        navigate(`/truyen/${slug}/chuong-${chapterIdx - 1}`);
+    };
 
-    function handleGoNextChapter() {
-        const newIdx = parseInt(chapterIdx) + 1;
-        navigate(`/truyen/${slug}/chuong-${newIdx}`);
-    }
+    const handleGoNextChapter = () => {
+        navigate(`/truyen/${slug}/chuong-${chapterIdx + 1}`);
+    };
 
-    // useEffect(() => {
-    //     if (!currentNovel || !currentChapter || !chapterIdx) return;
-    //
-    //     console.log('Current Novel:', currentNovel);
-    //
-    //     startReadChapter(currentNovel.id, {
-    //         userId: getUserIdFromContext(),
-    //         chapterId: currentChapter.chapterId,
-    //         chapterIdx: chapterIdx,
-    //         currentChapterIdx: chapterIdx,
-    //         novelId: currentNovel.id,
-    //     }).then(r => {
-    //         console.log('Start reading chapter response:', r);
-    //     });
-    // }, [currentNovel, currentChapter, chapterIdx]);
-
-    // Show loading while checking permission
+    // Loading UI
     if (canRead === null) {
         return (
             <div className="flex justify-center items-center h-64">
@@ -377,11 +331,10 @@ const ReadingPage = () => {
         );
     }
 
-    // Show ComponentA if user cannot read
-    if (canRead === false && purchased === false || canRead === true && purchased === false) {
-        return <LockedChapterNotice />;
+    // Lock UI
+    if (!purchased) {
+        return <LockedChapterNotice itemId={currentChapter.id} itemType="CHAPTER" amount={currentChapter.amountToUnlock} />;
     }
-
     return (
         <>
             {canRead}
@@ -612,14 +565,61 @@ const NovelAdvertise = () => {
 const FunctionBar = ({ changeMode }) => {
     // const ItemArray = new Array()
     const navigate = useNavigate();
+
+    const wallets = useMyWallet();
+    const setWallets = useSetMyWallet();
+    const updateWallet = useUpdateWalletBalance();
     function handleGoNextChapter() {
         let nextChapterIdx = parseInt(useCurrentChapterIdx()) + 1;
-        navigate()
+        // navigate('truyen')
     }
 
     function handleGoPreviousChapter() {
     }
 
+
+    // function handlePromotion() {
+    //     console.log("A");
+    //     console.log(wallets);
+    //     wallets.map((wallet => {
+    //         if (wallet.currency.code === "XU"){
+    //             if (wallet.balance < 1){
+    //                 showError('Bạn không đủ xu để đề cử');
+    //             }
+    //             else{
+    //                 promotion().then(r => {})
+    //             }
+    //         }
+    //     }));
+    // }
+
+    function handlePromotion() {
+        const xuWallet = wallets.find(wallet => wallet.currency.code === "XUK");
+
+        if (!xuWallet) {
+            showError("Không tìm thấy ví XUK");
+            return;
+        }
+
+        if (xuWallet.balance < 1) {
+            showError("Bạn không đủ xu để đề cử");
+            return;
+        }
+
+        promotion()
+            .then(() => {
+                showSuccess("Đề cử thành công");
+
+                // ✅ Gợi ý: cập nhật balance ở local UI nếu muốn phản hồi nhanh
+                updateWallet("XUK", -1);
+
+                // Hoặc: Gọi lại API get wallets để sync lại state chính xác
+            })
+            .catch((err) => {
+                console.log("Error during promotion:", err);
+                showError("Có lỗi xảy ra khi đề cử");
+            });
+    }
 
     return (
         <>
@@ -648,15 +648,7 @@ const FunctionBar = ({ changeMode }) => {
                         </span>
                         <span>Đánh giá</span>
                     </button>
-                    <button
-                        className={'space-y-2 hover:text-yellow-500'}
-                        onClick={() => changeMode('gift')}
-                    >
-                        <span className={'flex justify-center items-center'}>
-                            <FontAwesomeIcon icon={faGift} />
-                        </span>
-                        <span>Tặng quà</span>
-                    </button>
+
                     <button
                         className={'space-y-2 hover:text-yellow-500'}
                         onClick={() => changeMode('report')}
@@ -666,7 +658,7 @@ const FunctionBar = ({ changeMode }) => {
                         </span>
                         <span>Báo cáo</span>
                     </button>
-                    <button className={'space-y-2 hover:text-yellow-500'}>
+                    <button className={'space-y-2 hover:text-yellow-500'} onClick={handlePromotion}>
                         <span className={'flex justify-center items-center'}>
                             <FontAwesomeIcon icon={faTicket} />
                         </span>
@@ -722,7 +714,7 @@ const CommentBox = () => {
                         <option value="-sticky,id">Cũ nhất</option>
                     </select>
                 </div>
-                <div className="font-bold">141 thảo luận</div>
+                <div className="font-bold"> thảo luận</div>
                 <button className="inline-flex justify-center px-4 py-2 border border-primary shadow-sm text-sm font-medium rounded-md text-primary bg-inherit focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 btn-outline-primary w-16 h-9 disabled:bg-gray-500">
                     GỬI
                 </button>

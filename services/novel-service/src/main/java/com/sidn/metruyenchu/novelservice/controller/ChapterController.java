@@ -84,6 +84,13 @@ public class ChapterController {
                 .build();
     }
 
+    @GetMapping("/{chapterId}/content")
+    ApiResponse<ChapterContentResponse> getChapterContent(@PathVariable String chapterId, @RequestBody ChapterContentGetRequest request){
+        request.setChapterId(chapterId);
+        return ApiResponse.<ChapterContentResponse>builder()
+                .result(chapterService.getChapterContentById(request))
+                .build();
+    }
     @GetMapping("/{chapterId}")
     ApiResponse<ChapterResponse> getChapter(@PathVariable String chapterId){
         return ApiResponse.<ChapterResponse>builder()

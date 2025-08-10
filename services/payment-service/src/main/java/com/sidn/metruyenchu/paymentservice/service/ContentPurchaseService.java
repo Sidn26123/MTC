@@ -33,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -152,8 +153,121 @@ public class ContentPurchaseService {
     }
 
     @Transactional
-    public ContentPurchaseResponse purchaseContents(BulkChapterPurchaseRequest request){
-
+    public ContentPurchaseResponse purchaseContents(BulkChapterPurchaseRequest request) {
+//        String userId = request.getUserId();
+//        if (userId == null) {
+//            userId = TokenUtils.getUserIdFromContext();
+//        }
+//
+//        // Validate request
+//        if (request.getChapterIds() == null || request.getChapterIds().isEmpty()) {
+//            throw new IllegalArgumentException("Chapter IDs are required");
+//        }
+//
+//        // Get user wallet
+//        Wallet wallet = walletRepository.findByUserIdAndCurrencyId(userId, request.getCurrencyId())
+//                .orElseThrow(() -> new IllegalStateException("Wallet not found"));
+//
+//        if (wallet.getStatus() != WalletStatus.ACTIVE) {
+//            throw new IllegalStateException("Wallet is not active");
+//        }
+//
+//        // Check if user already purchased any of these chapters
+//        List<String> alreadyPurchased = new ArrayList<>();
+//        for (String chapterId : request.getChapterIds()) {
+//            boolean hasPur = hasPurchasedContent(CheckUserPurchaseContentRequest.builder()
+//                    .userId(userId)
+//                    .itemId(chapterId)
+//                    .itemType(ContentType.CHAPTER)
+//                    .build());
+//            if (hasPur) {
+//                alreadyPurchased.add(chapterId);
+//            }
+//        }
+//
+//        if (!alreadyPurchased.isEmpty()) {
+//            throw new AppException(ErrorCode.CONTENT_PURCHASE_ALREADY_EXISTS,
+//                    "Already purchased chapters: " + String.join(", ", alreadyPurchased));
+//        }
+//
+//        // Calculate total price
+//        BigDecimal totalPrice = BigDecimal.ZERO;
+//        for (String chapterId : request.getChapterIds()) {
+//            // Lấy giá của từng chapter (có thể từ database hoặc service khác)
+//            BigDecimal chapterPrice = getChapterPrice(chapterId);
+//            totalPrice = totalPrice.add(chapterPrice);
+//        }
+//
+//        // Apply bulk discount if any
+//        if (request.getDiscount() != null) {
+//            totalPrice = totalPrice.subtract(request.getDiscount());
+//        }
+//
+//        // Check balance
+//        if (wallet.getBalance().compareTo(totalPrice) < 0) {
+//            throw new IllegalStateException("Insufficient balance");
+//        }
+//
+//        Currency currency = currencyService.getCurrencyEntityById(request.getCurrencyId());
+//
+//        // Create main transaction
+//        String transactionCode = "BULK-PUR-" + UUID.randomUUID().toString().substring(0, 8);
+//        Transactions transaction = Transactions.builder()
+//                .transactionCode(transactionCode)
+//                .userId(userId)
+//                .wallet(wallet)
+//                .type(TransactionType.BULK_PURCHASE)
+//                .amount(totalPrice)
+//                .currency(currency)
+//                .status(TransactionStatus.PENDING)
+//                .build();
+//        transaction = transactionsRepository.save(transaction);
+//
+//        try {
+//            // Create content purchase records for each chapter
+//            List<ContentPurchase> purchases = new ArrayList<>();
+//            for (String chapterId : request.getChapterIds()) {
+//                BigDecimal chapterPrice = getChapterPrice(chapterId);
+//
+//                ContentPurchase contentPurchase = ContentPurchase.builder()
+//                        .transaction(transaction)
+//                        .itemType(ContentType.CHAPTER)
+//                        .itemId(chapterId)
+//                        .price(chapterPrice)
+//                        .finalPrice(chapterPrice)
+//                        .currencyId(request.getCurrencyId())
+//                        .quantity(1)
+//                        .build();
+//                purchases.add(contentPurchase);
+//            }
+//
+//            // Save all purchases
+//            contentPurchaseRepository.saveAll(purchases);
+//
+//            // Update wallet balance
+//            wallet.setBalance(wallet.getBalance().subtract(totalPrice));
+//            walletRepository.save(wallet);
+//
+//            // Complete transaction
+//            transaction.setStatus(TransactionStatus.COMPLETED);
+//            transaction.setCompletedAt(LocalDateTime.now());
+//            transactionsRepository.save(transaction);
+//
+//            // Return response with summary
+//            return ContentPurchaseResponse.builder()
+//                    .transactionCode(transactionCode)
+//                    .totalAmount(totalPrice)
+//                    .purchasedItemCount(request.getChapterIds().size())
+//                    .status("SUCCESS")
+//                    .message("Successfully purchased " + request.getChapterIds().size() + " chapters")
+//                    .build();
+//
+//        } catch (Exception e) {
+//            // Rollback transaction status
+//            transaction.setStatus(TransactionStatus.FAILED);
+//            transactionsRepository.save(transaction);
+//            throw e;
+//        }
         return null;
     }
 

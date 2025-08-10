@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import "../../styles/styles.css";
-import {Link} from "react-router";
+import { Link, useNavigate } from 'react-router';
 import { NovelFilter } from './NovelFilter.jsx';
 import LoginPanel from './LoginPanel.jsx';
 import useUserStore from '../../stores/userStores.js';
 import { showSuccess } from '../../utils/ToastUtils.js';
-import { logOut } from '../../services/authenticationService.js';
+import { isLoggedIn, logOut } from '../../services/authenticationService.js';
 import { toast } from 'react-toastify';
 import RegisterPage from '../../pages/users/RegisterPage.jsx';
 import RegisterPanel from './RegisterPanel.jsx';
@@ -20,8 +20,10 @@ import { faCoins } from '@fortawesome/free-solid-svg-icons';
 import { useMyWallet } from '../../stores/paymentStore.js';
 import { useSetUnreadCount, useUnreadCount } from '../../stores/notificationStore.js';
 import { getUnreadCount } from '../../services/notificationService.js';
+import { getFullPathOfAvatar } from '../../utils/ProfileUtils.js';
 
 function Navbar() {
+    const navigate = useNavigate();
     const [isDropdownOpen, setDropdownOpen] = useState(false);
     const [showFilter, setShowFilter] = useState(false);
     const [showLoginPanel, setShowLoginPanel] = useState(0);
@@ -57,10 +59,13 @@ function Navbar() {
             setListNovel(novel.data.result); // Gọi action của Zustand
         };
 
-        getUnreadCount().then( r => {
-            console.log("Unread count: ", r.data.result);
-            setUnreadCount(r.data.result);
-        })
+        if (isLoggedIn()){
+            getUnreadCount().then( r => {
+                console.log("Unread count: ", r.data.result);
+                setUnreadCount(r.data.result);
+            })
+        }
+
 
         fetchData().then(r => {});
     }, []);
@@ -176,7 +181,7 @@ function Navbar() {
                                 <>
                                     <img
                                         className="w-8 h-8 rounded-full"
-                                        src="http://localhost:8889/api/v1/file/files/media/download/3557eebf-d947-4716-88ac-2ad9b7295a88.png"
+                                        src={getFullPathOfAvatar(user.avatarPath)}
                                         alt="user"
                                     />
                                 </>
@@ -208,7 +213,7 @@ function Navbar() {
                                                 <>
                                                     <img
                                                         className="w-10 h-10 rounded-full"
-                                                        src="http://localhost:8889/api/v1/file/files/media/download/3557eebf-d947-4716-88ac-2ad9b7295a88.png"
+                                                        src={getFullPathOfAvatar(user.avatarPath)}
                                                         alt="user"
                                                     />
                                                 </>
@@ -433,10 +438,7 @@ function Navbar() {
                                     </li>
                                     <li className={'list-none'}>
                                         <span
-                                            onClick={() => {
-                                                openChat();
-                                                setDropdownOpen(false);
-                                            }}
+                                            onClick={() => navigate('/chatbot')}
                                             className="block px-4 py-2 text-gray-700 hover:bg-gray-400"
                                         >
                                             Chatbot

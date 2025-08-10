@@ -67,9 +67,9 @@ public class Chapter {
     @Column(nullable = false, updatable = false)
     LocalDateTime createdAt;
 
-    @UpdateTimestamp
     LocalDateTime publishedAt;
 
+    @UpdateTimestamp
     LocalDateTime updatedAt;
 
     @Builder.Default

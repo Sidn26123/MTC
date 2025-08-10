@@ -20,7 +20,7 @@ const AdminRoutes = ({ user, userRoles}) => {
     return (
        <Route element={<ProtectedRoute isAllowed={isAdmin} />}>
             <Route element={<AdminLayout />}>
-                <Route path={`${adminRoutesPrefix}/dashboard`} element={<Dashboard />} />
+                {/*<Route path={`${adminRoutesPrefix}/dashboard`} element={<Dashboard />} />*/}
                 <Route path={`${adminRoutesPrefix}/novels`} element={<NovelManagePage />} />
                 <Route path={`${adminRoutesPrefix}/users`} element={<ManageUsers />} />
                 <Route path={`${adminRoutesPrefix}/accounts`} element={<AccountManagePage />} />

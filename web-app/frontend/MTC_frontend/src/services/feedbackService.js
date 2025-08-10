@@ -82,7 +82,7 @@ export const fetchTickets = async (status) => {
             params: {
                 page: 0,
                 size: 10,
-                status: "PENDING",
+                status: status,
             },
 
         });

@@ -1,9 +1,11 @@
 package com.sidn.metruyenchu.paymentservice.service;
 
 import com.sidn.metruyenchu.paymentservice.configurations.VNPAYConfig;
+import com.sidn.metruyenchu.paymentservice.dto.request.transactions.TransactionsCreateRequest;
 import com.sidn.metruyenchu.paymentservice.dto.request.walletHistory.WalletBalanceHistoryCreateRequest;
 import com.sidn.metruyenchu.paymentservice.dto.response.PaymentResponse;
 import com.sidn.metruyenchu.paymentservice.dto.response.payment.VNPayResponse;
+import com.sidn.metruyenchu.paymentservice.dto.response.transactions.TransactionsResponse;
 import com.sidn.metruyenchu.paymentservice.dto.response.wallet.WalletResponse;
 import com.sidn.metruyenchu.paymentservice.entity.*;
 import com.sidn.metruyenchu.paymentservice.entity.PaymentMethod;
@@ -33,6 +35,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.sidn.metruyenchu.paymentservice.utils.TokenUtils.getUserIdFromContext;
+
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level  = AccessLevel.PRIVATE, makeFinal = true)
@@ -49,6 +53,7 @@ public class WalletService {
     PaymentRequestsMapper paymentRequestsMapper;
     CurrencyService currencyService;
     WalletBalanceHistoryService walletBalanceHistoryService;
+    private final TransactionsService transactionsService;
 
     /**
      * Find or create a wallet for a user
@@ -361,5 +366,54 @@ public class WalletService {
         Currency currency = currencyService.getCurrencyEntityById(currencyId);
         return walletRepository.findByUserIdAndCurrencyId(userId, currencyId)
                 .orElseThrow(() -> new AppException(ErrorCode.WALLET_NOT_FOUND));
+    }
+
+    public BigDecimal getWalletXuK() {
+        String userId = getUserIdFromContext();
+        Currency currency = currencyService.getCurrencyEntityByCode("XUK");
+        WalletResponse wallet = walletRepository.findByUserIdAndCurrencyId(userId, currency.getId())
+                .map(walletMapper::toResponse)
+                .orElseThrow(() -> new AppException(ErrorCode.WALLET_NOT_FOUND));
+        return wallet.getBalance() != null ? wallet.getBalance() : BigDecimal.ZERO;
+    }
+
+    public Void promotion(){
+        String userId = getUserIdFromContext();
+        Currency currency = currencyService.getCurrencyEntityByCode("XUK");
+        Wallet wallet = walletRepository.findByUserIdAndCurrencyId(userId, currency.getId())
+                .orElseThrow(() -> new AppException(ErrorCode.WALLET_NOT_FOUND));
+        log.info("Promotion deduction for user: {}, Wallet ID: {}, Current Balance: {} {}", userId, wallet.getId(), wallet.getBalance(), wallet.getBalance().compareTo(BigDecimal.ZERO));
+        if (wallet.getBalance() == null || wallet.getBalance().compareTo(BigDecimal.ZERO) < 1) {
+            return null;
+
+        }
+
+        // Deduct 1 XUK from the wallet
+        BigDecimal balanceAfter = wallet.getBalance().subtract(BigDecimal.ONE);
+        log.info("Deducting 1 XUK from wallet. User ID: {}, Current Balance: {}, New Balance: {}", userId, wallet.getBalance(), balanceAfter);
+        wallet.setBalance(balanceAfter);
+        walletRepository.save(wallet);
+
+        TransactionsResponse transactions = transactionsService.createTransaction(
+                TransactionsCreateRequest.builder()
+                        .userId(userId)
+                        .walletId(wallet.getId())
+                        .type(TransactionType.PURCHASE)
+                        .amount(1) // Deducting 1 XUK
+                        .currencyId(currency.getId())
+                        .build()
+        );
+
+
+//        // Record the balance change
+//        walletBalanceHistoryService.recordBalanceChange(WalletBalanceHistoryCreateRequest.builder()
+//                .walletId(wallet.getId())
+//                .transactionId(transactions.getId())
+//                .amount(BigDecimal.ONE.negate()) // Deducting 1 XUK
+//                .description("Promotion deduction")
+//                .type(WalletBalanceHistoryType.PROMOTION)
+//                .build());
+
+        return null;
     }
 }

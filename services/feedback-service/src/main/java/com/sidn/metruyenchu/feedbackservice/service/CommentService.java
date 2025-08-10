@@ -88,7 +88,7 @@ public class CommentService {
 //        chapterResponse = callFeignGetChapterInfo(novelClient, request.getChapterId()).getResult();
 
 
-        updateCommentStat(request.getFeedbackType(), request.getParentId(), 1);
+//        updateCommentStat(request.getFeedbackType(), request.getParentId(), 1);
         comment = commentRepository.save(comment);
         if (request.getNovelId() != null && request.getChapterId() != null) {
             novelClient.commentNovel(request.getNovelId(),
@@ -166,7 +166,7 @@ public class CommentService {
         Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
         Pageable pageable = PageRequest.of(request.getPage() - 1, request.getSize(), sort);
 
-        Page<Comment> comments = commentRepository.findAllByNovelId(request.getNovelId(), pageable);
+        Page<Comment> comments = commentRepository.findAllByNovelIdAndIsDeletedIsFalse(request.getNovelId(), pageable);
         List<CommentResponse> commentResponses = comments.map(commentMapper::toCommentResponse).toList();
         return PageResponse.<CommentResponse>builder()
                 .currentPage(request.getPage())

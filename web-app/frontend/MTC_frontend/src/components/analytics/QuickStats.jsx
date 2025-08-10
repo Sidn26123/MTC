@@ -22,18 +22,51 @@ export function QuickStats() {
     return (
         <div className="bg-gray-600 rounded-lg p-6 mb-8">
             <h2 className="text-xl font-semibold text-white mb-6">Thống kê nhanh tháng này</h2>
-
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div className="space-y-1">
-                    <StatItem label="Lượt đọc chương mới: 0" value="" hasInfo />
-                    <StatItem label="Lượt đọc chương cũ: 0" value="" hasInfo />
-                </div>
-
-                <div className="space-y-1">
-                    <StatItem label="Tiền lượt đọc tháng: 0 đ" value="" hasInfo />
-                    <StatItem label="Tiền mở khóa tháng: 0 đ" value="" />
-                </div>
-            </div>
+            <RatingBars />
         </div>
     )
+}
+import { Star } from "lucide-react";
+
+const ratingData = {
+    "1": 0,
+    "2": 0,
+    "3": 1,
+    "4": 3,
+    "5": 2
+};
+
+export function RatingBars() {
+    const maxCount = Math.max(...Object.values(ratingData), 1); // đảm bảo > 0 tránh chia 0
+
+    return (
+        <div className="bg-gray-600 rounded-lg p-6 mb-8">
+            <h2 className="text-xl font-semibold text-white mb-6">Đánh giá người dùng</h2>
+
+            <div className="space-y-3">
+                {[5, 4, 3, 2, 1].map((star) => {
+                    const count = ratingData[star] ?? 0;
+                    const percent = (count / maxCount) * 100;
+
+                    return (
+                        <div key={star} className="flex items-center space-x-4">
+                            <div className="flex items-center w-16 text-yellow-400">
+                                <Star className="w-4 h-4 fill-yellow-400 mr-1" />
+                                <span className="text-sm text-white">{star}</span>
+                            </div>
+
+                            <div className="flex-1 bg-gray-700 rounded h-3 overflow-hidden">
+                                <div
+                                    className="bg-yellow-400 h-full transition-all duration-300"
+                                    style={{ width: `${percent}%` }}
+                                />
+                            </div>
+
+                            <div className="w-8 text-right text-sm text-white">{count}</div>
+                        </div>
+                    );
+                })}
+            </div>
+        </div>
+    );
 }

@@ -44,4 +44,6 @@ public interface CommentRepository extends JpaRepository<Comment, String>, JpaSp
     Page<Comment> findAllByNovelId(String novelId, Pageable pageable);
 
     Page<Comment> findAllByCommentedBy(String userId, Pageable pageable);
+
+    Page<Comment> findAllByNovelIdAndIsDeletedIsFalse(String novelId, Pageable pageable);
 }

@@ -14,7 +14,7 @@ const PotatoIcon = () => (
 function DonatePage() {
     const navigate = useNavigate();
     function handleGotoChoosePage() {
-        navigate("/nap-tien/chi-tiet");
+        navigate("/nap-tien/momo");
     }
 
     return (
@@ -64,27 +64,27 @@ function DonatePage() {
                         </div>
                     </a>
                 </div>
-                <div className="col-span-1 sm:col-span-2" onClick={handleGotoChoosePage}>
-                    <a
-                        href=""
-                        className="border border-primary bg-secondary text-black px-auto py-5 w-full block rounded-3xl hover:bg-primary hover:text-white"
-                    >
-                        <div className="flex flex-col space-y-3">
-                            <div className="flex justify-center space-x-2">
+                {/*<div className="col-span-1 sm:col-span-2" onClick={handleGotoChoosePage}>*/}
+                {/*    <a*/}
+                {/*        href=""*/}
+                {/*        className="border border-primary bg-secondary text-black px-auto py-5 w-full block rounded-3xl hover:bg-primary hover:text-white"*/}
+                {/*    >*/}
+                {/*        <div className="flex flex-col space-y-3">*/}
+                {/*            <div className="flex justify-center space-x-2">*/}
 
-                                <img
-                                    src={vnpay_icon}
-                                    alt="momo"
-                                    className="h-4"
-                                />
+                {/*                <img*/}
+                {/*                    src={vnpay_icon}*/}
+                {/*                    alt="momo"*/}
+                {/*                    className="h-4"*/}
+                {/*                />*/}
 
-                            </div>
-                            <div className="text-center font-medium">
-                                Mua Xu: Momo
-                            </div>
-                        </div>
-                    </a>
-                </div>
+                {/*            </div>*/}
+                {/*            <div className="text-center font-medium">*/}
+                {/*                Mua Xu: Momo*/}
+                {/*            </div>*/}
+                {/*        </div>*/}
+                {/*    </a>*/}
+                {/*</div>*/}
             </div>
         </>
     )
