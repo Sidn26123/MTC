@@ -52,6 +52,8 @@ export const getUserIdFromToken = (token) => {
     const payload = parseJwt(token);
     return payload ? payload.user_id : null;
 }
+
+
 export const logInWithGoogle = async () => {
     const response = await httpClient.get(API.LOGIN_GOOGLE);
     setToken(response.data?.result?.token);

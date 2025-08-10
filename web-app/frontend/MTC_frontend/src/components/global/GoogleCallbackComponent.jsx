@@ -77,7 +77,6 @@ function GoogleCallbackComponent() {
         const email = jwtPayload?.email;
         const userId = jwtPayload?.user_id;
         debugger;
-
         if (!email) {
           console.error('Không thể đọc email từ token!');
           navigate('/login');
@@ -404,7 +403,7 @@ export default GoogleCallbackComponent;
 //         // debugger;
 //         // if (user) {
 //         //   setUser(user);
-//         //   debugger;
+//         //   debugger;  
 //         //   // Cập nhật auth state
 //         //   const roles = getScopeArray(token);
 //         //   const { login: loginAccount } = require('../../stores/authStore.js').useAuthActions();

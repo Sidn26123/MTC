@@ -49,3 +49,47 @@ export const updateUserRole = async (userId, roleUpdate) => {
         throw error;
     }
 }
+
+export const updateUserProfile = async (userId, profileData) => {
+    try {
+        const response = await api.put(
+            `${API.USER}/${userId}`,
+            profileData
+        );
+        return response.data;
+    } catch (error) {
+        console.error("Lỗi khi cập nhật thông tin người dùng:", error);
+        throw error;
+    }
+}
+
+export const checkPassword = async (userId, password) => {
+    try {
+        const response = await api.get(
+            `${API.IDENTITY_SERVICE}/users/checkPassword`,
+            {
+                params: {
+                    userId,
+                    password
+                }
+            }
+        );
+        return response.data; // { code: 0, result: true/false }
+    } catch (error) {
+        console.error("Lỗi khi kiểm tra mật khẩu:", error);
+        throw error;
+    }
+};
+
+export const updatePassword = async (userId, passwordData) => {
+    try {
+        const response = await api.put(
+            `${API.IDENTITY_SERVICE}/users/${userId}`,
+             {password : passwordData}
+        );
+        return response.data; // { code: 0, message: "Cập nhật mật khẩu thành công" }
+    } catch (error) {
+        console.error("Lỗi khi cập nhật mật khẩu:", error);
+        throw error;
+    }
+}
