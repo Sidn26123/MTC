@@ -8,6 +8,7 @@ import AccountManagePage from '../pages/admins/AccountManagePage.jsx';
 import CategoryManagePage from '../pages/admins/CategoryManagePage.jsx';
 import AnalyticsPage from '../pages/admins/AnalyticsPage.jsx';
 import PolicyManagePage from '../pages/admins/PolicyManagePage.jsx';
+import ReportManagePage from '../pages/admins/ReportManagePage.jsx';
 import { hasScope } from '../services/authoriazationService.js';
 
 const adminRoutesPrefix = "/admin";
@@ -30,6 +31,7 @@ const AdminRoutes = ({ user, userRoles}) => {
                 <Route path={`${adminRoutesPrefix}/category`} element={<CategoryManagePage />} />
                 <Route path={`${adminRoutesPrefix}/analytics`} element={<AnalyticsPage />} />
                 <Route path={`${adminRoutesPrefix}/policies`} element={<PolicyManagePage />} />
+                <Route path={`${adminRoutesPrefix}/reports`} element={<ReportManagePage />} />
                 {/* <Route path="settings" element={<Settings />} /> */}
             </Route>
         </Route>

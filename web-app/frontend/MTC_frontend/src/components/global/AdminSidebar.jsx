@@ -97,6 +97,7 @@ const SidebarLinks = ({onLinkClick} ) => (
     <Link to={`${adminRoutesPrefix}/category`} onClick={onLinkClick}>Quản lý Danh Mục</Link>
     <Link to={`${adminRoutesPrefix}/analytics`} onClick={onLinkClick}>Thống Kê</Link>
     <Link to={`${adminRoutesPrefix}/policies`} onClick={onLinkClick}>Quản lý Điều Khoản Dịch Vụ</Link>
+    <Link to={`${adminRoutesPrefix}/reports`} onClick={onLinkClick}>Xử lý báo cáo</Link>
     {/* <Link to="/admin/settings" onClick={onLinkClick}>Cài đặt</Link> */}
     <Link to="/admin/settings" onClick={onLinkClick}>Cài đặt</Link>
   </nav>
