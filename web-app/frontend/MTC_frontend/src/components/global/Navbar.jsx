@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import "../../styles/styles.css";
-import {Link} from "react-router";
+import { Link, useNavigate } from 'react-router';
 import { NovelFilter } from './NovelFilter.jsx';
 import LoginPanel from './LoginPanel.jsx';
 import useUserStore from '../../stores/userStores.js';
 import { showSuccess } from '../../utils/ToastUtils.js';
-import { logOut } from '../../services/authenticationService.js';
+import { isLoggedIn, logOut } from '../../services/authenticationService.js';
 import { toast } from 'react-toastify';
 import RegisterPage from '../../pages/users/RegisterPage.jsx';
 import RegisterPanel from './RegisterPanel.jsx';
@@ -15,8 +15,15 @@ import { getNovelProgressStatus } from '../../services/novelFilterService.js';
 import { useSetNovelStatus } from '../../stores/selectors/novelFilterSelector.js';
 import { getNovels } from '../../services/novelService.js';
 import { useSetListNovel } from '../../stores/novelStore.js';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCoins } from '@fortawesome/free-solid-svg-icons';
+import { useMyWallet } from '../../stores/paymentStore.js';
+import { useSetUnreadCount, useUnreadCount } from '../../stores/notificationStore.js';
+import { getUnreadCount } from '../../services/notificationService.js';
+import { getFullPathOfAvatar } from '../../utils/ProfileUtils.js';
 
 function Navbar() {
+    const navigate = useNavigate();
     const [isDropdownOpen, setDropdownOpen] = useState(false);
     const [showFilter, setShowFilter] = useState(false);
     const [showLoginPanel, setShowLoginPanel] = useState(0);
@@ -26,6 +33,10 @@ function Navbar() {
     const toggleNovelFilterPanel = useToggleNovelFilterPanel();
     const setNovelStatus = useSetNovelStatus();
     const setListNovel = useSetListNovel();
+    const myWallet = useMyWallet();
+
+    const unreadCount = useUnreadCount();
+    const setUnreadCount = useSetUnreadCount();
 
     const handleLogout = (event)=> {
         event.preventDefault();
@@ -48,63 +59,114 @@ function Navbar() {
             setListNovel(novel.data.result); // Gọi action của Zustand
         };
 
+        if (isLoggedIn()){
+            getUnreadCount().then( r => {
+                console.log("Unread count: ", r.data.result);
+                setUnreadCount(r.data.result);
+            })
+        }
+
+
         fetchData().then(r => {});
     }, []);
     // getNovelProgressStatus().then(r => console.log("Novel progress status: ", r.data.result));
     return (
-
         <>
             <nav className="border-gray-200 background-color">
-
                 <div className="flex flex-wrap items-center justify-between mx-auto p-1">
-                    <Link to="/" className="flex items-center rtl:space-x-reverse">
-                        <img src="https://flowbite.com/docs/images/logo.svg" className="h-8" alt="Flowbite Logo"/>
-                        <span
-                            className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">Metruyenchu</span>
+                    <Link
+                        to="/"
+                        className="flex items-center rtl:space-x-reverse"
+                    >
+                        <img
+                            src="https://flowbite.com/docs/images/logo.svg"
+                            className="h-8"
+                            alt="Flowbite Logo"
+                        />
+                        <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">
+                            Metruyenchu
+                        </span>
                     </Link>
 
                     {/*Search bar*/}
                     <div className="flex">
-                        <Link to = "/truyen" data-collapse-toggle="navbar-search" aria-controls="navbar-search"
-                                aria-expanded="false"
-                                className=" text-gray-500 dark:text-gray-400 hover:bg-gray-100 rounded-lg text-sm p-2.5 me-1">
-                            <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                 viewBox="0 0 20 20">
-                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"
-                                      strokeWidth="2"
-                                      d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                        <Link
+                            to="/truyen"
+                            data-collapse-toggle="navbar-search"
+                            aria-controls="navbar-search"
+                            aria-expanded="false"
+                            className=" text-gray-500 dark:text-gray-400 hover:bg-gray-100 rounded-lg text-sm p-2.5 me-1"
+                        >
+                            <svg
+                                className="w-5 h-5"
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 20 20"
+                            >
+                                <path
+                                    stroke="currentColor"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                                />
                             </svg>
                             <span className="sr-only">Search</span>
                         </Link>
                         <div className="relative hidden md:block">
                             <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                <svg className="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
-                                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"
-                                          strokeWidth="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
+                                <svg
+                                    className="w-4 h-4 text-gray-500 dark:text-gray-400"
+                                    aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 20 20"
+                                >
+                                    <path
+                                        stroke="currentColor"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"
+                                    />
                                 </svg>
                                 <span className="sr-only">Search icon</span>
                             </div>
-                            <input type="text" id="search-navbar"
-                                   className="block w-full p-2   ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                                   placeholder="Search..."/>
+                            <input
+                                type="text"
+                                id="search-navbar"
+                                className="block w-full p-2   ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                                placeholder="Search..."
+                            />
                         </div>
-                        <button data-collapse-toggle="navbar-search" type="button"
-                                className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-gray-200 "
-                                aria-controls="navbar-search" aria-expanded="false"
-                                // onClick={() => setShowFilter(true)}
-                                onClick={() => toggleNovelFilterPanel()}
+                        <button
+                            data-collapse-toggle="navbar-search"
+                            type="button"
+                            className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg hover:bg-gray-100 focus:outline-none focus:ring-1 focus:ring-gray-200 "
+                            aria-controls="navbar-search"
+                            aria-expanded="false"
+                            // onClick={() => setShowFilter(true)}
+                            onClick={() => toggleNovelFilterPanel()}
                         >
                             <span className="sr-only">Open main menu</span>
-                            <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                 viewBox="0 0 17 14">
-                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round"
-                                      strokeWidth="2"
-                                      d="M1 1h15M1 7h15M1 13h15"/>
+                            <svg
+                                className="w-5 h-5"
+                                aria-hidden="true"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 17 14"
+                            >
+                                <path
+                                    stroke="currentColor"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth="2"
+                                    d="M1 1h15M1 7h15M1 13h15"
+                                />
                             </svg>
                         </button>
                     </div>
-
 
                     {/* Container cha (relative) */}
                     <div className="relative">
@@ -117,139 +179,309 @@ function Navbar() {
                             <span className="sr-only">Open user menu</span>
                             {user.avatarPath ? (
                                 <>
-                                    <img className="w-8 h-8 rounded-full"
-                                         src="http://localhost:8889/api/v1/file/files/media/download/3557eebf-d947-4716-88ac-2ad9b7295a88.png"
-                                         alt="user" />
+                                    <img
+                                        className="w-8 h-8 rounded-full"
+                                        src={getFullPathOfAvatar(user.avatarPath)}
+                                        alt="user"
+                                    />
                                 </>
                             ) : (
                                 <>
-                                    <img className="w-8 h-8 rounded-full"
-
-                                         alt="user" /></>
+                                    <img
+                                        className="w-8 h-8 rounded-full"
+                                        alt="user"
+                                    />
+                                </>
                             )}
-
                         </button>
 
                         {/* Dropdown Menu (Mở rộng sang trái) */}
-                        {isDropdownOpen && (
-                            <div
+                        {/*{isDropdownOpen && (*/}
+                        {/*    <div*/}
 
-                                className="absolute z-10 bg-gray-800 -left-[160px] top-full mt-2 w-48 rounded-md shadow-lg origin-top-left">
+                        {/*        className="absolute z-10 bg-gray-800 -left-[160px] top-full mt-2 w-48 rounded-md shadow-lg origin-top-left">*/}
+                        {isDropdownOpen && (
+                            <div className="absolute z-20 -left-[200px] top-full mt-2 w-56 origin-top-right rounded-xl bg-white dark:bg-gray-800 shadow-lg ring-1 ring-gray-200 dark:ring-gray-700 transition-all duration-200">
                                 {user.username ? (
                                     <div className="px-4 py-3">
-                                        <Link to="/profile">
-                                            <span
-                                                className="block text-sm text-gray-900 dark:text-white">{user.username}</span>
-                                        </Link>
-
-                                        <span
-                                            className="block text-sm text-gray-500 truncate dark:text-gray-400">Cấp {user.level}</span>
+                                        <div
+                                            className={
+                                                'flex flex-row items-center space-x-2'
+                                            }
+                                        >
+                                            {user.avatarPath ? (
+                                                <>
+                                                    <img
+                                                        className="w-10 h-10 rounded-full"
+                                                        src={getFullPathOfAvatar(user.avatarPath)}
+                                                        alt="user"
+                                                    />
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <img
+                                                        className="w-10 h-10 rounded-full"
+                                                        alt="user"
+                                                    />
+                                                </>
+                                            )}
+                                            <div
+                                                className={
+                                                    'flex flex-col items-start'
+                                                }
+                                            >
+                                                <Link to="/profile">
+                                                    <span className="block text-sm text-gray-900 dark:text-white">
+                                                        {user.username}
+                                                    </span>
+                                                </Link>
+                                                <div
+                                                    className={
+                                                        'flex flex-row py-2'
+                                                    }
+                                                >
+                                                    <span className="block text-sm text-gray-500 truncate dark:text-gray-400">
+                                                        Cấp {user.level}
+                                                    </span>
+                                                    <Link
+                                                        to={'/thong-bao'}
+                                                        title="Xem tất cả thông báo"
+                                                        className="bg-red-700 inline-flex items-center justify-center w-6 h-6 ms-2 text-xs font-semibold text-white rounded-full"
+                                                        data-x-text="$store.account.userData.unread_notifications_count"
+                                                    >
+                                                        {unreadCount}
+                                                    </Link>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                ):
-                                (
-                                   <>
-                                       <ul className="py-2">
-                                           <li>
-                                               <a
-                                                      className="block px-4 py-2 text-gray-700 hover:cursor-pointer hover:bg-gray-400"
-                                                    onClick={() => setShowLoginPanel(1)}>Đăng nhập</a></li>
+                                ) : (
+                                    <>
+                                        <ul className="py-2">
+                                            <li>
+                                                <a
+                                                    className="block px-4 py-2 text-gray-700 hover:cursor-pointer hover:bg-gray-400"
+                                                    onClick={() =>
+                                                        setShowLoginPanel(1)
+                                                    }
+                                                >
+                                                    Đăng nhập
+                                                </a>
+                                            </li>
 
-                                           <li>
-                                               <a
-                                                   onClick={() => setShowLoginPanel(2)}
-                                                  className="block px-4 py-2 text-gray-700 hover:cursor-pointer hover:bg-gray-400">Đăng ký</a></li>
-                                       </ul>
-                                   </>
+                                            <li>
+                                                <a
+                                                    onClick={() =>
+                                                        setShowLoginPanel(2)
+                                                    }
+                                                    className="block px-4 py-2 text-gray-700 hover:cursor-pointer hover:bg-gray-400"
+                                                >
+                                                    Đăng ký
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </>
                                 )}
 
-                                <ul className="py-2">
-                                    {canViewAdmin && (
-                                        <li><Link to={'/admin/dashboard'}
-                                                  className="block px-4 py-2 text-gray-700 hover:bg-gray-400">Admin</Link>
+                                <ul className="py-2 list-disc pl-4">
+                                    {!canViewAdmin && (
+                                        <li>
+                                            <Link
+                                                to={'/admin/dashboard'}
+                                                className="block px-4 py-2 text-gray-700 hover:bg-gray-400"
+                                            >
+                                                Admin
+                                            </Link>
                                         </li>
                                     )}
+                                    {/*<div className={'px-8'}>*/}
+                                    {/*    <li>*/}
+                                    {/*        <Link*/}
+                                    {/*            to={'/nang-cap-tai-khoan'}*/}
+                                    {/*            className="block px-4 py-2 text-gray-700 hover:bg-gray-400 text-sm"*/}
+                                    {/*        >*/}
+                                    {/*            Nâng cấp tài khoản*/}
+                                    {/*        </Link>*/}
+                                    {/*    </li>*/}
+                                    {/*    <li>*/}
+                                    {/*        <Link*/}
+                                    {/*            to={'/tu-truyen'}*/}
+                                    {/*            className="block px-4 py-2 text-gray-700 hover:bg-gray-400 text-sm"*/}
+                                    {/*        >*/}
+                                    {/*            Tủ truyện*/}
+                                    {/*        </Link>*/}
+                                    {/*    </li>*/}
+                                    {/*    <li>*/}
+                                    {/*        <Link*/}
+                                    {/*            to={'/lich-su-giao-dich'}*/}
+                                    {/*            className="block px-4 py-2 text-gray-700 hover:bg-gray-400 text-sm"*/}
+                                    {/*        >*/}
+                                    {/*            Lịch sử giao dịch*/}
+                                    {/*        </Link>*/}
+                                    {/*    </li>*/}
+                                    {/*    <li>*/}
+                                    {/*        <Link*/}
+                                    {/*            to={'/cai-dat'}*/}
+                                    {/*            className="block px-4 py-2 text-gray-700 hover:bg-gray-400 text-sm"*/}
+                                    {/*        >*/}
+                                    {/*            Cài đặt*/}
+                                    {/*        </Link>*/}
+                                    {/*    </li>*/}
+                                    {/*    <li>*/}
+                                    {/*        <Link*/}
+                                    {/*            to={'/yeu-cau-ho-tro'}*/}
+                                    {/*            className="block px-4 py-2 text-gray-700 hover:bg-gray-400 text-sm"*/}
+                                    {/*        >*/}
+                                    {/*            Yêu cầu hỗ trợ*/}
+                                    {/*        </Link>*/}
+                                    {/*    </li>*/}
+                                    {/*</div>*/}
 
-                                    <li><Link to={'/nang-cap-tai-khoan'}
-                                              className="block px-4 py-2 text-gray-700 hover:bg-gray-400">Nâng cấp tài
-                                        khoản</Link>
-                                    </li>
-                                    <li><Link to={'/tu-truyen'}
-                                              className="block px-4 py-2 text-gray-700 hover:bg-gray-400">Tủ
-                                        truyện</Link>
-                                    </li>
-                                    <li><Link to={'/lich-su-giao-dich'}
-                                              className="block px-4 py-2 text-gray-700 hover:bg-gray-400">Lịch sử giao
-                                        dịch</Link></li>
-                                    <li><Link to={'/cai-dat'}
-                                              className="block px-4 py-2 text-gray-700 hover:bg-gray-400">Cài đặt</Link>
-                                    </li>
-                                    <div className="flex flex-col ">
+                                    <ul className="px-8 list-disc pl-[10px] marker:mr-[4px] text-sm text-gray-200 space-y-1">
+                                        {/*<li className="ml-3 border-b-1 border-gray-500/25 py-[3px]">*/}
+                                        {/*    <Link*/}
+                                        {/*        to="/nang-cap-tai-khoan"*/}
+                                        {/*        className="block"*/}
+                                        {/*    >*/}
+                                        {/*        Nâng cấp tài khoản*/}
+                                        {/*    </Link>*/}
+                                        {/*</li>*/}
+                                        <li className="ml-3 border-b-1 border-gray-500/25 py-[3px]">
+                                            <Link
+                                                to="/tu-truyen"
+                                                className="block"
+                                            >
+                                                Tủ truyện
+                                            </Link>
+                                        </li>
+                                        <li className="ml-3 border-b-1 border-gray-500/25 py-[3px]">
+                                            <Link
+                                                to="/lich-su-giao-dich"
+                                                className="block"
+                                            >
+                                                Lịch sử giao dịch
+                                            </Link>
+                                        </li>
+                                        <li className="ml-3 border-b-1 border-gray-500/25 py-[3px]">
+                                            <Link
+                                                to="/cai-dat"
+                                                className="block"
+                                            >
+                                                Cài đặt
+                                            </Link>
+                                        </li>
+                                        <li className="ml-3 py-[3px]">
+                                            {' '}
+                                            {/* dòng cuối không có border */}
+                                            <Link
+                                                to="/yeu-cau-ho-tro"
+                                                className="block"
+                                            >
+                                                Yêu cầu hỗ trợ
+                                            </Link>
+                                        </li>
+                                    </ul>
+
+                                    <div className="flex flex-col list-none">
                                         <div>
-                                            <li className="block px-4 py-2 text-gray-700 hover:bg-gray-400">Túi</li>
+                                            <li className="block px-4 py-2 text-gray-200 hover:bg-gray-400">Túi</li>
                                         </div>
+
                                         <div className="flex flex-col w-full px-4">
-                                            <div className="flex flex-row justify-between">
-                                                <li>A:</li>
-                                                <li className="pr-10">B:</li>
-                                            </div>
-                                            <div className="flex flex-row justify-between">
-                                                <li>C:</li>
-                                                <li className="pr-10">D:</li>
+                                            <div className="flex flex-col justify-between space-x-6">
+                                                {/* Xu */}
+                                                <li className="flex items-center space-x-2">
+                                                    <FontAwesomeIcon icon={faCoins} />
+                                                    <span>:</span>
+                                                    <span>
+                                                      {(myWallet?.find(w => w.currency.code === "XU")?.balance ?? 0).toLocaleString()}
+                                                    </span>
+                                                </li>
+
+                                                {/* Xu khoá */}
+                                                <li className="flex items-center space-x-2">
+                                                    <svg
+                                                        className="w-5 h-5 text-primary"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                        viewBox="0 0 24 24"
+                                                        fill="currentColor"
+                                                    >
+                                                        <path
+                                                            fillRule="evenodd"
+                                                            d="M1.5 6.375c0-1.036.84-1.875 1.875-1.875h17.25c1.035 0 1.875.84 1.875 1.875v3.026a.75.75 0 0 1-.375.65 2.249 2.249 0 0 0 0 3.898.75.75 0 0 1 .375.65v3.026c0 1.035-.84 1.875-1.875 1.875H3.375A1.875 1.875 0 0 1 1.5 17.625v-3.026a.75.75 0 0 1 .374-.65 2.249 2.249 0 0 0 0-3.898.75.75 0 0 1-.374-.65V6.375Zm15-1.125a.75.75 0 0 1 .75.75v.75a.75.75 0 0 1-1.5 0V6a.75.75 0 0 1 .75-.75Zm.75 4.5a.75.75 0 0 0-1.5 0v.75a.75.75 0 0 0 1.5 0v-.75Zm-.75 3a.75.75 0 0 1 .75.75v.75a.75.75 0 0 1-1.5 0v-.75a.75.75 0 0 1 .75-.75Zm.75 4.5a.75.75 0 0 0-1.5 0V18a.75.75 0 0 0 1.5 0v-.75ZM6 12a.75.75 0 0 1 .75-.75H12a.75.75 0 0 1 0 1.5H6.75A.75.75 0 0 1 6 12Zm.75 2.25a.75.75 0 0 0 0 1.5h3a.75.75 0 0 0 0-1.5h-3Z"
+                                                            clipRule="evenodd"
+                                                        ></path>
+                                                    </svg>
+                                                    <span>:</span>
+                                                    <span>
+                                                      {myWallet?.find(w => w.currency.code === "XUK")?.balance ?? 0}
+                                                    </span>
+                                                </li>
                                             </div>
                                         </div>
                                     </div>
-                                    <li><Link to={'/nap-tien'}
-                                              className="block px-4 py-2 text-gray-700 hover:bg-gray-400">Nạp</Link>
+                                    <li className={'list-none'}>
+                                        <Link
+                                            to={'/nap-tien'}
+                                            className="block px-4 py-2 text-gray-700 hover:bg-gray-400"
+                                        >
+                                            Nạp
+                                        </Link>
                                     </li>
-                                    <li><Link to = {'/bookhub/dashboard'} className="block px-4 py-2 text-gray-700 hover:bg-gray-400">Đăng
-                                        truyện</Link>
+                                    <li className={'list-none'}>
+                                        <Link
+                                            to={'/bookhub/dashboard'}
+                                            className="block px-4 py-2 text-gray-700 hover:bg-gray-400"
+                                        >
+                                            Đăng truyện
+                                        </Link>
                                     </li>
-                                    <li><span onClick = {() => {openChat(); setDropdownOpen(false)}} className="block px-4 py-2 text-gray-700 hover:bg-gray-400">Chatbot</span>
+                                    <li className={'list-none'}>
+                                        <span
+                                            onClick={() => navigate('/chatbot')}
+                                            className="block px-4 py-2 text-gray-700 hover:bg-gray-400"
+                                        >
+                                            Chatbot
+                                        </span>
                                     </li>
                                     {user.username && (
-                                        <li><a
-                                            onClick={(event) => handleLogout(event)}
-                                            className="block px-4 py-2 text-gray-700 hover:cursor-pointer hover:bg-gray-400">Đăng
-                                            xuất</a></li>
+                                        <li className={'list-none'}>
+                                            <a
+                                                onClick={(event) =>
+                                                    handleLogout(event)
+                                                }
+                                                className="block px-4 py-2 text-gray-700 hover:cursor-pointer hover:bg-gray-400"
+                                            >
+                                                Đăng xuất
+                                            </a>
+                                        </li>
                                     )}
-
                                 </ul>
                             </div>
                         )}
                     </div>
                 </div>
                 <div>
-                {/*{showFilter && (*/}
+                    {/*{showFilter && (*/}
                     {/*    <NovelFilter onClose={() => setShowFilter(false)}/>*/}
 
                     {/*)}*/}
                     {showLoginPanel === 1 && (
-                        <LoginPanel onClose={() => setShowLoginPanel(0)}/>
+                        <LoginPanel onClose={() => setShowLoginPanel(0)} />
                     )}
                     {showLoginPanel === 2 && (
-                        <RegisterPanel onClose={() => setShowLoginPanel(0)} isRegister={true}/>
+                        <RegisterPanel
+                            onClose={() => setShowLoginPanel(0)}
+                            isRegister={true}
+                        />
                     )}
                     {useIsNovelFilterPanelOpen && (
-                        <NovelFilter onClose={() => toggleNovelFilterPanel()}/>
+                        <NovelFilter onClose={() => toggleNovelFilterPanel()} />
                     )}
-
                 </div>
-                {/*<div>*/}
-                {/*<NovelFilter /> */}
-                {/*    <div*/}
-                {/*        className={"bg-gray-50/50 transition-opacity z-40 fixed top-0 left-0 w-full h-full outline-none overflow-x-hidden"}>*/}
-                {/*        <div className={"h-full max-w-screen-lg mx-auto relative w-auto pointer-events-none"}>*/}
-                {/*            <div className={"min-h-screen max-h-full overflow-hidden border-none shadow-lg relative flex flex-col w-full pointer-events-auto bg-clip-padding bg-gray-50  outline-none"}>*/}
-                {/*                /!*<NovelFilter />*!/*/}
-                {/*            </div>*/}
-                {/*        </div>*/}
-                {/*    </div>*/}
-                {/*</div>*/}
             </nav>
-
         </>
-
-);
+    );
 }
 
 export default Navbar;

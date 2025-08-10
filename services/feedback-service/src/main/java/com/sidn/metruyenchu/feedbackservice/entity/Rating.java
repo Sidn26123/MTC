@@ -29,6 +29,7 @@ public class Rating {
 
     String lastReadChapterId;
 
+    Integer lastReadChapterIdx;
 
     @Column(nullable = false)
     Float rate;
@@ -51,10 +52,16 @@ public class Rating {
     String narrativeDepthContent;
 
     @Builder.Default
+    @Column(columnDefinition = "integer default 0")
     Integer totalLikes = 0;
 
     @Builder.Default
+    @Column(columnDefinition = "integer default 0")
     Integer totalDislikes = 0;
+
+    @Builder.Default
+    @Column(columnDefinition = "integer default 0")
+    Integer totalReplies = 0;
 
     @Column(nullable = false, updatable = false)
     @CreationTimestamp

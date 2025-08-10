@@ -22,5 +22,6 @@ public class ChapterUpdateRequest {
     ChapterState status;
     List<ChapterStatusResponse> chapterStatus;
     String novelId;
+    String content;
 
 }

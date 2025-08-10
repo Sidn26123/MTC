@@ -298,8 +298,8 @@ const NovelApprovedAnalytic = () => {
             <h3 className="text-lg font-bold">Thống kê</h3>
             <p className="text-gray-100 font-medium">
                 {mode === 'Monthly'
-                    ? `Số truyện đã đăng tháng ${parseInt(filterValue.split('-')[1])}/${filterValue.split('-')[0]}`
-                    : `Số truyện đã đăng năm ${filterValue}`}
+                    ? `Số truyện đã duyệt tháng ${parseInt(filterValue.split('-')[1])}/${filterValue.split('-')[0]}`
+                    : `Số truyện đã duyệt năm ${filterValue}`}
             </p>
             <div className="flex justify-between items-center mt-4">
                 <div>

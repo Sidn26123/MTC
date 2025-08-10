@@ -1,6 +1,7 @@
 package com.sidn.metruyenchu.paymentservice.dto.response.transactions;
-import com.sidn.metruyenchu.paymentservice.enums.TransactionStatus;
-import com.sidn.metruyenchu.paymentservice.enums.TransactionType;
+import com.sidn.metruyenchu.paymentservice.dto.response.currency.CurrencyResponse;
+import com.sidn.metruyenchu.shared_library.enums.payment.TransactionStatus;
+import com.sidn.metruyenchu.shared_library.enums.payment.TransactionType;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -19,6 +20,7 @@ public class TransactionsResponse {
     TransactionType type;
     Integer amount;
     String currencyId;
+    CurrencyResponse currency;
     TransactionStatus status;
     String referenceId;
     LocalDateTime createdAt;

@@ -58,7 +58,11 @@ export default {
                 primary: "#896B29", // Xanh dương đậm
                 secondary: "#E11D48", // Đỏ hồng
             },
+            fontFamily: {
+                palatino: ['"Palatino Linotype"', 'serif'],
+            },
         },
+
     },
     plugins: [
         react(), tailwindcss()],

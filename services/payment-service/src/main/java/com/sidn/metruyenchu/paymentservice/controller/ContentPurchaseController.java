@@ -7,6 +7,9 @@ import com.sidn.metruyenchu.paymentservice.dto.request.contentPurchase.CheckUser
 import com.sidn.metruyenchu.paymentservice.dto.request.contentPurchase.CheckUserPurchaseContentRequest;
 import com.sidn.metruyenchu.paymentservice.dto.request.contentPurchase.ContentPurchaseRequest;
 import com.sidn.metruyenchu.paymentservice.dto.response.contentPurchase.ContentPurchaseResponse;
+import com.sidn.metruyenchu.paymentservice.entity.Currency;
+import com.sidn.metruyenchu.paymentservice.entity.Wallet;
+import com.sidn.metruyenchu.paymentservice.repository.CurrencyRepository;
 import com.sidn.metruyenchu.paymentservice.service.ContentPurchaseService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -27,7 +30,7 @@ import java.util.List;
 @Slf4j
 public class ContentPurchaseController {
     private final ContentPurchaseService contentPurchaseService;
-
+    private final CurrencyRepository currencyRepository;
     /**
      * Purchase content
      * @param request the purchase request
@@ -84,5 +87,6 @@ public class ContentPurchaseController {
                 .result(isPurchased)
                 .build();
     }
+
 
 }

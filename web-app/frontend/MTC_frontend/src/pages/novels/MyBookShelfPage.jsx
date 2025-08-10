@@ -1,28 +1,48 @@
-import React from "react";
+import React, { useEffect, useState } from 'react';
 import {FontAwesomeIcon} from "@fortawesome/react-fontawesome";
 import {
     faAngleLeft,
     faAngleRight,
     faAnglesLeft,
     faAnglesRight,
-    faBell,
+    faBell, faBellSlash,
     faChevronRight,
-    faX
-} from "@fortawesome/free-solid-svg-icons";
+    faX,
+} from '@fortawesome/free-solid-svg-icons';
+import { useBookShelf } from '../../stores/novelStore.js';
+import {
+    deleteBookmarkedNovel,
+    deleteBookshelfItem,
+    getMyBookmarkedNovels,
+    getBookshelfItems,
+    getCurrentBookshelf, updateBookmarkItem, updateBookshelfItem,
+} from '../../services/bookshelfService.js';
+import {
+    useBookmarkedNovels,
+    useBookshelfItems,
+    useCurrentBookshelf, useSetBookmarkedNovels,
+    useSetBookshelfItems,
+    useSetCurrentBookshelf,
+} from '../../stores/bookshelfStore.js';
+import { timeAgo } from '../../utils/DatetimeUtil.js';
+import { PageNavigator } from '../../components/global/Navigators.jsx';
+import { NovelCoverImage_S } from '../../common/CommonComponents.jsx';
+import { initPageData } from '../../utils/PageUtils.js';
+import useUserStore, { useUser } from '../../stores/userStores.js';
+import { useNavigate } from 'react-router';
 
 function MyBookShelfPage() {
-    const [tab, setTab] = React.useState(1);
-
+    const [tab, setTab] = React.useState(0);
+    const setCurrentBookshelf = useSetCurrentBookshelf();
+    getCurrentBookshelf().then((response) => {
+        if (response.data.result) {
+            setCurrentBookshelf(response.data.result);
+        }
+    });
 
     return (
         <>
             <div className={"flex flex-col"}>
-                <div className={"px-20 mt-5"}>
-                    {/*Quang cao*/}
-                    <div className={"bg-gray-700 min-h-[120px]"}>
-
-                    </div>
-                </div>
 
                 <div className={"flex flex-row justify-between items-center pt-5 px-20"}>
                     <div className={"flex flex-row justify-left items-center"}>
@@ -47,15 +67,64 @@ function MyBookShelfPage() {
 export default MyBookShelfPage;
 
 function ReadingNovels() {
+    const bookshelves = useBookShelf();
+    const bookShelfItems = useBookshelfItems();
+    const currentBookshelf = useCurrentBookshelf();
+    const setBookshelfItems = useSetBookshelfItems();
+    const [pageData, setPageData] = useState(initPageData());
+    const user = useUserStore((state) => state.user);
+    useEffect(() => {
+        getBookshelfItems(currentBookshelf.id, pageData).then((response) => {
+            console.log("Fetching bookshelf items with page data:", currentBookshelf.id);
+            if (response.data.result) {
+                setBookshelfItems(response.data.result);
+                console.log("Fetched novels:", response.data.result);
+
+            } else {
+                console.error("Failed to fetch bookshelf items.");
+            }
+        })
+    }, [pageData]);
+
+    const handleChangePage = (page) => {
+        setPageData((prev) => ({
+            ...prev,
+            page: page,
+        }));
+    }
+
+    const handlePageSizeChange = (size) => {
+        setPageData((prev) => ({
+            ...prev,
+            size: size,
+        }));
+
+    }
+
+
+
     return (
         <>
             <div>
                 <div className={""}>
                     <div className={""}>
-                        <BookShelfNovelCard/>
+                        {bookShelfItems.data && bookShelfItems.data.map((item, index) => {
+                            return (
+                                <div key={index} className={"m-2"}>
+                                    <BookShelfNovelCard data={item}/>
+                                </div>
+                            )
+                        })}
                     </div>
                     <div className={"flex justify-center mt-2"}>
-                        <NavigationBar />
+                        <PageNavigator
+                            page={bookShelfItems.currentPage}
+                            pageSize={bookShelfItems.size}
+                            totalPages={bookShelfItems.totalPages}
+                            totalElements={bookShelfItems.totalElements}
+                            onPageChange={handleChangePage}
+                            onPageSizeChange={handlePageSizeChange}
+                        />
 
                     </div>
                 </div>
@@ -85,78 +154,241 @@ function NavigationBar() {
     )
 }
 
-function BookShelfNovelCard() {
+function BookShelfNovelCard({data}) {
+    console.log(data);
+    const navigate = useNavigate();
+    const handleUpdateNotice = (novelId, isNoticed) => {
+        const payload = {
+            isNoticed: isNoticed
+        };
+        updateBookshelfItem(novelId, payload).then((response) => {
+            if (response.data.result) {
+                console.log("Updated notice status successfully");
+            } else {
+            }
+        });
+    }
+
+    const handleDeleteItem = (readingNovelId) => {
+        deleteBookshelfItem(readingNovelId, data.novel.id).then((response) => {
+            if (response.data.result) {
+                console.log("Deleted bookshelf item successfully");
+                // Optionally, you can refresh the bookshelf items
+                setPageData((prev) => ({
+                    ...prev,
+                    page: 1, // Reset to first page after deletion
+                }));
+            } else {
+                console.error("Failed to delete bookshelf item");
+            }
+        });
+    }
+
+    const handleGotoNovel = () => {
+        navigate(`/truyen/${data.novel.slug}/chuong-${data.currentChapterIdx}`, {
+            state: {
+                from: 'MyBookShelfPage'
+            }
+        })
+    }
     return (
         <>
-            <div className={"relative overflow-x-auto shadow-md sm:rounded-lg select-none"}>
-                <div className={"w-full flex flex-1 flex-row border-b border-gray-500 border-dotted items-center"}>
-                    <div className={"w-1/10"}></div>
-                    <div className={"w-7/10"}>
-                        <div className={"flex flex-col"}>
-                            <div className={"truncate"}>
-                                Vo hiep truoc bat dau nhat cai hoang dung lam dau bep nu
-                            </div>
-                            <div className={"text-gray-500 text-sm my-2"}>
-                                Đã đọc: 10/100
+            <div
+                className={
+                    'relative overflow-x-auto shadow-md sm:rounded-lg select-none'
+                }
+
+            >
+                <div
+                    className={
+                        'w-full flex flex-1 flex-row border-b border-gray-500 border-dotted items-center'
+                    }
+                >
+                    <div className={'w-1/10'} onClick={handleGotoNovel}>
+                        <div className={'flex'}>
+                            {/*<img*/}
+                            {/*    className={*/}
+                            {/*        'w-10 h-15 shadow-lg rounded mx-auto'*/}
+                            {/*    }*/}
+                            {/*    src={data.novel.novelCoverImage}*/}
+                            {/*    alt={data.novel.name}*/}
+                            {/*></img>*/}
+                            <NovelCoverImage_S src={data.novel.novelCoverImage}
+                                                    alt={data.novel.name} />
+                        </div>
+                    </div>
+                    <div className={'w-7/10'} onClick={handleGotoNovel}>
+                        <div className={'flex flex-col'}>
+                            <div className={'truncate'}>{data.novel.name}</div>
+                            <div className={'text-gray-500 text-sm my-2'}>
+                                Đã đọc: {data.currentChapterIdx && data.currentChapterIdx}/
+                                {data.novel.totalChapters && data.novel.totalChapters}
                             </div>
                         </div>
                     </div>
-                    <div className={"w-1/10 text-gray-500 text-xs"}>
-                        4 phút trước
+                    <div className={'w-1/10 text-gray-500 text-xs'}>
+                        {data.lastReadAt && timeAgo(data.lastReadAt)}
                     </div>
-                    <div className={"w-1/10 justify-end"}>
-                        <FontAwesomeIcon icon={faX} className={"mr-3 hover:cursor-pointer"}/>
-                        <FontAwesomeIcon icon={faBell} />
+                    <div className={'w-1/10 justify-end'}>
+                        <FontAwesomeIcon
+                            icon={faX}
+                            onClick={() => handleDeleteItem(data.id)}
+                            className={'mr-3 hover:cursor-pointer'}
+                        />
+                        {data.isNoticed ? (
+                            <FontAwesomeIcon icon={faBell}
+                                onClick={() => handleUpdateNotice(data.id, false)}
+                            />
+                        ) : (
+                            <FontAwesomeIcon icon={faBellSlash}
+                                onClick={() => handleUpdateNotice(data.id, true)}
+                            />
+                        )}
+
+
                     </div>
                 </div>
-
             </div>
         </>
-    )
+    );
 }
 
-function BookmarkNovels(){
+function BookmarkNovels() {
+    const bookmarkedNovels = useBookmarkedNovels();
+    const setBookmarkedNovels = useSetBookmarkedNovels();
+    const [pageData, setPageData] = useState(initPageData());
+
+    const handleDeleteBookmark = (novelId) => {};
+
+
+
+
+    const handleChangePage = (page) => {
+
+        setPageData((prev) => ({
+            ...prev,
+            page: page,
+        }));
+    }
+
+    const handlePageSizeChange = (size) => {
+        setPageData((prev) => ({
+            ...prev,
+            size: size,
+        }));
+
+    }
+    useEffect(() => {
+        getMyBookmarkedNovels(pageData).then((response) => {
+            if (response.data.result) {
+                setBookmarkedNovels(response.data.result);
+
+            } else {
+                console.error('Failed to fetch bookmarked novels.');
+            }
+        });
+    }, [pageData]);
+
+    return (
+        <>
+            {bookmarkedNovels.totalPages ?
+                (
+                    <div>
+                        <div className={''}>
+                            {bookmarkedNovels.data &&
+                                bookmarkedNovels.data.map((item, index) => {
+                                    return (
+                                        <div key={index} className={'m-2 gap-y-2'}>
+                                            <BookmarkNovelCard data={item} />
+                                        </div>
+                                    );
+                                })}
+                            <div className={'flex justify-center mt-2'}>
+                                <PageNavigator
+                                    page={bookmarkedNovels.currentPage}
+                                    pageSize={bookmarkedNovels.size}
+                                    totalPages={bookmarkedNovels.totalPages}
+                                    totalElements={bookmarkedNovels.totalElements}
+                                    onPageChange={handleChangePage}
+                                    onPageSizeChange={handlePageSizeChange}
+                                />
+                            </div>
+                        </div>
+                    </div>
+
+                )
+                :
+                (
+                    <div className={'text-center text-gray-500'}>
+                        Không có truyện nào được đánh dấu.
+                    </div>
+                )
+            }
+        </>
+    );
+}
+
+function BookmarkNovelCard({ data }) {
+    const navigate = useNavigate();
+
+    const handleDeleteBookmark = () => {
+        deleteBookmarkedNovel(data.id).then((response) => {
+            console.log("DE",response.data);
+
+            if (response.data.result) {
+                console.log("Deleted bookmark successfully");
+            } else {
+                console.error("Failed to delete bookmark");
+            }
+        });
+    };
+
+    const handleNavigate = () => {
+        navigate(`/truyen/${data.slug}`);
+    }
+
     return (
         <>
             <div>
-                <div className={""}>
-                    <div className={""}>
-                        <BookmarkNovelCard/>
-                    </div>
-                    <div className={"flex justify-center mt-2"}>
-                        <NavigationBar />
+                <div
+                    className={
+                        'flex flex-row border-b border-gray-500 border-dotted items-center'
 
+                    }
+                >
+                    <div className={'w-1/10'} onClick={handleNavigate}
+                    >
+                        <div className={'flex'}>
+                            {/*<img*/}
+                            {/*    className={*/}
+                            {/*        'w-10 h-15 shadow-lg rounded mx-auto'*/}
+                            {/*    }*/}
+                            {/*    src={data.novel.novelCoverImage}*/}
+                            {/*    alt={data.novel.name}*/}
+                            {/*></img>*/}
+                            <NovelCoverImage_S
+                                src={data.novel.novelCoverImage}
+                                alt={data.novel.name}
+                            />
+                        </div>
+                    </div>
+                    <div className={'w-7/10'} onClick={handleNavigate}>
+                        <div className={'flex flex-col'}>
+                            <div className={'truncate'}>{data.novel.name}</div>
+                            <div className={'text-gray-500 text-sm my-2'}>
+                                Đã đọc: {data.markedAtChapter + 1}/
+                                {data.novel.totalChapters}
+                            </div>
+                        </div>
+                    </div>
+                    <div className={'w-1/10 text-right'} onClick={handleDeleteBookmark}>
+                        <FontAwesomeIcon
+                            icon={faX}
+                            className={'mr-3 ml-auto hover:cursor-pointer'}
+                        />
                     </div>
                 </div>
             </div>
         </>
-    )
-}
-
-function BookmarkNovelCard(){
-    return (
-        <>
-            <div>
-                <div className={"flex flex-row border-b border-gray-500 border-dotted items-center"}>
-                    <div className={"w-1/10"}></div>
-                    <div className={"flex flex-col w-7/10"}>
-                        <div>
-                            Cửu Tinh Bá Thể Quyết
-                        </div>
-                        <div className={"text-gray-500 text-sm my-2"}>
-                            Mới: Chương 6565
-                        </div>
-                    </div>
-                    <div className={"w-1/10 text-xs text-gray-500"}>
-                        10:10:20 19:02:2025
-                    </div>
-                    <div className={"w-1/10 text-right"}>
-                        <FontAwesomeIcon icon={faX} className={"mr-3 ml-auto hover:cursor-pointer"}/>
-
-                    </div>
-
-                </div>
-            </div>
-        </>
-    )
+    );
 }

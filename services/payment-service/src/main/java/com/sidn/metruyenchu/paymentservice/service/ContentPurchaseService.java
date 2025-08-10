@@ -2,19 +2,18 @@ package com.sidn.metruyenchu.paymentservice.service;
 
 import com.sidn.metruyenchu.paymentservice.dto.BaseFilterRequest;
 import com.sidn.metruyenchu.paymentservice.dto.PageResponse;
-import com.sidn.metruyenchu.paymentservice.dto.request.contentPurchase.CheckUserCanReadContentRequest;
-import com.sidn.metruyenchu.paymentservice.dto.request.contentPurchase.CheckUserPurchaseContentRequest;
-import com.sidn.metruyenchu.paymentservice.dto.request.contentPurchase.ContentPurchaseCreateRequest;
-import com.sidn.metruyenchu.paymentservice.dto.request.contentPurchase.ContentPurchaseRequest;
+import com.sidn.metruyenchu.paymentservice.dto.request.contentPurchase.*;
 import com.sidn.metruyenchu.paymentservice.dto.response.contentPurchase.ContentPurchaseResponse;
 import com.sidn.metruyenchu.paymentservice.entity.ContentPurchase;
+import com.sidn.metruyenchu.paymentservice.entity.Currency;
 import com.sidn.metruyenchu.paymentservice.entity.Transactions;
 import com.sidn.metruyenchu.paymentservice.entity.Wallet;
-import com.sidn.metruyenchu.paymentservice.enums.TransactionStatus;
-import com.sidn.metruyenchu.paymentservice.enums.TransactionType;
+import com.sidn.metruyenchu.paymentservice.repository.http.NovelClient;
+import com.sidn.metruyenchu.shared_library.enums.payment.TransactionStatus;
+import com.sidn.metruyenchu.shared_library.enums.payment.TransactionType;
 import com.sidn.metruyenchu.paymentservice.enums.WalletStatus;
-import com.sidn.metruyenchu.paymentservice.exception.AppException;
-import com.sidn.metruyenchu.paymentservice.exception.ErrorCode;
+import com.sidn.metruyenchu.shared_library.exceptions.AppException;
+import com.sidn.metruyenchu.shared_library.exceptions.ErrorCode;
 import com.sidn.metruyenchu.paymentservice.mapper.ContentPurchaseMapper;
 import com.sidn.metruyenchu.paymentservice.mapper.TransactionsMapper;
 import com.sidn.metruyenchu.paymentservice.repository.ContentPurchaseRepository;
@@ -34,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -49,6 +49,9 @@ public class ContentPurchaseService {
     ContentPurchaseRepository contentPurchaseRepository;
     TransactionsMapper transactionsMapper;
     ContentPurchaseMapper contentPurchaseMapper;
+    CurrencyService currencyService;
+
+//    NovelClient novelClient;
 
     /**
      * Purchase content using wallet balance
@@ -80,6 +83,15 @@ public class ContentPurchaseService {
             throw new IllegalStateException("Wallet is not active");
         }
 
+        boolean hasPur =  hasPurchasedContent(CheckUserPurchaseContentRequest.builder()
+                .userId(userId)
+                .itemId(contentPurchaseRequest.getItemId())
+                .itemType(contentPurchaseRequest.getItemType())
+                .build());
+
+        if (hasPur) {
+            throw new AppException(ErrorCode.CONTENT_PURCHASE_ALREADY_EXISTS);
+        }
         // Calculate final price
         BigDecimal finalPrice = contentPurchaseRequest.getPrice();
         if (contentPurchaseRequest.getDiscount() != null) {
@@ -94,6 +106,7 @@ public class ContentPurchaseService {
             throw new IllegalStateException("Insufficient balance");
         }
 
+        Currency currency = currencyService.getCurrencyEntityById(contentPurchaseRequest.getCurrencyId());
         // Create transaction
         String transactionCode = "PUR-" + UUID.randomUUID().toString().substring(0, 8);
         Transactions transaction = Transactions.builder()
@@ -101,8 +114,8 @@ public class ContentPurchaseService {
                 .userId(userId)
                 .wallet(wallet)
                 .type(TransactionType.PURCHASE)
-                .amount(finalPrice.intValue())
-                .currencyId(contentPurchaseRequest.getCurrencyId())
+                .amount(BigDecimal.valueOf(finalPrice.intValue()))
+                .currency(currency)
                 .status(TransactionStatus.PENDING)
                 .build();
         transaction = transactionsRepository.save(transaction);
@@ -137,6 +150,125 @@ public class ContentPurchaseService {
             transactionsRepository.save(transaction);
             throw e;
         }
+    }
+
+    @Transactional
+    public ContentPurchaseResponse purchaseContents(BulkChapterPurchaseRequest request) {
+//        String userId = request.getUserId();
+//        if (userId == null) {
+//            userId = TokenUtils.getUserIdFromContext();
+//        }
+//
+//        // Validate request
+//        if (request.getChapterIds() == null || request.getChapterIds().isEmpty()) {
+//            throw new IllegalArgumentException("Chapter IDs are required");
+//        }
+//
+//        // Get user wallet
+//        Wallet wallet = walletRepository.findByUserIdAndCurrencyId(userId, request.getCurrencyId())
+//                .orElseThrow(() -> new IllegalStateException("Wallet not found"));
+//
+//        if (wallet.getStatus() != WalletStatus.ACTIVE) {
+//            throw new IllegalStateException("Wallet is not active");
+//        }
+//
+//        // Check if user already purchased any of these chapters
+//        List<String> alreadyPurchased = new ArrayList<>();
+//        for (String chapterId : request.getChapterIds()) {
+//            boolean hasPur = hasPurchasedContent(CheckUserPurchaseContentRequest.builder()
+//                    .userId(userId)
+//                    .itemId(chapterId)
+//                    .itemType(ContentType.CHAPTER)
+//                    .build());
+//            if (hasPur) {
+//                alreadyPurchased.add(chapterId);
+//            }
+//        }
+//
+//        if (!alreadyPurchased.isEmpty()) {
+//            throw new AppException(ErrorCode.CONTENT_PURCHASE_ALREADY_EXISTS,
+//                    "Already purchased chapters: " + String.join(", ", alreadyPurchased));
+//        }
+//
+//        // Calculate total price
+//        BigDecimal totalPrice = BigDecimal.ZERO;
+//        for (String chapterId : request.getChapterIds()) {
+//            // Lấy giá của từng chapter (có thể từ database hoặc service khác)
+//            BigDecimal chapterPrice = getChapterPrice(chapterId);
+//            totalPrice = totalPrice.add(chapterPrice);
+//        }
+//
+//        // Apply bulk discount if any
+//        if (request.getDiscount() != null) {
+//            totalPrice = totalPrice.subtract(request.getDiscount());
+//        }
+//
+//        // Check balance
+//        if (wallet.getBalance().compareTo(totalPrice) < 0) {
+//            throw new IllegalStateException("Insufficient balance");
+//        }
+//
+//        Currency currency = currencyService.getCurrencyEntityById(request.getCurrencyId());
+//
+//        // Create main transaction
+//        String transactionCode = "BULK-PUR-" + UUID.randomUUID().toString().substring(0, 8);
+//        Transactions transaction = Transactions.builder()
+//                .transactionCode(transactionCode)
+//                .userId(userId)
+//                .wallet(wallet)
+//                .type(TransactionType.BULK_PURCHASE)
+//                .amount(totalPrice)
+//                .currency(currency)
+//                .status(TransactionStatus.PENDING)
+//                .build();
+//        transaction = transactionsRepository.save(transaction);
+//
+//        try {
+//            // Create content purchase records for each chapter
+//            List<ContentPurchase> purchases = new ArrayList<>();
+//            for (String chapterId : request.getChapterIds()) {
+//                BigDecimal chapterPrice = getChapterPrice(chapterId);
+//
+//                ContentPurchase contentPurchase = ContentPurchase.builder()
+//                        .transaction(transaction)
+//                        .itemType(ContentType.CHAPTER)
+//                        .itemId(chapterId)
+//                        .price(chapterPrice)
+//                        .finalPrice(chapterPrice)
+//                        .currencyId(request.getCurrencyId())
+//                        .quantity(1)
+//                        .build();
+//                purchases.add(contentPurchase);
+//            }
+//
+//            // Save all purchases
+//            contentPurchaseRepository.saveAll(purchases);
+//
+//            // Update wallet balance
+//            wallet.setBalance(wallet.getBalance().subtract(totalPrice));
+//            walletRepository.save(wallet);
+//
+//            // Complete transaction
+//            transaction.setStatus(TransactionStatus.COMPLETED);
+//            transaction.setCompletedAt(LocalDateTime.now());
+//            transactionsRepository.save(transaction);
+//
+//            // Return response with summary
+//            return ContentPurchaseResponse.builder()
+//                    .transactionCode(transactionCode)
+//                    .totalAmount(totalPrice)
+//                    .purchasedItemCount(request.getChapterIds().size())
+//                    .status("SUCCESS")
+//                    .message("Successfully purchased " + request.getChapterIds().size() + " chapters")
+//                    .build();
+//
+//        } catch (Exception e) {
+//            // Rollback transaction status
+//            transaction.setStatus(TransactionStatus.FAILED);
+//            transactionsRepository.save(transaction);
+//            throw e;
+//        }
+        return null;
     }
 
     /**

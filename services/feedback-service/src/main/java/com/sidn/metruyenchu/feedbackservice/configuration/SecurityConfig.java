@@ -17,7 +17,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity(prePostEnabled = true)
 @Slf4j
 public class SecurityConfig {
-    private final String[] PUBLIC_ENDPOINTS = {"/feedbacks/**", "/feedback/swagger-ui/**", "/feedback/v3/api-docs/**", "/v3/api-docs/**", "/feedback/v3/api-docs"};
+    private final String[] PUBLIC_ENDPOINTS = {"/feedbacks/**", "/feedback/swagger-ui/**", "/feedback/v3/api-docs/**", "/v3/api-docs/**", "/feedback/v3/api-docs", "/ratings/**", "/feedback/ratings/**"};
     private CustomJWTDecoder customJWTDecoder;
     public SecurityConfig(CustomJWTDecoder customJwtDecoder) {
         this.customJWTDecoder = customJwtDecoder;
@@ -35,10 +35,14 @@ public class SecurityConfig {
 //                ).permitAll()
 //                .anyRequest()
 //                .authenticated());
-        httpSecurity
-                .authorizeHttpRequests(auth -> auth
-                        .anyRequest().permitAll()
-                );
+//        httpSecurity
+//                .authorizeHttpRequests(auth -> auth
+//                        .anyRequest().permitAll()
+//                );
+        httpSecurity.authorizeHttpRequests(request -> request.requestMatchers(HttpMethod.GET, PUBLIC_ENDPOINTS)
+                .permitAll()
+                .anyRequest()
+                .authenticated());
         httpSecurity.oauth2ResourceServer(oauth2 -> oauth2.jwt(jwtConfigurer -> jwtConfigurer
                         .decoder(customJWTDecoder)
                         .jwtAuthenticationConverter(jwtAuthenticationConverter()))

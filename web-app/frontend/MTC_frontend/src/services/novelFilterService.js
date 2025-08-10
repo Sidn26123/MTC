@@ -121,3 +121,12 @@ export const extractFiltersFromStore = () => {
     };
 };
 
+
+export function findItemInFilterStore(key, id) {
+    const state = useFilterStore.getState();
+    const list = state[key];
+
+    if (!Array.isArray(list)) return null;
+
+    return list.find(item => item.id === id) || null;
+}

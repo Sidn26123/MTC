@@ -15,4 +15,5 @@ public interface DraftRepository extends JpaRepository<Draft, String>, JpaSpecif
     List<Draft> findByPublisherAndIsDeletedFalseOrderByUpdatedAtDesc(String publisher);
     Optional<Draft> findByIdAndIsDeletedFalse(String id);
     Page<Draft> findByPublisherAndIsDeletedFalse(String publisher, Pageable pageable);
+
 }

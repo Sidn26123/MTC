@@ -103,6 +103,13 @@ public class NovelStatisticController {
                 .build();
     }
 
+    @GetMapping("/top/promotions")
+    public ApiResponse<List<TopNovelDto>> getTopNovelsByPromotions(@RequestParam(defaultValue = "10") int limit) {
+        return ApiResponse.<List<TopNovelDto>>builder()
+                .result(novelStatisticService.getTopNovelsByPromotions(limit))
+                .build();
+    }
+
     @GetMapping("/word-count/total")
     public ApiResponse<Long> getTotalWordCount() {
         return ApiResponse.<Long>builder()

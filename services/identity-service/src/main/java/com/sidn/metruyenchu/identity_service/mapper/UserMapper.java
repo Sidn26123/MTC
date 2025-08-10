@@ -7,11 +7,14 @@ import com.sidn.metruyenchu.identity_service.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring")
-public interface UserMapper {
+@Mapper(
+        componentModel = "spring",
+        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE
+)public interface UserMapper {
     @Mapping(target = "roles", ignore = true)
     User toUser(UserCreationRequest request);
 //    @Mapping(source = "id", target = "id")

@@ -3,6 +3,7 @@ import ChatComponent from './ChatCompo';
 import DocumentUploader from './DocumentUploader';
 import DocumentList from './DocumentList';
 import ConversationList from './ConversationList';
+import DocumentViewer from './DocumentViewer.jsx';
 
 const RAGApp = () => {
     const [activeConversationId, setActiveConversationId] = useState(null);
@@ -10,6 +11,8 @@ const RAGApp = () => {
 
     return (
         <div className="container base-text-color mx-auto p-4">
+            {/*<DocumentViewer />*/}
+
             <div className="flex flex-col lg:flex-row gap-4">
                 {/* Sidebar */}
                 <div className="lg:w-1/4 space-y-4">
@@ -31,7 +34,7 @@ const RAGApp = () => {
 
                 {/* Main chat area */}
                 <div className="lg:w-3/4 bg-white border rounded-lg shadow-sm h-[600px]">
-                    {activeConversationId ? (
+                    {true ? (
                         <ChatComponent conversationId={activeConversationId} />
                     ) : (
                         <div className="flex items-center justify-center h-full text-gray-500">

@@ -6,19 +6,26 @@ import { SimpleDropdown } from '../../common/CommonComponents.jsx';
 import { DefaultNavigator } from '../../components/global/Navigators.jsx';
 import { Link } from 'react-router';
 import { useCurrentNovelPublisher } from '../../stores/userStores.js';
-import { usePublisherStore } from '../../stores/publisherStore.js';
+import {
+    useCurrentChapterList,
+    useCurrentChosenPublishedNovel,
+    usePublisherStore,
+    useSetCurrentChapterList,
+} from '../../stores/publisherStore.js';
 import { getFilteredNovels } from '../../services/novelService.js';
 import { getFilteredChapters } from '../../services/chapterService.js';
 const ChapterList = () => {
-    const currentPublishedNovelChosen = usePublisherStore().currentChosenPublishedNovel;
-    const chapterList = usePublisherStore((state) =>state.currentNovelChapterList);
-    const setCurrentChapterList = usePublisherStore((state) => state.setCurrentNovelChapterList);
+    const currentPublishedNovelChosen = useCurrentChosenPublishedNovel();
+    const chapterList = useCurrentChapterList();
+    const setCurrentChapterList = useSetCurrentChapterList();
     useEffect(() => {
         const fetchNovels = async () => {
             try {
                 const filter = { novelId: currentPublishedNovelChosen.id };
+                console.log("Filter: ", filter);
                 const response = await getFilteredChapters(filter);
-                console.log("Res: ", response.data.result);
+                console.log("Res: ", response);
+
                 setCurrentChapterList(response.data.result);
             } catch (err) {
             }
@@ -32,15 +39,16 @@ const ChapterList = () => {
         <>
             <div>
                 <div className={'flex flex-col'}>
+                    {console.log(currentPublishedNovelChosen)}
                     <div className={"flex flex-col bg-background-light rounded-md p-5 mt-2"}>
                         {/*Head part*/}
                         <div className={"flex flex-row justify-between items-center"}>
                             <div className={"flex flex-col"}>
-                                <span className={"text-lg"}>Danh sach chuong</span>
-                                <span className={"text-gray-500"}>Truyen dau tien</span>
+                                <span className={"text-lg"}>Danh sách chương</span>
+                                <span className={"text-gray-500"}>{currentPublishedNovelChosen.name}</span>
                             </div>
                             <div className={"flex flex-row gap-x-2"}>
-                                <Link to={'/bookhub/books/1/update'}>
+                                <Link to={'/bookhub/novels/1/update'}>
                                     <button
                                         className={'bg-cus-gray w-full text-white rounded-md p-2 hover:bg-yellow-500 focus:outline-none focus:ring-0 hover:cursor-pointer'}
 
@@ -51,7 +59,7 @@ const ChapterList = () => {
                                     </button>
                                 </Link>
 
-                                <Link to={"/bookhub/books/1/upload-chapters"}>
+                                <Link to={`/bookhub/novels/${currentPublishedNovelChosen.slug}/upload-chapters`}>
                                     <button
                                         className={'bg-cus-gray w-full text-white rounded-md p-2 hover:bg-yellow-500 focus:outline-none focus:ring-0 hover:cursor-pointer'}
 
@@ -102,13 +110,13 @@ const ChapterList = () => {
                                         STT
                                     </th>
                                     <th scope="col" className="px-6 py-3">
-                                        TEN CHUONG
+                                        TÊN CHƯƠNG
                                     </th>
                                     <th scope="col" className="px-6 py-3">
-                                        XUAT BAN LUC
+                                        XUẤT BẢN LÚC
                                     </th>
                                     <th scope="col" className="px-6 py-3">
-                                        SO TU
+                                        SỐ TỪ
                                     </th>
                                     <th scope="col" className="px-6 py-3">
                                         LƯỢT ĐỌC
@@ -135,13 +143,13 @@ const ChapterList = () => {
                                                     : 'Chưa xuất bản'}
                                             </td>
                                             <td className="px-6 py-4">
-                                                {chapter.wordCount ?? '—'}
+                                                {chapter.wordCount != null ? chapter.wordCount : '20'}
                                             </td>
                                             <td className="px-6 py-4">
                                                 {chapter.viewCount ?? 0}
                                             </td>
                                             <td className="px-6 py-4">
-                                                <SpecItem />
+                                                <SpecItem item={chapter}/>
                                             </td>
                                         </tr>
                                     ))
@@ -175,21 +183,29 @@ const ChapterList = () => {
 export default ChapterList;
 
 
-const SpecItem = () => {
+const SpecItem = ({item}) => {
+
+    function handleDelete() {
+    }
+
+    function handleEdit() {
+
+    }
+
     return (
         <>
             <div>
                 <div className={'flex flex-row justify-end items-center gap-x-1'}>
                     <div
                         className={'bg-gray-300 p-1 rounded-md px-2 ml-3 pl-[10px] hover:cursor-pointer hover:bg-gray-400'}>
-                        <Link to={'/bookhub/chapters/1/edit'}>
+                        <Link to={`/bookhub/chapters/${item.id}/edit`}>
                             <FontAwesomeIcon icon={faPenToSquare} />
                         </Link>
                     </div>
                     <div className={'bg-red-500 p-1 rounded-md px-2 ml-3 hover:cursor-pointer hover:bg-red-600'}>
-                        <Link to={'/bookhub/books/1/upload-chapters'}>
+                        <div onClick={handleDelete}>
                             <FontAwesomeIcon icon={faTrashCan} />
-                        </Link>
+                        </div>
                     </div>
                 </div>
             </div>

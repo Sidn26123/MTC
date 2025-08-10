@@ -18,12 +18,16 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+
+import static com.sidn.metruyenchu.novelservice.utils.TokenUtils.getTokenFromContext;
+import static com.sidn.metruyenchu.shared_library.utils.TokenUtils.getUserIdFromToken;
 
 @Service
 @RequiredArgsConstructor
@@ -195,9 +199,10 @@ public class MarkedNovelService {
     public Void softDeleteMarkedNovel(String markedNovelId) {
         MarkedNovel markedNovel = markedNovelRepository.findById(markedNovelId)
                 .orElseThrow(() -> new AppException(ErrorCode.MARKED_NOVEL_NOT_FOUND));
+        markedNovel.setIsDeleted(true);
 
         try {
-            markedNovel.setIsDeleted(true);
+            markedNovelRepository.save(markedNovel);
         } catch (Exception exception) {
             throw new AppException(ErrorCode.UNKNOWN_ERROR);
         }
@@ -206,4 +211,27 @@ public class MarkedNovelService {
     }
 
 
+    public PageResponse<MarkedNovelResponse> getMyMarkedNovels(BaseFilterRequest request) {
+        String userId = getUserIdFromToken(getTokenFromContext());
+
+        Pageable pageable = PageUtils.from(request);
+        var pageData = markedNovelRepository.findAllByUserIdAndIsDeletedIsFalse(userId, pageable);
+        return PageUtils.toPageResponse(
+                pageData,
+                markedNovelMapper::toResponse,
+                request.getPage()
+        );
+    }
+
+    public PageResponse<MarkedNovelResponse> getMarkedNovelByUserIdAndNovelId(String userId, String novelId, BaseFilterRequest request) {
+        Pageable pageable = PageUtils.from(request);
+
+        Page<MarkedNovel> pageData = markedNovelRepository.findByUserIdAndNovelIdAndIsDeletedIsFalse(userId, novelId, pageable);
+
+        return PageUtils.toPageResponse(
+                pageData,
+                markedNovelMapper::toResponse,
+                request.getPage()
+        );
+    }
 }

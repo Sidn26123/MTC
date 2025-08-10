@@ -1,5 +1,6 @@
 package com.sidn.metruyenchu.feedbackservice.service;
 
+import com.sidn.metruyenchu.shared_library.exceptions.ErrorCode;
 import com.sidn.metruyenchu.shared_library.dto.BaseFilterRequest;
 import com.sidn.metruyenchu.shared_library.dto.PageResponse;
 import com.sidn.metruyenchu.feedbackservice.dto.request.report.ReportCommentRequest;
@@ -8,6 +9,7 @@ import com.sidn.metruyenchu.feedbackservice.entity.Report;
 import com.sidn.metruyenchu.feedbackservice.entity.ReportComment;
 import com.sidn.metruyenchu.feedbackservice.mapper.ReportCommentMapper;
 import com.sidn.metruyenchu.feedbackservice.repository.ReportCommentRepository;
+import com.sidn.metruyenchu.shared_library.exceptions.AppException;
 import com.sidn.metruyenchu.shared_library.utils.PageUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -48,7 +50,7 @@ public class ReportCommentService {
     public ReportCommentResponse getReportComment(String id) {
         return reportCommentMapper.toResponse(
                 reportCommentRepository.findById(id)
-                        .orElseThrow(() -> new IllegalArgumentException("Report comment not found with ID: " + id))
+                        .orElseThrow(() -> new AppException(ErrorCode.NOT_FOUND))
         );
     }
 

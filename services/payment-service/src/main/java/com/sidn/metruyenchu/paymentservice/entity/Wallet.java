@@ -37,7 +37,7 @@ public class Wallet {
     BigDecimal balance = BigDecimal.ZERO;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "currency_id", insertable = false, updatable = false)
+    @JoinColumn(name = "currency_id", updatable = false)
     Currency currency;
 
     @Enumerated(EnumType.STRING)

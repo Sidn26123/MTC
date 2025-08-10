@@ -12,7 +12,12 @@ import NovelOverviewPage from "../pages/novels/NovelOverviewPage.jsx";
 import NovelListPage from '../pages/novels/NovelListPage.jsx';
 import ProtectedRoute from '../components/global/ProtectedRoute.jsx';
 import RAGApp from '../components/chatbot/RagApp.jsx';
+import MyReportPage from '../pages/users/MyReportPage.jsx';
+import ReportDetailPage from '../pages/publishers/ReportDetailPage.jsx';
+import NotificationListPage from '../pages/users/NotificationListPage.jsx';
+import DonateChooseMomoPage from '../pages/users/DonateChooseMomoPage.jsx';
 import PaymentSuccess from "../pages/users/PaymentSuccess.jsx";
+import DonateChooseVnpayPage from '../pages/users/DonateChooseVnpayPage.jsx';
 
 const UserRoutes = ({user}) => {
     return (
@@ -28,6 +33,12 @@ const UserRoutes = ({user}) => {
                 <Route path="/tu-truyen" element={<MyBookShelfPage />} />
                 <Route path="/lich-su-giao-dich" element={<PaymentHistoryPage />} />
                 <Route path="/nap-tien" element={<DonatePage />} />
+                <Route path="/nap-tien/momo" element={<DonateChooseMomoPage />} />
+                <Route path="/nap-tien/vnpay" element={<DonateChooseVnpayPage />} />
+                {/*<Route path="/nap-tien/:vnpay" element={<DonateChoosePage />} />*/}
+                <Route path="/yeu-cau-ho-tro" element={<MyReportPage />} />
+                <Route path="/yeu-cau-ho-tro/:reportId" element={<ReportDetailPage />} />
+                <Route path="/thong-bao" element={<NotificationListPage />} />
                 <Route path="/chatbot" element={<RAGApp />} />
             </Route>
             <Route path="/payment-success" element={<PaymentSuccess />} />

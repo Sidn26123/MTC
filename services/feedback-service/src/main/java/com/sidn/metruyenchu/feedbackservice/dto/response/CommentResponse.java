@@ -22,6 +22,8 @@ public class CommentResponse {
     String commentParentId;
     @Builder.Default
     Integer totalComments = 0; //total child comments
+    Integer totalReplies = 0;
+
     Integer totalLikes;
     @Builder.Default
     Integer totalLike = 0;

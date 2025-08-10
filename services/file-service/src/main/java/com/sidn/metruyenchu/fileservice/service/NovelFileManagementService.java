@@ -4,6 +4,7 @@ import com.sidn.metruyenchu.fileservice.dto.request.ChapterContentUploadRequest;
 import com.sidn.metruyenchu.fileservice.dto.request.NovelFileUpdateRequest;
 import com.sidn.metruyenchu.fileservice.dto.request.PrepareStorageRequest;
 import com.sidn.metruyenchu.fileservice.dto.request.StoredFile.FileManagementUpdateRequest;
+import com.sidn.metruyenchu.fileservice.dto.request.feign.NovelUpdateRequest;
 import com.sidn.metruyenchu.fileservice.dto.response.FolderResponse;
 import com.sidn.metruyenchu.fileservice.dto.response.NovelFileResponse;
 import com.sidn.metruyenchu.fileservice.dto.response.StoredFile.FileManagementResponse;
@@ -20,6 +21,7 @@ import com.sidn.metruyenchu.fileservice.repository.ChapterContentRepository;
 import com.sidn.metruyenchu.fileservice.repository.FileRepository;
 import com.sidn.metruyenchu.fileservice.repository.NovelFileManagementRepository;
 import com.sidn.metruyenchu.fileservice.repository.FileManagementRepository;
+import com.sidn.metruyenchu.fileservice.repository.httpclient.NovelClient;
 import com.sidn.metruyenchu.fileservice.service.utils.FileService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +50,9 @@ public class NovelFileManagementService {
     FileManagementMapper fileManagementMapper;
     ChapterContentMapper chapterContentMapper;
     FileService fileService;
+    NovelClient novelClient;
+
+
     @NonFinal
     @Value("${file.upload-dir}")
     String uploadDir;
@@ -324,6 +329,13 @@ public class NovelFileManagementService {
                 .category(FileCategoryEnum.COVER)
                 .file(fileManagement)
                 .build();
+
+        novelClient.updateNovel(
+                novelId,
+                NovelUpdateRequest.builder()
+                        .novelCoverImage(fileManagement.getFileName())
+                        .build()
+        ).orElseThrow(() -> new AppException(ErrorCode.NOVEL_NOT_FOUND));
 
         return novelFileMapper.toNovelFileResponse(
                 novelFileManagementRepository.save(novelFileManagement)

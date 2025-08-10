@@ -12,6 +12,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 @Repository
 public interface ChapterRepository extends JpaRepository<Chapter, String>, JpaSpecificationExecutor<Chapter> {
@@ -57,5 +58,29 @@ public interface ChapterRepository extends JpaRepository<Chapter, String>, JpaSp
 
     Optional<Chapter> findByNovelAndChapterIdxAndIsDeletedIsFalse(Novel novel, int i);
 
+    @Query(
+            value = """
+    SELECT c.*
+    FROM chapter c
+    JOIN (
+        SELECT novel_id, MAX(published_at) as max_published
+        FROM chapter
+        WHERE is_deleted = false AND is_published = true AND is_public = true
+        GROUP BY novel_id
+    ) latest_chap ON c.novel_id = latest_chap.novel_id AND c.published_at = latest_chap.max_published
+    ORDER BY c.published_at DESC
+    LIMIT :limit
+    """,
+            nativeQuery = true
+    )
+    List<Chapter> findTopNLatestPublishedChaptersPerNovel(@Param("limit") int limit);
+
+
+    @Query("SELECT c FROM Chapter c WHERE c.publishedAt <= :currentTime AND c.isPublished = false AND c.isDeleted = false")
+    List<Chapter> findChaptersToPublish(@Param("currentTime") LocalDateTime currentTime);
+
+    @Modifying
+    @Query("UPDATE Chapter c SET c.isPublished = true, c.updatedAt = :updateTime WHERE c.id IN :chapterIds")
+    int bulkUpdatePublishStatus(@Param("chapterIds") List<String> chapterIds, @Param("updateTime") LocalDateTime updateTime);
 //    Optional<Chapter> findByNovelAndChapterIdxAndIsDeletedIsFalseAndPublishedAt
 }

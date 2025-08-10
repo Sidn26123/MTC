@@ -85,6 +85,15 @@ public class NovelSpecification {
         return (root, query, cb) -> cb.isFalse(root.get("isDeleted"));
     }
 
+    public static Specification<Novel> isActive(Boolean isActive) {
+        return (root, query, cb) -> {
+            if (isActive == null) return null;
+            return cb.equal(root.get("isActive"), isActive);
+        };
+    }
+
+
+
     public static Specification<Novel> ofAuthor(String authorId) {
 //        return (root, query, cb) -> {
 //            if (authorId == null || authorId.trim().isEmpty()) return null;
@@ -204,6 +213,8 @@ public class NovelSpecification {
                 .and(NovelSpecification.hasNovelStates(request.getNovelStates()))
                 .and(NovelSpecification.hasNovelAttributes(request.getNovelAttributes()))
                 .and(NovelSpecification.notDeleted())
+                .and(NovelSpecification.isActive(true))
+//                .and(NovelSpecification.isPublished(true))
                 ;
     }
 

@@ -1,5 +1,6 @@
 package com.sidn.metruyenchu.paymentservice.entity;
 
+import com.sidn.metruyenchu.shared_library.enums.payment.PaymentRequestStatus;
 import jakarta.persistence.Entity;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -58,6 +59,10 @@ public class PaymentRequest {
     @Column(name = "payment_url", length = 2048)
 
     String paymentUrl;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    PaymentRequestStatus status;
 
     @Column(name = "expires_at")
     LocalDateTime expiresAt;

@@ -25,7 +25,9 @@ const LoginPanel = ({ onClose }) => {
 
         try {
             const response = await logIn(userInfo.email, userInfo.password);
+            console.log("Login response:", response);
             const profile = await fetchUserInfo();
+            console.log("User profile:", profile);
             setUser(profile.result);
             const token = response.data.result.token;
             // console.log("Login response:", response.);
@@ -46,7 +48,7 @@ const LoginPanel = ({ onClose }) => {
             // console.log("user.roles.includes('ROLE_ADMIN'):", user.roles.includes('ROLE_ADMIN'));
             // if (user && user.roles && user.roles.includes('ROLE_ADMIN')) {
             if (scope.includes('ROLE_ADMIN')) {
-                navigate('/admin/users');
+                navigate('/admin/analytics');
                 // } else if (user && user.roles && user.roles.includes('ROLE_CONTENT_MOD')) {
                 //   navigate('/content-mod');
                 // } else if (user && user.roles && user.roles.includes('ROLE_PUBLISHER')) {

@@ -5,6 +5,7 @@ import com.sidn.metruyenchu.paymentservice.dto.request.wallet.WalletUpdateReques
 import com.sidn.metruyenchu.paymentservice.dto.response.wallet.WalletResponse;
 import com.sidn.metruyenchu.paymentservice.entity.Wallet;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
@@ -14,6 +15,7 @@ import java.util.List;
 public interface WalletMapper {
     Wallet toEntity(WalletCreateRequest request);
 
+    @Mapping(target = "currencyId", source = "currency.id")
     WalletResponse toResponse(Wallet wallet);
 
     List<WalletResponse> toResponses(List<Wallet> wallets);

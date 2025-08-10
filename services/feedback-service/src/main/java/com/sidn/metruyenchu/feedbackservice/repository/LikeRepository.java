@@ -2,7 +2,7 @@ package com.sidn.metruyenchu.feedbackservice.repository;
 
 import com.sidn.metruyenchu.feedbackservice.dto.response.projection.GeneralCountProjectionResponse;
 import com.sidn.metruyenchu.feedbackservice.entity.Like;
-import com.sidn.metruyenchu.feedbackservice.enums.FeedbackType;
+import com.sidn.metruyenchu.shared_library.enums.feedback.FeedbackType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

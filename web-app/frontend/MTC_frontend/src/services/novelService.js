@@ -14,30 +14,52 @@ export const getNovelBySlug = async (slug) => {
     const response = await api.get(API.NOVEL + "/novels/" + slug);
     return response;
 }
-
+export const getNovelById = async (id) => {
+    const response = await api.get(API.NOVEL + "/novels/id/" + id);
+    return response;
+}
 export const getFilteredNovels = async (filter) => {
+    console.log("getFilteredNovels", filter);
     const response = await api.post(API.NOVEL + "/novels/filter", filter);
     return response;    
 };
 
-// export const fetchFilteredNovels = async (filters) => {
-//     const params = {
-//         status: filters.status,
-//         categoryId: filters.categoryId,
-//         sortBy: 'publishDate',
-//         sortDirection: filters.sortDirection || 'desc',
-//         page: filters.page || 0,
-//         size: filters.size || 10,
-//     };
-//     const response = await api.get(API.NOVEL + "/novels/filter", params);
-//     return response;
-// };
 
 export const isNovelBookmarked = async (novelId, novelList) => {
     //check if novelId is in novelList
     const isBookmarked = novelList.some((novel) => novel.id === novelId);
     return isBookmarked;
 }
+
+export const getAllMyNovels = async () => {
+    const response = await api.get(API.NOVEL + "/novels/my/novels/all");
+    return response;
+}
+
+// export const getJustReadNovel = async
+
+export const getTopPromotionNovels = async () => {
+    const response = await api.get(API.NOVEL + "/novel-statistic/top/promotions",
+        {
+            params: {
+                page: 1,
+                limit: 10
+            }
+        });
+    return response;
+}
+
+export const getBestNovels = async () => {
+    const response = await api.get(API.NOVEL + "/novels/top/best",
+        {
+            params: {
+                limit: 10
+            }
+        });
+    return response;
+}
+
+
 
 // genres
 

@@ -3,18 +3,18 @@ import api from '../middlewares/axios.js';
 import { API } from '../configurations/configuration.js';
 
 const userChapterStore = create((set) => ({
-    currentChapter: {
-        chapterIdx: 6,
-        content: 'asd',
-    },
+    currentChapter: {},
     listChapter: [],
     filteredChapterList: [],
     listChapterRecentPublishedOfNovel: [],
     actions: {
         setCurrentChapter: (chapter) =>
-            set({
-                currentChapter: { ...chapter },
-            }),
+            set((state) => ({
+                currentChapter: {
+                    ...state.currentChapter,
+                    ...chapter,
+                },
+            })),
         setListChapterRecentPublishedOfNovel: (chapters) =>
             set({ listChapterRecentPublishedOfNovel: chapters }),
 

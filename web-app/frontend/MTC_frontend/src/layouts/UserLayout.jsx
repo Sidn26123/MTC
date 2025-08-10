@@ -21,14 +21,12 @@ const UserLayout = () => {
         <div className={"background-color "}>
             <div>
                 <UserNavbar />
-                <div className="px-20 ">
+                <div className="px-20 mt-5 mx-30">
                     {/*<main className="">*/}
                         <Outlet />
                     {/*</main>*/}
                 </div>
-                {/*{isChatOpen && (*/}
-                {/*    <ChatFrame onClose = {() => closeChatFrame()}/>*/}
-                {/*)}*/}
+
                 {isChatOpen && (
                     <UpdatedChatFrame
                         onClose={() => closeChatFrame()}

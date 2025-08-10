@@ -112,24 +112,12 @@ public class Novel {
     @Column(columnDefinition = "INTEGER DEFAULT 0")
     Integer totalBookmarks = 0;
 
-
-
     @ManyToOne
     @JoinColumn(name = "author_id")
     NovelAuthor author;
 
-//    @JoinTable(
-//            name = "novel_novelstatus",
-//            joinColumns = @JoinColumn(name = "novel_id", referencedColumnName = "id"),
-//            inverseJoinColumns = @JoinColumn(name = "novel_status_id", referencedColumnName = "id")
-//    )
-
-
     @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     List<NovelStatusDetail> status = new ArrayList<>();
-//    @ManyToOne
-//    @JoinColumn(name = "novel_status_id")
-//    NovelStatus novelStatus;
 
     @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     List<Chapter> chapters = new ArrayList<>();
@@ -152,6 +140,9 @@ public class Novel {
 
     @Builder.Default
     Boolean isActive = true;
+
+    @Builder.Default
+    Boolean isPublished = false;
 
     @CreationTimestamp
     @Column(nullable = false, updatable = false)

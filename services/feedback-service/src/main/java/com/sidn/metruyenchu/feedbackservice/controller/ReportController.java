@@ -2,12 +2,15 @@ package com.sidn.metruyenchu.feedbackservice.controller;
 
 import com.sidn.metruyenchu.feedbackservice.dto.ApiResponse;
 import com.sidn.metruyenchu.feedbackservice.dto.request.report.ReportCreationRequest;
+import com.sidn.metruyenchu.feedbackservice.dto.request.report.ReportFilterRequest;
 import com.sidn.metruyenchu.feedbackservice.dto.request.report.ReportUpdateRequest;
 import com.sidn.metruyenchu.feedbackservice.dto.response.ReportResponse;
+import com.sidn.metruyenchu.feedbackservice.enums.TargetType;
 import com.sidn.metruyenchu.feedbackservice.service.ReportService;
 import com.sidn.metruyenchu.shared_library.dto.BaseFilterRequest;
 import com.sidn.metruyenchu.shared_library.dto.PageResponse;
 import com.sidn.metruyenchu.shared_library.enums.feedback.AssigneeRole;
+import com.sidn.metruyenchu.shared_library.enums.feedback.ReportType;
 import com.sidn.metruyenchu.shared_library.enums.user.UserRole;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,14 +37,21 @@ public class ReportController {
     @GetMapping("/user/{userId}")
     ApiResponse<PageResponse<ReportResponse>> getReportByUserId(
             @PathVariable String userId,
-            @RequestParam(value = "role", defaultValue = "USER") String role,
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size
+            @RequestParam(value = "role", defaultValue = "PUBLISHER") String role,
+            @ModelAttribute BaseFilterRequest filterRequest
     ) {
-        Pageable pageable = PageRequest.of(page, size);
         AssigneeRole userRole = AssigneeRole.valueOf(role.toUpperCase());
         return ApiResponse.<PageResponse<ReportResponse>>builder()
-                .result(reportService.getReportsForUser(userId, userRole, pageable))
+                .result(reportService.getReportsForUser(userId, userRole, filterRequest))
+                .build();
+    }
+
+    @GetMapping("/filter")
+    ApiResponse<PageResponse<ReportResponse>> getReportsByFilter(
+            @ModelAttribute ReportFilterRequest filterRequest
+    ) {
+        return ApiResponse.<PageResponse<ReportResponse>>builder()
+                .result(reportService.filterReports(filterRequest))
                 .build();
     }
 
@@ -98,14 +108,14 @@ public class ReportController {
     @PutMapping("/{reportId}/status")
     ApiResponse<ReportResponse> updateReportStatus(
             @PathVariable String reportId,
-            @ModelAttribute ReportUpdateRequest status
+            @RequestBody ReportUpdateRequest request
     ) {
+        log.info("Received status update for {}: {}", reportId, request.getStatus());
         return ApiResponse.<ReportResponse>builder()
-                .result(reportService.updateReportStatus(reportId, status))
+                .result(reportService.updateReportStatus(reportId, request))
                 .build();
     }
 
-    @Operation(summary = "Tạo báo cáo")
     @PostMapping("/comment")
     ApiResponse<ReportResponse> createReportForComment(
             @Valid @RequestBody ReportCreationRequest request
@@ -128,6 +138,8 @@ public class ReportController {
     ApiResponse<ReportResponse> createReportForNovel(
             @Valid @RequestBody ReportCreationRequest request
     ) {
+        request.setReportType(ReportType.NOVEL_VIOLATION);
+        request.setTargetType(TargetType.NOVEL);
         return ApiResponse.<ReportResponse>builder()
                 .result(reportService.reportNovel(request))
                 .build();
@@ -162,6 +174,15 @@ public class ReportController {
                 .build();
     }
 
+
+    @PostMapping("/{reportId}/accept")
+    ApiResponse<ReportResponse> acceptReport(
+            @PathVariable String reportId
+    ) {
+        return ApiResponse.<ReportResponse>builder()
+                .result(reportService.acceptReport(reportId))
+                .build();
+    }
 
 
 

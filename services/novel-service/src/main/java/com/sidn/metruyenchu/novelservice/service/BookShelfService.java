@@ -21,6 +21,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static com.sidn.metruyenchu.novelservice.utils.TokenUtils.getTokenFromContext;
+import static com.sidn.metruyenchu.shared_library.utils.TokenUtils.getUserIdFromToken;
+
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
@@ -138,5 +141,13 @@ public class BookShelfService {
         }
 
         return bookShelfList.getFirst();
+    }
+
+    public BookShelfResponse getMyCurrentActiveBookShelf() {
+        String userId = getUserIdFromToken(getTokenFromContext());
+
+        BookShelf bookShelf = getCurrentActiveBookShelfOfUser(userId);
+
+        return bookShelfMapper.toResponse(bookShelf);
     }
 }

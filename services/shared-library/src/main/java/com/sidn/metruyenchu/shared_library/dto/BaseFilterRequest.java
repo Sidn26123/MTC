@@ -1,11 +1,11 @@
 package com.sidn.metruyenchu.shared_library.dto;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Getter;
+import lombok.*;
 
 @Data
 @Getter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 public class BaseFilterRequest {
     private int page = 1;

@@ -47,7 +47,8 @@ api.interceptors.response.use(
             // window.location.href = '/login';
         } else if (status === 500) {
             // const navigate = useNavigate();
-            window.location.href = '/500'; // Trang 500 bạn tự tạo
+
+            // window.location.href = '/500'; // Trang 500 bạn tự tạo
             // navigate("/500");
         }
 
@@ -71,5 +72,21 @@ export const setupInterceptors = (navigate) => {
         }
     );
 };
+// export const setupInterceptors = (navigate) => {
+//     api.interceptors.response.use(
+//         (response) => response,
+//         (error) => {
+//             const status = error.response?.status;
+//
+//             if (status === 401) {
+//                 showError('Bạn cần đăng nhập để tiếp tục.');
+//             } else if (status === 500) {
+//                 navigate("/500");
+//             }
+//
+//             return Promise.reject(error);
+//         }
+//     );
+// };
 
 export default api;

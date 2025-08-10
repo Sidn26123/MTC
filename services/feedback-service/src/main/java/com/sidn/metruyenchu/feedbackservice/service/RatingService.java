@@ -22,12 +22,14 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.sidn.metruyenchu.feedbackservice.utils.FeignResponseUtils.callFeignGetChapterInfo;
 import static com.sidn.metruyenchu.feedbackservice.utils.FeignResponseUtils.callFeignGetNovelInfo;
@@ -59,10 +61,10 @@ public class RatingService {
         );
     }
 
-    public Rating getRating(String ratingId) {
-        return (
-                ratingRepository.findById(ratingId).orElseThrow(() -> new RuntimeException("Review not found"))
-        );
+    public Optional<Rating> getRatingEntity(String ratingId) {
+        Optional<Rating> rating = ratingRepository.findById(ratingId);
+
+        return rating;
     }
 
 
@@ -70,28 +72,30 @@ public class RatingService {
     public RatingResponse createReview(RatingCreationRequest request){
         String userId = getUserIdFromToken(getTokenFromContext());
         request.setRatedBy(userId);
+        log.info("Creating rating with request: {}", request);
+
         //Kiểm tra novel và chapter có tồn tại không
         //Kiểm tra chapter có thuộc novel không
-        if (request.getNovelId() == null || request.getLastReadChapterId() == null){
+        if (request.getNovelId() == null || request.getLastReadChapterIdx() == null){
             throw new AppException(ErrorCode.OBJECT_NOT_FOUND);
         }
 
-        NovelResponse novelResponse = callFeignGetNovelInfo(novelClient, request.getNovelId()).getResult();
-        ChapterResponse chapterResponse = callFeignGetChapterInfo(novelClient, request.getLastReadChapterId()).getResult();
-
-        if (novelResponse == null || chapterResponse == null){
-            throw new AppException(ErrorCode.OBJECT_NOT_FOUND);
-        }
-
-        if (!Objects.equals(chapterResponse.getNovel(), request.getNovelId())){
-            throw new AppException(ErrorCode.CHAPTER_NOT_BELONG_TO_NOVEL);
-        }
+//        NovelResponse novelResponse = callFeignGetNovelInfo(novelClient, request.getNovelId()).getResult();
+//        ChapterResponse chapterResponse = callFeignGetChapterInfo(novelClient, request.getLastReadChapterId()).getResult();
+//        if (novelResponse == null || chapterResponse == null){
+//            throw new AppException(ErrorCode.OBJECT_NOT_FOUND);
+//        }
+//
+//        if (!Objects.equals(chapterResponse.getNovel(), request.getNovelId())){
+//            throw new AppException(ErrorCode.CHAPTER_NOT_BELONG_TO_NOVEL);
+//        }
 
 //        if (chapterResponse.getChapterIdx() < novelResponse.getChapterReadToComment())
 
         var rating = ratingMapper.toEntity(request);
 
         try{
+            log.info("{}", rating);
             rating = ratingRepository.save(rating);
             log.info("Rating created with id: {}", rating.getId());
             novelClient.ratingNovel(
@@ -178,4 +182,43 @@ public class RatingService {
     public void incrementTotalDisLikes(String ratingId){
         ratingRepository.incrementTotalDisLikes(ratingId);
     }
+
+    public List<RatingResponse> getTopRecentRatings(int topN) {
+        Pageable pageable = PageRequest.of(0, topN, Sort.by(Sort.Direction.DESC, "createdAt"));
+        Page<Rating> ratings = ratingRepository.findAllByIsDeletedFalseAndIsHiddenFalseOrderByCreatedAtDesc(pageable);
+        return ratings.getContent().stream()
+                .map(ratingMapper::toResponse)
+                .collect(Collectors.toList());
+    }
+
+    public void saveRating(Rating rating) {
+        try {
+            ratingRepository.save(rating);
+        } catch (DataIntegrityViolationException e) {
+            throw new AppException(ErrorCode.RATING_ALREADY_EXISTS);
+        } catch (Exception e) {
+            throw new AppException(ErrorCode.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public Map<Integer, Long> getRatingCountGroupedByStar(String novelId) {
+        List<Object[]> results = ratingRepository.countRatingsGroupedByStar(novelId);
+        Map<Integer, Long> ratingStats = new HashMap<>();
+
+        // Khởi tạo mặc định 0 cho từng sao từ 1 -> 5
+        for (int i = 1; i <= 5; i++) {
+            ratingStats.put(i, 0L);
+        }
+
+        for (Object[] row : results) {
+            Integer star = ((Number) row[0]).intValue();
+            Long count = ((Number) row[1]).longValue();
+            if (star >= 1 && star <= 5) {
+                ratingStats.put(star, count);
+            }
+        }
+
+        return ratingStats;
+    }
+
 }

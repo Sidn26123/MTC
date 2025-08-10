@@ -106,7 +106,7 @@ public class PaymentController {
      * @param request the HTTP request
      * @return processing status
      */
-    @PostMapping("/vnpay/callback")
+    @PostMapping("/vn-pay-callback")
     public ResponseEntity<Map<String, String>> vnpayCallback(HttpServletRequest request) {
         Map<String, String> params = new HashMap<>();
         for (Map.Entry<String, String[]> entry : request.getParameterMap().entrySet()) {
@@ -127,7 +127,6 @@ public class PaymentController {
         }
     }
 
-
-
-
 }
+
+

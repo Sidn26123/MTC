@@ -6,6 +6,7 @@ import com.sidn.metruyenchu.novelservice.dto.request.chapter.*;
 import com.sidn.metruyenchu.novelservice.dto.response.chapter.ChapterResponse;
 import com.sidn.metruyenchu.novelservice.dto.response.chapter.ChapterContentResponse;
 import com.sidn.metruyenchu.novelservice.dto.response.chapter.ChapterListResponse;
+import com.sidn.metruyenchu.novelservice.dto.response.chapter.TopChapterResponse;
 import com.sidn.metruyenchu.novelservice.service.ChapterService;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
@@ -61,6 +62,13 @@ public class ChapterController {
                 .build();
     }
 
+    @GetMapping("/novel/{novelSlug}/chapter/{chapterIdx}")
+    ApiResponse<ChapterResponse> getChapterByNovelSlugAndIdx(@PathVariable String novelSlug, @PathVariable Integer chapterIdx){
+        return ApiResponse.<ChapterResponse>builder()
+                .result(chapterService.getChapterByNovelSlugAndIdx(novelSlug, chapterIdx))
+                .build();
+    }
+
     @DeleteMapping("/{chapterId}")
     ApiResponse<String> deleteChapter(@PathVariable String chapterId){
         chapterService.deleteChapter(chapterId);
@@ -76,6 +84,13 @@ public class ChapterController {
                 .build();
     }
 
+    @GetMapping("/{chapterId}/content")
+    ApiResponse<ChapterContentResponse> getChapterContent(@PathVariable String chapterId, @RequestBody ChapterContentGetRequest request){
+        request.setChapterId(chapterId);
+        return ApiResponse.<ChapterContentResponse>builder()
+                .result(chapterService.getChapterContentById(request))
+                .build();
+    }
     @GetMapping("/{chapterId}")
     ApiResponse<ChapterResponse> getChapter(@PathVariable String chapterId){
         return ApiResponse.<ChapterResponse>builder()
@@ -115,6 +130,13 @@ public class ChapterController {
 
         return ApiResponse.<ChapterContentResponse>builder()
                 .result(chapterService.getChapterContent(request))
+                .build();
+    }
+
+    @GetMapping("/truyen/{novelSlug}/chuong/{chapterIdx}")
+    ApiResponse<ChapterResponse> getChapterContentBySlug(@PathVariable String novelSlug, @PathVariable Integer chapterIdx){
+        return ApiResponse.<ChapterResponse>builder()
+                .result(chapterService.getChapterByNovelSlugAndIdx(novelSlug, chapterIdx))
                 .build();
     }
 
@@ -167,6 +189,25 @@ public class ChapterController {
                 .build();
     };
 
+    @GetMapping("/top/published")
+    ApiResponse<List<TopChapterResponse>> getTopPublishedChapters(
+            @RequestParam(value = "size", defaultValue = "10") int size
+    ) {
+        return ApiResponse.<List<TopChapterResponse>>builder()
+                .result(chapterService.findNTopLastedChaptersByNovelId(size))
+                .build();
+    }
+
+    @GetMapping("/novel/{novelId}/from")
+    ApiResponse<List<ChapterResponse>> getFromChaptersByNovelId(
+            @PathVariable String novelId,
+            @RequestParam (value = "from", defaultValue = "0") int from,
+            @RequestParam (value = "size", defaultValue = "10") int size
+    ) {
+        return ApiResponse.<List<ChapterResponse>>builder()
+                .result(chapterService.getFromChaptersByNovelId(novelId, from, size))
+                .build();
+    }
 
 
 }

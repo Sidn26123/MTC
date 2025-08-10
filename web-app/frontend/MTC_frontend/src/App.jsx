@@ -7,9 +7,9 @@ import PublisherRoutes from './routers/PublisherRoutes.jsx';
 import { useEffect, useState } from 'react';
 import api, { setupInterceptors } from './middlewares/axios.js';
 import { API } from './configurations/configuration.js';
-import useUserStore from './stores/userStores.js';
+import useUserStore, { useProfile, useSetProfile, useSetUser, useUser } from './stores/userStores.js';
 import LoadingSpinning from './components/global/LoadingSpinning.jsx';
-import { getTokenFromLocalStorage } from './services/authenticationService.js';
+import { getTokenFromLocalStorage, getUserIdFromToken } from './services/authenticationService.js';
 import Page404 from './components/global/Page404.jsx';
 import Page500 from './components/global/Page500.jsx';
 import { ToastContainer } from 'react-toastify';
@@ -18,22 +18,40 @@ import { useAuthRoles } from './stores/authStore.js';
 import ContentModRoutes from './routers/ContentModRoutes.jsx';
 import { useNavigate } from 'react-router';
 import GoogleCallbackComponent from './components/global/GoogleCallbackComponent.jsx';
+import { getCurrentBookshelf } from './services/bookshelfService.js';
+import { useSetCurrentBookshelf } from './stores/bookshelfStore.js';
+import { getMyWallet } from './services/paymentService.js';
+import { useSetMyWallet } from './stores/paymentStore.js';
 
 
 const App = () => {
     const [loading, setLoading] = useState(true);
-    const user = useUserStore((state => state.user));
-    const setUser = useUserStore((state => state.setUser));
+    const user = useUser();
+    const setUser = useSetUser();
+    const setProfile = useSetProfile();
     const userRoles = useAuthRoles();
-
+    const setCurrentBookshelf = useSetCurrentBookshelf();
+    const setMyWallet = useSetMyWallet();
     useEffect(() => {
         const token = getTokenFromLocalStorage(); // Lấy token từ localStorage
+        const userId = getUserIdFromToken(token); // Lấy userId từ localStorage nếu cần
         if (token) {
 
             api.get(API.INFO_ME).then(r => {
                     setUser(r.data.result);
-            }
-            );
+                    setProfile(r.data.result);
+            });
+            getCurrentBookshelf().then((response) => {
+                if (response.data.result) {
+                    // Lưu thông tin sách vào store hoặc state nếu cần
+                    setCurrentBookshelf(response.data.result);
+                } else {
+                    console.error("Failed to fetch current bookshelf.");
+                }
+            });
+            getMyWallet(userId).then((response) => {
+                setMyWallet(response.data.result);
+            });
             setLoading(false); // Có token thì gọi API
         } else {
             setLoading(false); // Không có token thì không gọi API

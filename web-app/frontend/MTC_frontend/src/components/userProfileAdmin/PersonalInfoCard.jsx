@@ -1,7 +1,4 @@
-// components/profile/PersonalInfoCard.jsx
-// import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-// import { Button } from "@/components/ui/button";
-// import { EditIcon } from "lucide-react";
+
 
 import { Card, CardHeader, CardTitle, CardContent } from "../ui/card";
 import { Button } from "../ui/button";

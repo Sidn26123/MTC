@@ -117,8 +117,9 @@ public class BookShelfItemService {
         BookShelfItem item = bookShelfItemRepository.findById(itemId)
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKSHELF_ITEM_NOT_FOUND));
 
+        item.setIsDeleted(true); // Đánh dấu là đã xoá
         try {
-            bookShelfItemRepository.delete(item);
+            bookShelfItemRepository.save(item);
         } catch (Exception e) {
             throw new AppException(ErrorCode.UNKNOWN_ERROR);
         }
@@ -129,8 +130,9 @@ public class BookShelfItemService {
         BookShelfItem item = bookShelfItemRepository.findByNovelId(novelId)
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKSHELF_ITEM_NOT_FOUND));
 
+        item.setIsDeleted(true); // Đánh dấu là đã xoá
         try {
-            bookShelfItemRepository.delete(item);
+            bookShelfItemRepository.save(item);
         } catch (Exception e) {
             throw new AppException(ErrorCode.UNKNOWN_ERROR);
         }
@@ -181,9 +183,9 @@ public class BookShelfItemService {
      * @return
      */
     public BookShelfItemResponse updateBookShelfItem(String itemId, @Valid BookShelfItemUpdateRequest request) {
+        log.info("Updating item in bookshelf with ID: {} {}", itemId, request);
         BookShelfItem item = bookShelfItemRepository.findById(itemId)
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKSHELF_ITEM_NOT_FOUND));
-
         bookShelfItemMapper.updateEntity(item, request);
 
         item = bookShelfItemRepository.save(item);

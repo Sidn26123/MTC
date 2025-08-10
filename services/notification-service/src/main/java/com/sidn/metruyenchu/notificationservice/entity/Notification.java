@@ -49,9 +49,9 @@ public class Notification {
     @Column(name = "action_url")
     String actionUrl;
     
-    @Convert(converter = JsonConverter.class)
-    @Column(columnDefinition = "JSON")
-    Map<String, Object> metadata;
+//    @Convert(converter = JsonConverter.class)
+//    @Column(columnDefinition = "JSON")
+//    Map<String, Object> metadata;
     
     @Enumerated(EnumType.STRING)
     NotificationPriority priority = NotificationPriority.MEDIUM;

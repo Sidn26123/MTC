@@ -43,6 +43,8 @@ public class BookShelfItem {
     @UpdateTimestamp
     LocalDateTime updatedAt;
 
+    LocalDateTime lastReadAt;
+
     @Builder.Default
     Boolean isDeleted = false;
 

@@ -17,6 +17,8 @@ public class RatingCreationRequest {
 
     String lastReadChapterId;
 
+    Integer lastReadChapterIdx;
+
     Float rate;
 
 }

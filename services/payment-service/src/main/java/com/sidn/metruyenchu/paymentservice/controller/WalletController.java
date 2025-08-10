@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.util.List;
 
+import static com.sidn.metruyenchu.paymentservice.utils.TokenUtils.getUserIdFromContext;
+
 @RestController
 @RequestMapping("/wallets")
 @RequiredArgsConstructor
@@ -80,6 +82,13 @@ public class WalletController {
                 .result(walletService.getWalletByUserIdAndCurrencyId(userId, currencyId))
                 .build();
     }
+    @GetMapping("/walletXuK")
+    public ApiResponse<BigDecimal> getWalletXuK() {
+        return ApiResponse.<BigDecimal>builder()
+                .result(walletService.getWalletXuK())
+                .build();
+    }
+
 
     /**
      * Get all wallets of a user
@@ -104,4 +113,11 @@ public class WalletController {
                 .build();
     }
 
+    @PostMapping("/p/promotion")
+    public ApiResponse<Void> promotion(){
+        walletService.promotion();
+        return ApiResponse.<Void>builder()
+                .result(null)
+                .build();
+    }
 }

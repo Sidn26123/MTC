@@ -1,6 +1,7 @@
 package com.sidn.metruyenchu.paymentservice.exception;
 
 import com.sidn.metruyenchu.shared_library.dto.ApiResponse;
+import com.sidn.metruyenchu.shared_library.exceptions.AppException;
 import com.sidn.metruyenchu.shared_library.exceptions.ErrorCode;
 import jakarta.validation.ConstraintViolation;
 import lombok.extern.slf4j.Slf4j;
@@ -20,29 +21,52 @@ public class GlobalExceptionHandler {
 
     private static final String MIN_ATTRIBUTE = "min";
 
+//    @ExceptionHandler(value = Exception.class)
+//    ResponseEntity<ApiResponse> handlingRuntimeException(final RuntimeException exception) {
+//        ApiResponse apiResponse = new ApiResponse();
+//        log.error("An unexpected error occurred: {}", exception.getMessage());
+//        log.error("Caught exception of type: {}", exception.getClass().getName());
+//        log.error(exception.getMessage(), exception);
+//        apiResponse.setCode(ErrorCode.UNKNOWN_ERROR.getCode());
+//        apiResponse.setMessage(ErrorCode.UNKNOWN_ERROR.getMessage());
+//
+//
+//        return ResponseEntity.badRequest().body(apiResponse);
+//    }
+//
+//    @ExceptionHandler(value = com.sidn.metruyenchu.shared_library.exceptions.AppException.class)
+//    ResponseEntity<ApiResponse> handlingAppException(com.sidn.metruyenchu.shared_library.exceptions.AppException exception) {
+//        ErrorCode errorCode = exception.getErrorCode();
+//        ApiResponse apiResponse = new ApiResponse();
+//        log.error(exception.getMessage(), exception);
+//        apiResponse.setCode(errorCode.getCode());
+//        apiResponse.setMessage(errorCode.getMessage());
+//
+//        return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponse);
+//    }
+
     @ExceptionHandler(value = Exception.class)
-    ResponseEntity<ApiResponse> handlingRuntimeException(final RuntimeException exception) {
+    ResponseEntity<ApiResponse> handlingRuntimeException(RuntimeException exception) {
+        log.error("Exception: ", exception);
         ApiResponse apiResponse = new ApiResponse();
-        log.error("An unexpected error occurred: {}", exception.getMessage());
-        log.error("Caught exception of type: {}", exception.getClass().getName());
-        log.error(exception.getMessage(), exception);
+
         apiResponse.setCode(ErrorCode.UNKNOWN_ERROR.getCode());
         apiResponse.setMessage(ErrorCode.UNKNOWN_ERROR.getMessage());
-
 
         return ResponseEntity.badRequest().body(apiResponse);
     }
 
-    @ExceptionHandler(value = com.sidn.metruyenchu.shared_library.exceptions.AppException.class)
-    ResponseEntity<ApiResponse> handlingAppException(com.sidn.metruyenchu.shared_library.exceptions.AppException exception) {
+    @ExceptionHandler(value = AppException.class)
+    ResponseEntity<ApiResponse> handlingAppException(AppException exception) {
         ErrorCode errorCode = exception.getErrorCode();
         ApiResponse apiResponse = new ApiResponse();
-        log.error(exception.getMessage(), exception);
+
         apiResponse.setCode(errorCode.getCode());
         apiResponse.setMessage(errorCode.getMessage());
 
         return ResponseEntity.status(errorCode.getStatusCode()).body(apiResponse);
     }
+
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     ResponseEntity<ApiResponse> handleValidationException(MethodArgumentNotValidException exception) {

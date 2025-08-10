@@ -45,7 +45,7 @@ export function DetailedStats() {
     const [toDate, setToDate] = useState("2025-07-11 23:59")
 
     return (
-        <div className="bg-gray-800 rounded-lg p-6">
+        <div className="bg-gray-600 rounded-lg p-6">
             <h2 className="text-xl font-semibold text-white mb-6">Xem thống kê chi tiết</h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">

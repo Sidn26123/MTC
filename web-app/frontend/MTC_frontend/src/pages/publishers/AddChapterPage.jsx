@@ -59,7 +59,9 @@ const AddChapterPage = () => {
                 name: ch.title,
             };
         });
-        uploadChapters(updatedList).then(r => {})
+        updatedList.forEach((ch, i) => {
+            uploadChapter(ch).then(r => {})
+        })
         showSuccess("Đăng chương thành công");
         navigate("/bookhub/published");
     }
@@ -256,14 +258,7 @@ const ConfirmAddNovel = ({chapter, onBack, onNext}) => {
                     {
                         chapter.map((item, index) => (
                             <div className={'bg-background-light rounded-md mt-5 p-5'} key={index}>
-                                {/*<div className={'flex flex-col'}>*/}
-                                {/*    <span className={'text-sm'}>Thu phí</span>*/}
-                                {/*    <input*/}
-                                {/*        className={'w-full border border-gray-500 rounded-md p-2 mt-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none focus:ring-0'}*/}
-                                {/*        readOnly={true}*/}
-                                {/*    />*/}
 
-                                {/*</div>*/}
                                 <div className={'flex flex-col'}>
                                     <span className={'text-sm'}>STT</span>
                                     <input
@@ -294,29 +289,6 @@ const ConfirmAddNovel = ({chapter, onBack, onNext}) => {
                         ))
                     }
 
-                    {/*<div className={"bg-background-light rounded-md mt-5 p-5"}>*/}
-                    {/*    <div className={'flex flex-col'}>*/}
-                    {/*        <span className={"text-sm"}>Thu phí</span>*/}
-                    {/*        <input*/}
-                    {/*            className={'w-full border border-gray-500 rounded-md p-2 mt-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none focus:ring-0'}*/}
-                    {/*            readOnly={true}*/}
-                    {/*        />*/}
-
-                    {/*    </div>*/}
-                    {/*    <div className={'flex flex-col mt-8'}>*/}
-                    {/*        <span className={"text-sm"}>Tên chương</span>*/}
-                    {/*        <input*/}
-                    {/*            className={'w-full border border-gray-500 rounded-md p-2 mt-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none focus:ring-0'}*/}
-                    {/*        />*/}
-
-                    {/*    </div>*/}
-                    {/*    <div className={'flex flex-col mt-8'}>*/}
-                    {/*        <span className={"text-sm"}>Nội dung</span>*/}
-                    {/*        <textarea*/}
-                    {/*            className={'w-full min-h-48 border border-gray-500 rounded-md p-2 mt-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none focus:ring-0'} />*/}
-                    {/*        <span className={'text-xs text-gray-500 mt-3'}>Số từ: 0</span>*/}
-                    {/*    </div>*/}
-                    {/*</div>*/}
                 </div>
                 <div className={"flex flex-row justify-center items-center gap-x-5 w-full"}>
                     <div className={"w-1/2"}>

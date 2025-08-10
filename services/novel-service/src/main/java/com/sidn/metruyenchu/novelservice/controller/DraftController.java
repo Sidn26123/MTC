@@ -66,4 +66,12 @@ public class DraftController {
                 .result(draftService.updateDraft(draftId, request))
                 .build();
     }
+
+    @GetMapping("/my/all")
+    ApiResponse<List<DraftResponse>> getMyDrafts(
+    ) {
+        return ApiResponse.<List<DraftResponse>>builder()
+                .result(draftService.getAllMyDrafts())
+                .build();
+    }
 }

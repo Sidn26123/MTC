@@ -4,6 +4,8 @@ import com.sidn.metruyenchu.novelservice.dto.response.novel.NovelResponse;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDateTime;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,4 +18,7 @@ public class BookShelfItemResponse {
     NovelResponse novel;
     Integer currentChapterIdx;
     Boolean isDeleted;
+    LocalDateTime lastReadAt;
+    Boolean isNoticed;
+    LocalDateTime updatedAt;
 }

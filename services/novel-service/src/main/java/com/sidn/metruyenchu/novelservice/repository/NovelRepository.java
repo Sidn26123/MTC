@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -23,6 +24,7 @@ public interface NovelRepository extends JpaRepository<Novel, String>, JpaSpecif
 
     Optional<Novel> findByAuthorId(String authorId);
 
+    List<Novel> findAllByCurrentPublisher(String publisherId);
 
 //    @Query("SELECT n FROM Novel n WHERE n.name LIKE %:searchText% OR n.author.name LIKE %:searchText% AND n.isDeleted = false")
 //    Page<Novel> findByFilter(NovelFilterRequest request, Pageable pageable);
@@ -86,4 +88,24 @@ public interface NovelRepository extends JpaRepository<Novel, String>, JpaSpecif
     @Query("UPDATE Novel n SET n.totalChapters = :totalChapters WHERE n.id = :novelId")
     void updateTotalChapters(@Param("novelId") String novelId, @Param("totalChapters") int totalChapters);
 
+    @Query(value = """
+    SELECT *
+    FROM novel
+    WHERE is_published = true
+      AND is_deleted = false
+      AND is_active = true
+      AND total_rates > 0
+    ORDER BY (
+        (total_rates / (total_rates + :minVotes)) * avg_rate +
+        (:minVotes / (total_rates + :minVotes)) * :systemAverageRate
+    ) DESC
+    LIMIT :limit
+    """,
+            nativeQuery = true
+    )
+    List<Novel> findTopNovelsByBayesianScore(
+            @Param("minVotes") int minVotes,
+            @Param("systemAverageRate") float systemAverageRate,
+            @Param("limit") int limit
+    );
 }

@@ -10,10 +10,12 @@ public class TopNovelDto {
     private String novelId;
     private String novelName;
     private String novelSlug;
+    private String novelCoverImage;
     private Long bookmarkCount;
     private Long viewCount;
     private Float avgRating;
     private Integer rank;
+    private Integer totalPromotions;
 
     public TopNovelDto(String aLong, String s, String s1, long l, long l1) {
         this.novelId = String.valueOf(aLong);

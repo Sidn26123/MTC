@@ -4,6 +4,9 @@ import httpClient from '../configurations/httpClient.js';
 import { getToken } from "./localStorageService.js";
 
 const API_BASE_URL = 'http://127.0.0.1:8000/api/chat';
+const API_RAG_URL = 'http://127.0.0.1:8000/api/rag';
+
+const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU0ODExMjAyLCJpYXQiOjE3NTQ3MjQ4MDIsImp0aSI6ImI1OGU3OTlmYWE4MjRlZjM4NzhjYzMxZDJlMGZhYzQ1IiwidXNlcl9pZCI6MX0.uRUG6tRT0MMEE6p5W58OT1_jtHfK8dhk3zirXa0pvtk"
 
 export const chatService = {
     // Document management
@@ -30,7 +33,12 @@ export const chatService = {
 
     async getDocuments() {
         try {
-            const response = await fetch(`${API_BASE_URL}/documents/`);
+            const response = await fetch(`${API_RAG_URL}/documents`, {
+                method: 'GET',
+                headers: {
+                    ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+                },
+            });
 
             if (!response.ok) {
                 throw new Error('Failed to fetch documents');
@@ -133,6 +141,85 @@ export const chatService = {
             throw error;
         } finally {
             if (callbacks.onFinish) callbacks.onFinish();
+        }
+    },
+
+    async sendMessageRAG(message, conversationId = null, model = 'llama3.2:1b', callbacks = {}) {
+        console.log("Sending RAG message:", message, conversationId, model);
+        try {
+            const { onStart, onSuccess, onError, onFinish } = callbacks;
+
+            if (onStart) onStart();
+
+            const url =
+                `${API_RAG_URL}/ask/`;
+
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+                },
+                body: JSON.stringify({ question: message, model }),
+            });
+
+
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to send message');
+            }
+
+            const data = await response.json();
+            console.log("RAG response data:", data);
+            if (onSuccess) onSuccess(data);
+
+            return data;
+        } catch (error) {
+            console.error('Error sending message:', error);
+            if (callbacks.onError) callbacks.onError(error);
+            throw error;
+        } finally {
+            if (callbacks.onFinish) callbacks.onFinish();
+        }
+    },
+    async getDocumentDB(documentId) {
+        try {
+            const response = await fetch(`${API_RAG_URL}/documents/${documentId}`, {
+                method: 'GET',
+                headers: {
+                    ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch document');
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching document:', error);
+            throw error;
+        }
+    },
+
+    async getDocumentByChunkid(chunkId) {
+        try {
+            const response = await fetch(`${API_RAG_URL}/document/chunk/${chunkId}`, {
+                method: 'GET',
+                headers: {
+                    ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch document by chunk ID');
+            }
+
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching document by chunk ID:', error);
+            throw error;
         }
     }
 };

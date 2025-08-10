@@ -4,6 +4,7 @@ import './index.css'
 import App from './App.jsx'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import WrappedApp from "./App.jsx";
+import AppWithRouter from './AppWithRouter.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

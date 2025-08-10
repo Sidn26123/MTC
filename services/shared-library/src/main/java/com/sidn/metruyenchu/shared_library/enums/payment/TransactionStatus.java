@@ -7,7 +7,8 @@ public enum TransactionStatus implements EnumUtils<TransactionStatus> {
     COMPLETED("Hoàn tất"),
     FAILED("Thất bại"),
     CANCELED("Đã hủy"),
-    REFUNDED("Đã hoàn tiền"),;
+    REFUNDED("Đã hoàn tiền"),
+    CANCELLED("Đã hủy");
     private final String label;
 
     TransactionStatus(String label) {

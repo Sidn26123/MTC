@@ -27,6 +27,7 @@ public class SecurityConfig {
             "/permissions/token", "/auth/social-login", "/auth/social/callback",
             "/identity/auth/social-login",
             "/identity/auth/social/callback",
+            "**/truyen/**", "/novel/**",
     };
     //    private final String[]
     @Value("${jwt.signerKey}")

@@ -35,132 +35,25 @@ const DefaultNavigator = ({data, goNext, goBack, goFirst, goLast}) => {
 }
 
 
-// const PageNavigator = ({
-//                            page = 1,
-//                            totalPages = 1,
-//                            pageSize = 10,
-//                            onPageChange = () => {},
-//                            onPageSizeChange = () => {},
-//                            onBackward = () => {},
-//                            onForward = () => {},
-//                            onFirst = () => {},
-//                            onLast = () => {},
-//                        }) => {
-//     const [currentPage, setCurrentPage] = useState(page);
-//     const [inputPage, setInputPage] = useState(page.toString());
-//     const [currentPageSize, setCurrentPageSize] = useState(pageSize.toString());
-//
-//     // Update internal state when props change
-//     useEffect(() => {
-//         setCurrentPage(page);
-//         setInputPage(page.toString());
-//     }, [page]);
-//
-//     useEffect(() => {
-//         setCurrentPageSize(pageSize.toString());
-//     }, [pageSize]);
-//
-//     // Handle page input change
-//     const handlePageInputChange = (e) => {
-//         setInputPage(e.target.value);
-//     };
-//
-//     // Handle page size input change
-//     const handlePageSizeInputChange = (e) => {
-//         setCurrentPageSize(e.target.value);
-//     };
-//
-//     // Navigate to first page
-//     const handleFirstPage = () => {
-//         if (currentPage > 1) {
-//             onFirst?.();
-//             onPageChange(1);
-//         }
-//     };
-//
-//     // Navigate to previous page
-//     const handlePreviousPage = () => {
-//         if (currentPage > 1) {
-//             onBackward?.();
-//             onPageChange(currentPage - 1);
-//         }
-//     };
-//
-//     // Navigate to next page
-//     const handleNextPage = () => {
-//         if (currentPage < totalPages) {
-//             onForward?.();
-//             onPageChange(currentPage + 1);
-//         }
-//     };
-//
-//     // Navigate to last page
-//     const handleLastPage = () => {
-//         if (currentPage < totalPages) {
-//             onLast?.();
-//             onPageChange(totalPages);
-//         }
-//     };
-//
-//     // Handle page input keydown event (Enter key)
-//     const handlePageInputKeyDown = (e) => {
-//         if (e.key === 'Enter') {
-//             const newPage = parseInt(inputPage, 10);
-//             if (!isNaN(newPage) && newPage >= 1 && newPage <= totalPages) {
-//                 onPageChange(newPage);
-//             } else {
-//                 // Reset to current page if invalid input
-//                 setInputPage(currentPage.toString());
-//             }
-//         }
-//     };
-//
-//     // Handle page size input keydown event (Enter key)
-//     const handlePageSizeInputKeyDown = (e) => {
-//         if (e.key === 'Enter') {
-//             const newPageSize = parseInt(currentPageSize, 10);
-//             if (!isNaN(newPageSize) && newPageSize > 0) {
-//                 onPageSizeChange(newPageSize);
-//             } else {
-//                 // Reset to current page size if invalid input
-//                 setCurrentPageSize(pageSize.toString());
-//             }
-//         }
-//     };
-//
-//     // Handle blur events to reset invalid inputs
-//     const handlePageInputBlur = () => {
-//         const newPage = parseInt(inputPage, 10);
-//         if (isNaN(newPage) || newPage < 1 || newPage > totalPages) {
-//             setInputPage(currentPage.toString());
-//         }
-//     };
-//
-//     const handlePageSizeInputBlur = () => {
-//         const newPageSize = parseInt(currentPageSize, 10);
-//         if (isNaN(newPageSize) || newPageSize < 1) {
-//             setCurrentPageSize(pageSize.toString());
-//         }
-//     };
 const PageNavigator = ({
-                           page = 0,
+                           page = 1,
                            pageSize = 10,
                            totalPages = 1,
                            totalElements = 0,
                            onPageChange,
-                           onPageSizeChange
-                       }) => {
+                           onPageSizeChange }) =>
+{
     const [inputPage, setInputPage] = useState(page.toString());
     const [currentPage, setCurrentPage] = useState(page);
     const [currentPageSize, setCurrentPageSize] = useState(pageSize.toString());
 
     // const changePage = onPageChange;
-    const changePage = useSetPage();
+    const changePage = onPageChange;
     const changePageSize = onPageSizeChange;
 
     // Update state when props change
     useEffect(() => {
-        setCurrentPage(page);
+        setCurrentPage(page-1);
         setInputPage(page.toString());
     }, [page]);
 
@@ -176,15 +69,15 @@ const PageNavigator = ({
     };
 
     const handlePreviousPage = () => {
-        if (currentPage > 1) {
-            changePage(currentPage - 1);
+        if (currentPage > 0) {
+            changePage(currentPage);
         }
     };
 
     const handleNextPage = () => {
-        console.log(currentPage, totalPages);
-        if (currentPage < totalPages) {
-            changePage(currentPage + 1);
+        if (currentPage < totalPages - 1) {
+            changePage(currentPage + 2);
+
         }
     };
 
@@ -240,9 +133,12 @@ const PageNavigator = ({
         let newPageSize = parseInt(currentPageSize, 10);
 
         // Validate the page size
-        if (isNaN(newPageSize) || newPageSize < 1) {
+        if (isNaN(newPageSize)) {
             newPageSize = 10; // Default page size
-        } else if (newPageSize > 100) {
+        } else if (newPageSize < 1) {
+            newPageSize = 1; // Min page size
+        }
+        else if (newPageSize > 100) {
             newPageSize = 100; // Max page size
         }
 
@@ -312,7 +208,7 @@ const PageNavigator = ({
                     className="border border-primary border-gray-500 rounded h-8 w-12 pl-4 bg-inherit text-black dark:text-white placeholder:text-gray-500 text-sm"
                     aria-label="Items per page"
                 />
-                <span className="text-sm ml-1">/ page</span>
+                <span className="text-sm ml-1">/ {totalElements}</span>
             </div>
         </div>
     );

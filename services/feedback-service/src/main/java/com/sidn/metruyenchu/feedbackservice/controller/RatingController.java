@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/ratings")
@@ -27,6 +28,7 @@ public class RatingController {
     @PostMapping()
     ApiResponse<RatingResponse> createReview(@Valid @RequestBody RatingCreationRequest request) {
         ApiResponse<RatingResponse> apiResponse = new ApiResponse<>();
+        log.info("Creating review with request: {}", request);
         apiResponse.setResult(reviewService.createReview(request));
         return apiResponse;
     }
@@ -59,6 +61,22 @@ public class RatingController {
     ApiResponse<PageResponse<RatingResponse>> getReviewsByNovelId(@PathVariable("novelId") String novelId, @ModelAttribute BaseFilterRequest request) {
         return ApiResponse.<PageResponse<RatingResponse>>builder()
                 .result(reviewService.getRatingInNovel(novelId, request))
+                .build();
+    }
+
+    @GetMapping("/new")
+    ApiResponse<List<RatingResponse>> getNewReviews(@RequestParam(value = "size", defaultValue = "1") int size)
+                                                            {
+        return ApiResponse.<List<RatingResponse>>builder()
+                .result(reviewService.getTopRecentRatings(size))
+                .build();
+    }
+
+    @GetMapping("/novel/{novelId}/stats")
+    public ApiResponse<Map<Integer, Long>> getRatingStats(@PathVariable String novelId) {
+        return ApiResponse.<Map<Integer,Long>>
+                builder()
+                .result(reviewService.getRatingCountGroupedByStar(novelId))
                 .build();
     }
 

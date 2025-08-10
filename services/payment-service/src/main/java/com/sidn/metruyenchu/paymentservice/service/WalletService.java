@@ -1,14 +1,19 @@
 package com.sidn.metruyenchu.paymentservice.service;
 
 import com.sidn.metruyenchu.paymentservice.configurations.VNPAYConfig;
+import com.sidn.metruyenchu.paymentservice.dto.request.transactions.TransactionsCreateRequest;
 import com.sidn.metruyenchu.paymentservice.dto.request.walletHistory.WalletBalanceHistoryCreateRequest;
 import com.sidn.metruyenchu.paymentservice.dto.response.PaymentResponse;
 import com.sidn.metruyenchu.paymentservice.dto.response.payment.VNPayResponse;
+import com.sidn.metruyenchu.paymentservice.dto.response.transactions.TransactionsResponse;
 import com.sidn.metruyenchu.paymentservice.dto.response.wallet.WalletResponse;
 import com.sidn.metruyenchu.paymentservice.entity.*;
 import com.sidn.metruyenchu.paymentservice.entity.PaymentMethod;
 import com.sidn.metruyenchu.paymentservice.enums.*;
 import com.sidn.metruyenchu.shared_library.exceptions.AppException;
+import com.sidn.metruyenchu.shared_library.enums.payment.TransactionType;
+import com.sidn.metruyenchu.shared_library.enums.payment.TransactionStatus;
+
 import com.sidn.metruyenchu.paymentservice.mapper.PaymentRequestsMapper;
 import com.sidn.metruyenchu.paymentservice.mapper.TransactionsMapper;
 import com.sidn.metruyenchu.paymentservice.mapper.WalletMapper;
@@ -30,6 +35,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import static com.sidn.metruyenchu.paymentservice.utils.TokenUtils.getUserIdFromContext;
+
 @Service
 @RequiredArgsConstructor
 @FieldDefaults(level  = AccessLevel.PRIVATE, makeFinal = true)
@@ -44,8 +51,9 @@ public class WalletService {
     WalletMapper walletMapper;
     TransactionsMapper transactionsMapper;
     PaymentRequestsMapper paymentRequestsMapper;
-    private final CurrencyService currencyService;
-    private final WalletBalanceHistoryService walletBalanceHistoryService;
+    CurrencyService currencyService;
+    WalletBalanceHistoryService walletBalanceHistoryService;
+    private final TransactionsService transactionsService;
 
     /**
      * Find or create a wallet for a user
@@ -115,8 +123,7 @@ public class WalletService {
         }
 
         // Validate currency
-        Currency currency = currenciesRepository.findById(currencyId)
-                .orElseThrow(() -> new IllegalArgumentException("Invalid currency ID"));
+        Currency currency = currencyService.getCurrencyEntityById(currencyId);
 
         if (currency.getStatus() == CurrencyStatus.INACTIVE) {
             throw new IllegalArgumentException("Currency is inactive");
@@ -153,8 +160,8 @@ public class WalletService {
                 .userId(userId)
                 .wallet(wallet)
                 .type(TransactionType.DEPOSIT)
-                .amount(amount.intValue())
-                .currencyId(currencyId)
+                .amount(BigDecimal.valueOf(amount.intValue()))
+                .currency(currency)
                 .status(TransactionStatus.PENDING)
 //                .transactionStatus(TransactionStatus.PENDING)
 //                .transactionType(TransactionType.DEPOSIT)
@@ -243,7 +250,7 @@ public class WalletService {
 
             // Update wallet balance
             Wallet wallet = transaction.getWallet();
-            wallet.setBalance(wallet.getBalance().add(BigDecimal.valueOf(transaction.getAmount())));
+            wallet.setBalance(wallet.getBalance().add((transaction.getAmount())));
             walletRepository.save(wallet);
 
 //            walletBalanceHistoryService.recordBalanceChange(WalletBalanceHistoryCreateRequest.builder()
@@ -300,12 +307,14 @@ public class WalletService {
     public void initializeWalletForUser(String userId) {
         //currency list
         List<Currency> currencies = currenciesRepository.findAllByCurrencyStatus(CurrencyStatus.ACTIVE);
-
         for (Currency currency : currencies) {
+
             // Check if wallet already exists
             Optional<Wallet> existingWallet = walletRepository.findByUserIdAndCurrencyId(userId, currency.getId());
+            log.info("ex: {}", currency.getId());
             if (existingWallet.isPresent()) {
                 continue; // Wallet already exists, skip creation
+
             }
 
             // Create a new wallet for each active currency
@@ -317,6 +326,8 @@ public class WalletService {
                     .build();
 
             walletRepository.save(newWallet);
+
+
         }
 
         // Create a new wallet with zero balance
@@ -355,5 +366,54 @@ public class WalletService {
         Currency currency = currencyService.getCurrencyEntityById(currencyId);
         return walletRepository.findByUserIdAndCurrencyId(userId, currencyId)
                 .orElseThrow(() -> new AppException(ErrorCode.WALLET_NOT_FOUND));
+    }
+
+    public BigDecimal getWalletXuK() {
+        String userId = getUserIdFromContext();
+        Currency currency = currencyService.getCurrencyEntityByCode("XUK");
+        WalletResponse wallet = walletRepository.findByUserIdAndCurrencyId(userId, currency.getId())
+                .map(walletMapper::toResponse)
+                .orElseThrow(() -> new AppException(ErrorCode.WALLET_NOT_FOUND));
+        return wallet.getBalance() != null ? wallet.getBalance() : BigDecimal.ZERO;
+    }
+
+    public Void promotion(){
+        String userId = getUserIdFromContext();
+        Currency currency = currencyService.getCurrencyEntityByCode("XUK");
+        Wallet wallet = walletRepository.findByUserIdAndCurrencyId(userId, currency.getId())
+                .orElseThrow(() -> new AppException(ErrorCode.WALLET_NOT_FOUND));
+        log.info("Promotion deduction for user: {}, Wallet ID: {}, Current Balance: {} {}", userId, wallet.getId(), wallet.getBalance(), wallet.getBalance().compareTo(BigDecimal.ZERO));
+        if (wallet.getBalance() == null || wallet.getBalance().compareTo(BigDecimal.ZERO) < 1) {
+            return null;
+
+        }
+
+        // Deduct 1 XUK from the wallet
+        BigDecimal balanceAfter = wallet.getBalance().subtract(BigDecimal.ONE);
+        log.info("Deducting 1 XUK from wallet. User ID: {}, Current Balance: {}, New Balance: {}", userId, wallet.getBalance(), balanceAfter);
+        wallet.setBalance(balanceAfter);
+        walletRepository.save(wallet);
+
+        TransactionsResponse transactions = transactionsService.createTransaction(
+                TransactionsCreateRequest.builder()
+                        .userId(userId)
+                        .walletId(wallet.getId())
+                        .type(TransactionType.PURCHASE)
+                        .amount(1) // Deducting 1 XUK
+                        .currencyId(currency.getId())
+                        .build()
+        );
+
+
+//        // Record the balance change
+//        walletBalanceHistoryService.recordBalanceChange(WalletBalanceHistoryCreateRequest.builder()
+//                .walletId(wallet.getId())
+//                .transactionId(transactions.getId())
+//                .amount(BigDecimal.ONE.negate()) // Deducting 1 XUK
+//                .description("Promotion deduction")
+//                .type(WalletBalanceHistoryType.PROMOTION)
+//                .build());
+
+        return null;
     }
 }

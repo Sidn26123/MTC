@@ -96,79 +96,6 @@ const SimpleDropdown = ({ dropdown }) => {
 };
 
 
-// const CategoryDropdown = ({ dropdown }) => {
-//     const [isOpen, setIsOpen] = useState(false);
-//     const [selectedItem, setSelectedItem] = useState(null); // Thêm state cho item được chọn
-//     const dropdownRef = useOutsideClick(() => setIsOpen(false));
-//
-//     const handleSelect = (item) => {
-//         setSelectedItem(item);
-//         setIsOpen(false);
-//     };
-//
-//     return (
-//         <div ref={dropdownRef} className="relative inline-block">
-//             <button
-//                 id="dropdownRadioButton"
-//                 onClick={() => setIsOpen(!isOpen)}
-//                 className="inline-flex items-center justify-between text-gray-500 border border-gray-500 font-medium rounded-lg text-sm px-3 py-1.5 focus:outline-none hover:ring-1 focus:ring-1 focus:ring-gray-500 w-fit max-w-full"
-//                 type="button"
-//             >
-//         <span className="truncate max-w-[calc(100%-1rem)]">
-//             {selectedItem ? selectedItem.name : 'Chọn thể loại'}
-//         </span>
-//                 <svg
-//                     className="w-2.5 h-2.5 ml-2 shrink-0"
-//                     aria-hidden="true"
-//                     xmlns="http://www.w3.org/2000/svg"
-//                     fill="none"
-//                     viewBox="0 0 10 6"
-//                 >
-//                     <path
-//                         stroke="currentColor"
-//                         strokeLinecap="round"
-//                         strokeLinejoin="round"
-//                         strokeWidth="2"
-//                         d="m1 1 4 4 4-4"
-//                     />
-//                 </svg>
-//             </button>
-//
-//
-//             {isOpen && (
-//                 <div className="w-full ">
-//                     <div
-//                         id="dropdownRadio"
-//                         className="z-10 absolute divide-y rounded-lg shadow-sm bg-cus-gray mt-2 "
-//                     >
-//                         <ul className="space-y-1 text-sm text-gray-700" aria-labelledby="dropdownRadioButton">
-//                             {dropdown.map((item) => (
-//                                 <li key={item.id}>
-//                                     <div
-//                                         className="flex items-center p-2 rounded-sm hover:bg-gray-600 cursor-pointer"
-//                                         onClick={() => handleSelect(item)}
-//                                     >
-//                                         <input
-//                                             type="radio"
-//                                             checked={selectedItem?.id === item.id}
-//                                             readOnly
-//                                             className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 hidden"
-//                                         />
-//                                         <label
-//                                             className="w-full ms-2 text-sm font-medium text-gray-900 dark:text-gray-300 mr-4">
-//                                             {item.name}
-//                                         </label>
-//                                     </div>
-//                                 </li>
-//                             ))}
-//                         </ul>
-//                     </div>
-//                 </div>
-//             )}
-//         </div>
-//     );
-// };
-
 const CategoryDropdown = ({ dropdown = [], onSelect, placeholder = "Chọn mục" }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
@@ -183,7 +110,7 @@ const CategoryDropdown = ({ dropdown = [], onSelect, placeholder = "Chọn mục
     };
 
     return (
-        <div ref={dropdownRef} className="relative inline-block w-full">
+        <div ref={dropdownRef} className="relative inline-block w-full min-w-[20px]">
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="inline-flex items-center justify-between w-full text-gray-500 border border-gray-500 font-medium rounded-lg text-sm px-3 py-1.5 focus:outline-none hover:ring-1 focus:ring-1 focus:ring-gray-500"
@@ -322,7 +249,7 @@ const CustomDatePicker = ({value, onChange}) =>{
 }
 const FormattedContent = ({ content }) => {
     if (!content) return null; // Kiểm tra nếu content không tồn tại
-    const lines = content.split(/[\n|\\n]+/).filter(line => line.trim() !== '');
+    const lines = content.split(/[\n]+/).filter(line => line.trim() !== '');
     return (
         <>
             {lines.map((line, index) => (
@@ -336,4 +263,52 @@ const FormattedContent = ({ content }) => {
     );
 };
 
-export { FullScreenWrapper, SimpleDropdown, useOutsideClick, CustomDatePicker, CategoryDropdown, FormattedContent };
+
+const ExpandableText = ({ text = '', limit = 100 }) => {
+    const [expanded, setExpanded] = useState(false);
+
+    if (text.length > limit) {
+        setCanExpand(true);
+    }
+    if (!text) return <span className="text-gray-400 italic">Không có mô tả</span>;
+
+    const isLongText = text.length > limit;
+    const displayedText = expanded || !isLongText ? text : text.slice(0, limit) + '...';
+
+    return (
+        <span className="text-gray-400 text-sm">
+            {displayedText}
+            {isLongText && (
+                <button
+                    onClick={() => setExpanded(!expanded)}
+                    className="ml-1 text-blue-400 hover:underline"
+                >
+                    {expanded ? 'Ẩn bớt' : 'Đọc tiếp'}
+                </button>
+            )}
+        </span>
+    );
+};
+
+export const NovelCoverImage_S = ({ src, alt, onClick }) => {
+    return (
+        <img
+            className={
+                'w-10 h-15 shadow-lg rounded mx-auto'
+            }
+            src={src}
+            alt={alt}
+        ></img>
+    );
+};
+
+
+export {
+    FullScreenWrapper,
+    SimpleDropdown,
+    useOutsideClick,
+    CustomDatePicker,
+    CategoryDropdown,
+    FormattedContent,
+    ExpandableText
+};

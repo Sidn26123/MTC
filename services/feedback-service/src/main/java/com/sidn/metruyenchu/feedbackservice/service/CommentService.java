@@ -8,9 +8,9 @@ import com.sidn.metruyenchu.feedbackservice.dto.response.feign.ChapterResponse;
 import com.sidn.metruyenchu.feedbackservice.dto.response.feign.NovelResponse;
 import com.sidn.metruyenchu.feedbackservice.dto.response.projection.GeneralCountProjectionResponse;
 import com.sidn.metruyenchu.feedbackservice.entity.Comment;
-import com.sidn.metruyenchu.feedbackservice.enums.FeedbackType;
-import com.sidn.metruyenchu.feedbackservice.exception.AppException;
-import com.sidn.metruyenchu.feedbackservice.exception.ErrorCode;
+import com.sidn.metruyenchu.shared_library.enums.feedback.FeedbackType;
+import com.sidn.metruyenchu.shared_library.exceptions.AppException;
+import com.sidn.metruyenchu.shared_library.exceptions.ErrorCode;
 import com.sidn.metruyenchu.feedbackservice.mapper.CommentMapper;
 import com.sidn.metruyenchu.feedbackservice.repository.CommentRepository;
 import com.sidn.metruyenchu.feedbackservice.repository.LikeRepository;
@@ -46,6 +46,7 @@ public class CommentService {
 
     NovelClient novelClient;
     private final LikeRepository likeRepository;
+    RatingService ratingService;
 
 
     public CommentResponse getComment(String commentId) {
@@ -66,20 +67,38 @@ public class CommentService {
         request.setCommentedBy(userId);
         var comment = commentMapper.toComment(request);
         //check nếu feedback type không tồn tại trong enum
-        if (!EnumUtils.isValidEnum(FeedbackType.class, request.getFeedbackType().toString())){
-            throw new AppException(ErrorCode.INVALID_FEEDBACK_TYPE);
-        }
+        log.info("Feedback type: {}", request.getFeedbackType());
+        NovelResponse novelResponse = null;
+        ChapterResponse chapterResponse = null;
         //openfeign call to check novel exist
-        NovelResponse novelResponse = callFeignGetNovelInfo(novelClient, request.getNovelId()).getResult();
-        ChapterResponse chapterResponse = callFeignGetChapterInfo(novelClient, request.getChapterId()).getResult();
+        if (request.getNovelId() != null){
+            novelResponse = callFeignGetNovelInfo(novelClient, request.getNovelId()).getResult();
 
+        }
+        if (request.getChapterId() != null){
+            //openfeign call to check chapter exist
+            if (novelResponse == null){
+                throw new AppException(ErrorCode.NOVEL_NOT_FOUND);
+            }
+            chapterResponse = callFeignGetChapterInfo(novelClient, request.getChapterId()).getResult();
+            if (chapterResponse == null){
+                throw new AppException(ErrorCode.CHAPTER_NOT_FOUND);
+            }
+        }
+//        chapterResponse = callFeignGetChapterInfo(novelClient, request.getChapterId()).getResult();
+
+
+//        updateCommentStat(request.getFeedbackType(), request.getParentId(), 1);
         comment = commentRepository.save(comment);
-        novelClient.commentNovel(request.getNovelId(),
-                CommentNovelRequest.builder()
-                        .chapterId(request.getChapterId())
-                        .novelId(request.getNovelId())
-                        .chapterIdx(chapterResponse.getChapterIdx())
-                        .build());
+        if (request.getNovelId() != null && request.getChapterId() != null) {
+            novelClient.commentNovel(request.getNovelId(),
+                    CommentNovelRequest.builder()
+                            .chapterId(request.getChapterId())
+                            .novelId(request.getNovelId())
+                            .chapterIdx(chapterResponse != null ? chapterResponse.getChapterIdx() : 0)
+                            .build());
+
+        }
 
 //        try{
 //            comment = commentRepository.save(comment);
@@ -147,7 +166,7 @@ public class CommentService {
         Sort sort = Sort.by(Sort.Direction.DESC, "createdAt");
         Pageable pageable = PageRequest.of(request.getPage() - 1, request.getSize(), sort);
 
-        Page<Comment> comments = commentRepository.findAllByNovelId(request.getNovelId(), pageable);
+        Page<Comment> comments = commentRepository.findAllByNovelIdAndIsDeletedIsFalse(request.getNovelId(), pageable);
         List<CommentResponse> commentResponses = comments.map(commentMapper::toCommentResponse).toList();
         return PageResponse.<CommentResponse>builder()
                 .currentPage(request.getPage())
@@ -248,6 +267,30 @@ public class CommentService {
 
     public void decrementTotalDisLikes(String commentId) {
         commentRepository.decrementTotalDisLikes(commentId);
+    }
+
+    /**
+     *
+     * @param feedbackType
+     * @param parentId
+     * @param mode 0: not change, 1: increase, -1: decrease
+     */
+    public void updateCommentStat(com.sidn.metruyenchu.shared_library.enums.feedback.FeedbackType feedbackType, String parentId, int mode){
+        if (feedbackType == com.sidn.metruyenchu.shared_library.enums.feedback.FeedbackType.COMMENT){
+            Comment comment = commentRepository.findById(parentId)
+                    .orElseThrow(() -> new AppException(ErrorCode.COMMENT_NOT_FOUND));
+            comment.setTotalReplies(comment.getTotalReplies() + mode);
+
+            commentRepository.save(comment);
+        }
+        else if (feedbackType == com.sidn.metruyenchu.shared_library.enums.feedback.FeedbackType.RATING){
+            ratingService.getRatingEntity(parentId)
+                    .ifPresent(rating -> {
+                        rating.setTotalReplies(rating.getTotalReplies() + mode);
+                        ratingService.saveRating(rating);
+                    });
+        }
+
     }
 
 }

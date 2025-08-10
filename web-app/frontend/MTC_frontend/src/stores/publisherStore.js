@@ -1,111 +1,3 @@
-// import { create } from 'zustand';
-//
-// const defaultPagination = {
-//     totalPages: 0,
-//     pageSize: 10,
-//     currentPage: 1,
-//     totalElements: 0,
-//     data: []
-// };
-//
-// const paginatedKeys = ['myPublishedNovels', 'novelStatistics', 'reports', 'drafts'];
-//
-// const generatePaginationSetters = (set) => {
-//     const actions = {};
-//     for (const key of paginatedKeys) {
-//         // Setter thay đổi pageSize và reset currentPage = 1
-//         actions[`set${capitalize(key)}PageSize`] = (size) => set((state) => ({
-//             [key]: {
-//                 ...state[key],
-//                 pageSize: size,
-//                 currentPage: 1
-//             }
-//         }));
-//
-//         // Hàm reset về defaultPagination
-//         actions[`reset${capitalize(key)}`] = () => set(() => ({
-//             [key]: { ...defaultPagination }
-//         }));
-//     }
-//     return actions;
-// };
-//
-// const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
-// const dynamicSetters = (set, keys) => {
-//     const actions = {};
-//     for (const key of keys) {
-//         actions[`set${capitalize(key)}`] = (data) => set((state) => ({
-//             [key]: {
-//                 ...state[key],
-//                 ...data
-//             }
-//         }));
-//     }
-//     return actions;
-// };
-// const usePublisherStore = create((set) => ({
-//     general: {},
-//     myPublishedNovels: { ...defaultPagination },
-//     novelStatistics: { ...defaultPagination },
-//     reports: { ...defaultPagination },
-//     drafts: { ...defaultPagination },
-//     currentChosenPublishedNovel: "",
-//     currentNovelChapterList: {...defaultPagination},
-//     ...generatePaginationSetters(set),
-//     ...dynamicSetters(set, ['currentNovelChapterList']),
-//
-//     setCurrentNovelChapterList: (data) => set((state) => ({
-//         currentNovelChapterList: {
-//             ...state.currentNovelChapterList,
-//             ...data,
-//         }
-//     })),
-//
-//
-//
-//     setCurrentChosenPublishedNovel: (novelId) => set(() => ({
-//         currentChosenPublishedNovel: novelId
-//     })),
-//
-//     resetGeneral: () => set(() => ({
-//         general: {}
-//     })),
-//
-//     resetMyPublishedNovels: () => set(() => ({
-//         myPublishedNovels: { ...defaultPagination }
-//     })),
-//
-//     resetNovelStatistics: () => set(() => ({
-//         novelStatistics: { ...defaultPagination }
-//     })),
-//
-//     resetReports: () => set(() => ({
-//         reports: { ...defaultPagination }
-//     })),
-//
-//     resetDrafts: () => set(() => ({
-//         drafts: { ...defaultPagination }
-//     })),
-// }));
-//
-//
-// export const usePublisherGeneral = () => usePublisherStore((state) => state.general);
-// export const useMyPublishedNovels = () => usePublisherStore((state) => state.myPublishedNovels);
-// export const useNovelStatistics = () => usePublisherStore((state) => state.novelStatistics);
-// export const useReports = () => usePublisherStore((state) => state.reports);
-// export const useDrafts = () => usePublisherStore((state) => state.drafts);
-// export const useCurrentChosenPublishedNovel = () => usePublisherStore((state) => state.currentChosenPublishedNovel);
-// export const usePublisherActions = () => usePublisherStore((state) => ({
-//
-//     setCurrentChosenPublishedNovel: state.setCurrentChosenPublishedNovel,
-//     resetMyPublishedNovels: state.resetMyPublishedNovels,
-//     resetNovelStatistics: state.resetNovelStatistics,
-//     resetReports: state.resetReports,
-//     resetDrafts: state.resetDrafts,
-//     resetGeneral: state.resetGeneral
-//
-// }));
-
 import { create } from 'zustand';
 
 const defaultPagination = {
@@ -168,9 +60,15 @@ export const usePublisherStore = create((set) => ({
     currentPublishedNovel: {},
     myPublishedNovels: [],
     chapterPrepareForPublish: [],
+    currentChapterList: [],
+    currentChoseChapter: {},
+    drafts: [],
     actions: {
         setMyPublishedNovels: (paginationData) => set((state) => ({
             myPublishedNovels: paginationData
+        })),
+        setCurrentChapterList: (paginationData) => set((state) => ({
+            currentChapterList: paginationData
         })),
         setCurrentChosenPublishedNovel: (novelId) => set(() => ({
             currentChosenPublishedNovel: novelId
@@ -180,7 +78,16 @@ export const usePublisherStore = create((set) => ({
         })),
         setChapterPrepareForPublish: (chapters) => set(() => ({
             chapterPrepareForPublish: chapters
-        }))
+        })),
+        setNovelStatistics: (statistics) => set((state) => ({
+            novelStatistics: statistics
+        })),
+        setDrafts: (drafts) => set((state) => ({
+            drafts: drafts
+        })),
+        setCurrentChosenChapter: (chapter) => set((state) => ({
+            currentChoseChapter: chapter
+        })),
     },
     // --- Pagination States ---
     ...Object.fromEntries([...paginatedKeys, ...dynamicPaginationKeys].map(key => [key, { ...defaultPagination }])),
@@ -200,8 +107,15 @@ export const useNovelStatistics = () => usePublisherStore((state) => state.novel
 export const useCurrentChosenPublishedNovel = () => usePublisherStore((state) => state.currentChosenPublishedNovel);
 export const useCurrentPublishedNovel = () => usePublisherStore((state) => state.currentPublishedNovel);
 export const useChapterPrepareForPublish = () => usePublisherStore((state) => state.chapterPrepareForPublish);
+export const useDrafts = () => usePublisherStore((state) => state.drafts);
+export const useCurrentChapterList = () => usePublisherStore((state) => state.currentChapterList);
+export const useCurrentChosenChapter = () => usePublisherStore((state) => state.currentChoseChapter);
+
 
 export const useSetMyPublishedNovels = () => usePublisherStore((state) => state.actions.setMyPublishedNovels);
 export const useSetCurrentChosenPublishedNovel = () => usePublisherStore((state) => state.actions.setCurrentChosenPublishedNovel);
 export const useSetCurrentPublishedNovel = () => usePublisherStore((state) => state.actions.setCurrentPublishedNovel);
 export const useSetChapterPrepareForPublish = () => usePublisherStore((state) => state.actions.setChapterPrepareForPublish);
+export const useSetDrafts = () => usePublisherStore((state) => state.actions.setDrafts);
+export const useSetCurrentChapterList = () => usePublisherStore((state) => state.actions.setCurrentChapterList);
+export const useSetCurrentChosenChapter = () => usePublisherStore((state) => state.actions.setCurrentChosenChapter);

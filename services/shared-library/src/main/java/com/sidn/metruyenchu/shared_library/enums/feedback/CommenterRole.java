@@ -6,7 +6,8 @@ public enum CommenterRole implements EnumUtils<CommenterRole> {
     REPORTER("Người báo cáo"),
     PUBLISHER("Người đăng truyện"),
     ADMIN("Quản trị viên"),
-    MODERATOR("Người quản lý");
+    MODERATOR("Người quản lý"),
+    SYSTEM("Hệ thống");
     private final String label;
 
     CommenterRole(String label) {

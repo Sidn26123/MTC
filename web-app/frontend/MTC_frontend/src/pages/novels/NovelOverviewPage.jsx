@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router';
+import { Link, useNavigate, useParams } from 'react-router';
 import MinialIntroduceNovelCard from "../../components/novel/MinialIntroduceNovelCard.jsx";
 import { RatingDetail } from "../../components/feedbacks/RatingDetail.jsx";
 import UserComment from "../../components/feedbacks/UserComment.jsx";
@@ -21,11 +21,26 @@ import { FormattedContent } from '../../common/CommonComponents.jsx';
 import { getCurrentPublisherChapter, getPublishedByPublisher } from '../../services/chapterService.js';
 import { useChapterActions, useListChapterCurrentPublished } from '../../stores/chapterStore.js';
 import { timeAgo } from '../../utils/DatetimeUtil.js';
-import { useCurrentNovelPublisher, useSetCurrentNovelPublisher } from '../../stores/userStores.js';
+import { useCurrentNovelPublisher, useSetCurrentNovelPublisher, useUser } from '../../stores/userStores.js';
 import { getProfileById } from '../../services/userService.js';
-import { sendRating } from '../../services/feedbackService.js';
-import { fetchCommentPage, useCurrentNovelComments } from '../../stores/feedbackStore.js';
+import { getCommentOfNovel, getRatingOfNovel, sendComment, sendRating } from '../../services/feedbackService.js';
+import {
+    fetchCommentPage,
+    fetchRatingPage,
+    useCurrentNovelComments,
+    useCurrentNovelRatings, useSetCurrentNovelComments, useSetCurrentNovelRating,
+} from '../../stores/feedbackStore.js';
 import { UserReply } from '../../components/feedbacks/Reply.jsx';
+import { getUserIdFromContext, isLoggedIn } from '../../services/authenticationService.js';
+import { getItemOfBookshelfByNovelId } from '../../services/bookshelfService.js';
+import {
+    useCurrentBookshelf, useCurrentNovelReadingChapter,
+    useSetCurrentNovelReadingChapter,
+} from '../../stores/bookshelfStore.js';
+import { roundToTwoDecimalPlaces } from '../../utils/Utils.js';
+import { Autoplay, FreeMode } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import { getNovelUrlWithSlug } from '../../utils/URLUtils.js';
 
 const NovelOverviewPage= () => {
     const [mode, setMode] = React.useState("rating");
@@ -34,11 +49,15 @@ const NovelOverviewPage= () => {
     const currentNovel = useCurrentNovel();
     const setCurrentNovel = useSetCurrentNovel();
     const currentNovelComments = useCurrentNovelComments();
-    console.log("currentNovelComments", currentNovelComments);
+    const setCurrentNovelComments = useSetCurrentNovelComments();
+    const rating = useCurrentNovelRatings();
+    const setRating = useSetCurrentNovelRating();
+
     useEffect(() => {
         if (!currentNovel || !currentNovel.slug || currentNovel.slug !== slug) {
             // Nếu chưa có novel hoặc slug không khớp thì fetch
              getNovelBySlug(slug).then(r => {
+                 console.log("Novel Overview Page: ", r.data.result);
                     setCurrentNovel(r.data.result);
                  window.scrollTo({
                      top: 0,
@@ -48,31 +67,48 @@ const NovelOverviewPage= () => {
 
             )
         }
+        if (currentNovel && currentNovel.id) {
+            fetchCommentPage(currentNovel.id).then(r => {
+                }
+            );
+        }
 
     }, [slug, currentNovel]);
     useEffect(() => {
         if (currentNovel && currentNovel.id) {
             fetchCommentPage(currentNovel.id).then(r => {
-
                     }
                 );
         }
+        getRatingOfNovel(currentNovel.id).then(
+            (data) => {
+                setRating(data.data.result)
+            }
+        )
+
     }, [currentNovel]);
-    // useEffect(() => {
-    //
-    // }, [slug])
+
+    const handleGotoRating = () => {
+        setMode('rating');
+        scrollToTabHeader();
+    }
+
+    const handleGotoComment = () => {
+        setMode('comment');
+        scrollToTabHeader();
+    }
+    const scrollToTabHeader = () => {
+        const element = document.getElementById('tab-header');
+        if (element) {
+            element.scrollIntoView({ behavior: 'smooth' });
+        }
+    };
 
 
-    //Smooth scroll to top
-    // useEffect(() => {
-    //     window.scrollTo({
-    //         top: 0,
-    //         behavior: 'smooth' // thêm animation cuộn mượt
-    //     });
-    // }, [slug]);
+
     return (
         <>
-            <div className={"px-20"}>
+            <div className={""}>
                 <div id ="masthead" className={"mx-auto"}>
                     <a id ="topbox-one" href={""} target={"_blank"} rel={"noopener noreferrer"}>
                         <img className={"w-full"} src="https://static.cdnno.com/storage/topbox/598742f2b91aa3516f6cd96c1cc59ee8.webp" alt={"abc"}></img>
@@ -82,7 +118,7 @@ const NovelOverviewPage= () => {
                 {
                     currentNovel.id ? (
                         <div className={"mt-5"} key={currentNovel.id}>
-                            <NovelStat novel ={currentNovel}/>
+                            <NovelStat novel ={currentNovel} gotoRating = {handleGotoRating} gotoComment = {handleGotoComment}/>
 
                         </div>
                     ) : (
@@ -125,32 +161,28 @@ const NovelOverviewPage= () => {
                                 {currentNovel.totalComments}
                             </span>
                         </div>
-                        <div
-                            onClick={() => setMode('fan')}
-                            className={`inline-flex items-center py-2 px-3 text-xs space-x-2 border-x hover:cursor-pointer ${
-                                mode === 'fan' ? 'bg-yellow-500 text-white' : 'primary-bg text-white'
-                            }`}
-                        >
-                            <span>HÂM MỘ</span>
-                            <span className="bg-red-700 inline-flex items-center justify-center min-w-6 h-6 ms-2 px-2 text-xs font-semibold text-white rounded-full">
-                                {/*{currentNovel.total}*/}
-                            </span>
-                        </div>
+
                     </div>
                     {mode === 'rating' ?
                         (
                             <div>
                                 <NovelRating novel = {currentNovel}/>
                                 <NovelRatingDetail />
-                                <RatingDetail />
+                                {rating && rating.data.map((item, index) => (
+                                    <div className={"flex flex-col gap-y-2 mb-5"} key={index}>
+                                        <RatingDetail rating={item}/>
+                                    </div>
+                                ))}
                             </div>
                         )
                         :
                         mode === 'comment' ?
                             (
                                 <div>
-                                    <CommentController comments = {currentNovelComments.data} totalComment = {currentNovelComments.totalElements}/>
+                                    {/*<CommentController comments = {currentNovelComments.data} totalComment = {currentNovelComments.totalElements}/>*/}
+                                    <CommentController novelId={currentNovel.id} totalComment={currentNovelComments.totalElements} />
                                 </div>
+
                             )
                             :
                             (
@@ -174,8 +206,11 @@ const NovelOverviewPage= () => {
 
 export default NovelOverviewPage;
 
-const NovelStat = (novel) => {
-    novel = novel.novel;
+export const NovelStat = ({novel, gotoRating, gotoComment}) => {
+    const navigate = useNavigate();
+    const currentBookshelf = useCurrentBookshelf();
+    const [idx,setIdx] = useState(0);
+    const setCurrent = useSetCurrentNovelReadingChapter();
     const data = {
         image: {
             src: novel.novelCoverImage,
@@ -205,18 +240,35 @@ const NovelStat = (novel) => {
             })
 
         }
-        getPublishedByPublisher(novel.currentPublisher.id, 6).then(r => {
-            setPublishedByPublisher(r.data.result);
-        })
 
-        getProfileById(novel.currentPublisher).then(r => {
-            setCurrentNovelPublisher(r.data.result);
-        })
+        if (isLoggedIn()){
+            getPublishedByPublisher(novel.currentPublisher.id, 6).then(r => {
+                setPublishedByPublisher(r.data.result);
+            })
+
+            getProfileById(novel.currentPublisher).then(r => {
+                setCurrentNovelPublisher(r.data.result);
+            })
+
+            getItemOfBookshelfByNovelId(currentBookshelf.id, novel.id).then(r => {
+
+                if (r.data.result) {
+                    setIdx(r.data.result.currentChapterIdx);
+                    setCurrent(r.data.result);
+                }
+            });
+        }
+
+
     }, []);
 
 
     function getCurrentPublisherFullName(currentNovelPublisher) {
         return currentNovelPublisher.firstName + " " + currentNovelPublisher.lastName;
+    }
+
+    function goReadingPage() {
+        navigate(`chuong-${idx}`)
     }
 
     return (
@@ -263,7 +315,10 @@ const NovelStat = (novel) => {
                             <div className={'flex flex-row my-3 text-sm'}>
                                 {/*Doc tiep*/}
                                 <div
-                                    className={'flex flex-row items-center justify-between mr-5 border-1 border-gray-400 rounded px-1 hover:border-yellow-500 hover:cursor-pointer hover:text-yellow-500'}>
+                                    className={'flex flex-row items-center justify-between mr-5 border-1 border-gray-400 rounded px-1 hover:border-yellow-500 hover:cursor-pointer hover:text-yellow-500'}
+                                    onClick={goReadingPage}
+
+                                >
                                     <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
                                          xmlnsXlink="http://www.w3.org/1999/xlink"
                                          x="0px" y="0px" viewBox="0 0 122.88 101.37"
@@ -329,7 +384,7 @@ const NovelStat = (novel) => {
                                          x="0px" y="0px" viewBox="0 0 122.88 101.37"
                                          style={{width: "20px", height: "30px", fill: "gray"}} xmlSpace="preserve"
                                          className={"mr-2"}
-                                    >cd
+                                    >
                                 <g>
                                     <path d="M12.64,77.27l0.31-54.92h-6.2v69.88c8.52-2.2,17.07-3.6,25.68-3.66c7.95-0.05,15.9,1.06,23.87,3.76
                                         c-4.95-4.01-10.47-6.96-16.36-8.88c-7.42-2.42-15.44-3.22-23.66-2.52c-1.86,0.15-3.48-1.23-3.64-3.08
@@ -358,7 +413,9 @@ const NovelStat = (novel) => {
                                 </div>
                                 {/*Đánh giá*/}
                                 <div
-                                    className={'flex flex-row relative items-center justify-between mr-5 border-1 border-gray-400 rounded px-1 hover:border-yellow-500 hover:cursor-pointer hover:text-yellow-500'}>
+                                    className={'flex flex-row relative items-center justify-between mr-5 border-1 border-gray-400 rounded px-1 hover:border-yellow-500 hover:cursor-pointer hover:text-yellow-500'}
+                                    onClick={gotoRating}
+                                >
                                     <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
                                          xmlnsXlink="http://www.w3.org/1999/xlink"
                                          x="0px" y="0px" viewBox="0 0 122.88 101.37"
@@ -388,13 +445,15 @@ const NovelStat = (novel) => {
                                     <span className={'absolute -right-4 -top-4'}>
                                 <span
                                     className="background-primary inline-flex items-center justify-center min-w-6 h-6 ms-2 px-1 text-[10px] text-white rounded-full">
-                                    {novel.totalRates}
+                                    {roundToTwoDecimalPlaces(novel.avgRate)}
                                 </span>
                             </span>
                                 </div>
                                 {/*Thảo luận*/}
                                 <div
-                                    className={'flex flex-row relative items-center justify-between mr-5 border-1 border-gray-400 rounded px-1 hover:border-yellow-500 hover:cursor-pointer hover:text-yellow-500'}>
+                                    className={'flex flex-row relative items-center justify-between mr-5 border-1 border-gray-400 rounded px-1 hover:border-yellow-500 hover:cursor-pointer hover:text-yellow-500'}
+                                    onClick={gotoComment}
+                                >
                                     <svg version="1.1" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
                                          xmlnsXlink="http://www.w3.org/1999/xlink"
                                          x="0px" y="0px" viewBox="0 0 122.88 101.37"
@@ -432,14 +491,14 @@ const NovelStat = (novel) => {
                             {/*Stat*/}
                             <div
                                 className="mb-6 flex justify-center divide-x divide-gray-500 divide-auto text-title md:justify-start md:mb-8 text-sm">
-                                <div className={'px-3 md:pl-0'}>
-                                <div className={"font-semibold text-md text-center"}>
-                                        22
-                                    </div>
-                                    <div>
-                                        Chương/tuần
-                                    </div>
-                                </div>
+                                {/*<div className={'px-3 md:pl-0'}>*/}
+                                {/*<div className={"font-semibold text-md text-center"}>*/}
+                                {/*        22*/}
+                                {/*    </div>*/}
+                                {/*    <div>*/}
+                                {/*        Chương/tuần*/}
+                                {/*    </div>*/}
+                                {/*</div>*/}
                                 {/*Lượt đọc*/}
                                 <div className={"px-3"}>
                                     <div className={"font-semibold text-md text-center"}>
@@ -505,27 +564,6 @@ const NovelStat = (novel) => {
                                 </>
                             ))
                             }
-
-                            {/*<div className={"flex flex-col w-1/3 mr-5"}>*/}
-                            {/*    <Link to="/novel/chapter/1" className={"hover:cursor-pointer"}>*/}
-                            {/*        <div className={"flex flex-row yellow-text-color"}>*/}
-                            {/*            Chuong 1*/}
-                            {/*        </div>*/}
-                            {/*        <div className={"text-sm"}>*/}
-                            {/*            5 gio truoc*/}
-                            {/*        </div>*/}
-                            {/*    </Link>*/}
-                            {/*</div>*/}
-                            {/*<div className={"flex flex-col w-1/3 mr-5"}>*/}
-                            {/*    <Link to="/novel/chapter/1" className={"hover:cursor-pointer"}>*/}
-                            {/*        <div className={"flex flex-row yellow-text-color"}>*/}
-                            {/*            Chuong 1*/}
-                            {/*        </div>*/}
-                            {/*        <div className={"text-sm"}>*/}
-                            {/*            5 gio truoc*/}
-                            {/*        </div>*/}
-                            {/*    </Link>*/}
-                            {/*</div>*/}
                         </div>
                     </div>
 
@@ -541,13 +579,7 @@ const NovelStat = (novel) => {
                     </div>
                     <div>
                         <div className={"text-gray-600 dark:text-gray-300 py-4 px-2 md:px-1 text-base break-words"}>
-                            {/*Là Đan Đế trọng sinh? Là dung hợp linh hồn? Bị đánh cắp linh căn, linh huyết, linh cốt ba không*/}
-                            {/*thiếu niên — — Long Trần, nương tựa theo trong trí nhớ luyện đan thần thuật, tu hành thần bí*/}
-                            {/*công pháp Cửu Tinh Bá Thể Quyết, đẩy ra sương mù dày đặc, giải khai cái bẫy động trời.*/}
-                            {/*<br/>*/}
-                            {/*<br/>*/}
-                            {/*Tay cầm thiên địa càn khôn, chân đạp nhật nguyệt tinh thần, thông đồng các loại mỹ nữ, trấn áp*/}
-                            {/*ác quỷ tà thần.*/}
+                            {/*{novel.description}*/}
                             <FormattedContent content={novel.description} />
                         </div>
 
@@ -565,28 +597,54 @@ const NovelStat = (novel) => {
 
                         </div>
                         <div className={"flex flex-row justify-start items-center mt-2"}>
-                            {/*{publishedByPublisher ? publishedByPublisher.map(((novel, idx) => (*/}
+                            {/*{Array.isArray(publishedByPublisher.data) && publishedByPublisher.data !== null ? publishedByPublisher.data.map((published, index) => (*/}
                             {/*    <>*/}
-                            {/*        <div className={'w-44 h-60 mr-2 mb-2'}>*/}
-                            {/*            <MinialIntroduceNovelCard data={novel} />*/}
-
-                            {/*        </div>*/}
+                            {/*    <div className={'w-44 h-60 mr-2 mb-2'}>*/}
+                            {/*        <MinialIntroduceNovelCard data={published} />*/}
+                            {/*    </div>*/}
                             {/*    </>*/}
-                            {/*))): <></>}*/}
-                            {/*{publishedByPublisher ? publishedByPublisher.map(((novel, idx) => () }*/}
-                            {Array.isArray(publishedByPublisher.data) && publishedByPublisher.data !== null ? publishedByPublisher.data.map((published, index) => (
-                                <>
-                                <div className={'w-44 h-60 mr-2 mb-2'}>
-                                    <MinialIntroduceNovelCard data={published} />
-                                </div>
-                                </>
-                            )) : (<></>)
-                            }
+                            {/*)) : (<></>)*/}
+                            {/*}*/}
+                            <Swiper
+                                modules={[Autoplay, FreeMode]}
+                                freeMode={true}
+                                autoplay={{
+                                    delay: 3000,
+                                    disableOnInteraction: false,
+                                }}
+                                spaceBetween={10}
+                                slidesPerView={2}
+                                breakpoints={{
+                                    640: { slidesPerView: 3 },
+                                    768: { slidesPerView: 4 },
+                                    1024: { slidesPerView: 5 },
+                                }}
+                            >
+                                {publishedByPublisher && publishedByPublisher.data.length && publishedByPublisher.data.map((item, index) => {
+                                    return (
+                                        <SwiperSlide key={index}>
+
+                                            <div className="flex flex-col space-y-2 mx-auto w-full">
+                                                <a href={getNovelUrlWithSlug(item.slug)} title={item.name} className="mx-auto block">
+                                                    <img
+                                                        src={item.novelCoverImage}
+                                                        alt={item.name}
+                                                        className="w-full aspect-[3/4] shadow-xl rounded"
+                                                    />
+                                                </a>
+                                                <a href={getNovelUrlWithSlug(item.slug)} name={item.name} className="text-center block">
+                                                    <span className="text-title text-xs font-semibold">{item.name}</span>
+                                                </a>
+                                            </div>
+                                        </SwiperSlide>
+                                    )}
+                                )}
+                            </Swiper>
                         </div>
 
                     </div>
                     {showReport && (
-                        <UserReport onClose={()=>setShowReport(false)}/>
+                        <UserReport targetId = {novel.id} targetType="NOVEL" onClose={()=>setShowReport(false)}/>
                     )}
                     {showChapterList && (
                         <ChapterListPanel onClose={() => setShowChapterList(false)}/>
@@ -598,33 +656,47 @@ const NovelStat = (novel) => {
 }
 
 const NovelRating = (novel) => {
+    novel = novel.novel;
+    const currentBookshelf = useCurrentBookshelf();
+    const [currentChapterRead, setCurrentChapterRead] = useState(null);
+    useEffect(() => {
+        getItemOfBookshelfByNovelId(currentBookshelf.id, novel.id).then((res) => {
+            if (res && res.data) {
+                setCurrentChapterRead(res.data.result.currentChapterIdx);
+            }
+        })
+    }, []);
+
+
     const [mainCharacterRateContent, setMainCharacterRateContent] = useState("");
     const [novelContentRateContent, setNovelContentRateContent] = useState("");
     const [worldContentRateContent, setWorldContentRateContent] = useState("");
     const [ratingDetailContent, setRatingDetailContent] = useState("");
     const [ratingValue, setRatingValue] = useState(5);
     const [isOnlyRating, setIsOnlyRating] = useState(false);
-
+    const userId = getUserIdFromContext();
     const handleChangeSlider = (value) => {
         setRatingValue(parseFloat(value));
     };
-
     const handleCheckboxChange = (e) => {
         setIsOnlyRating(e.target.checked);
     };
 
     const handleRating = async () => {
         const ratingData = {
-            rating: ratingValue,
+            rate: ratingValue,
             ...(isOnlyRating
                 ? {}
                 : {
-                    // mainCharacter: mainCharacterRateContent,
-                    // novelContent: novelContentRateContent,
-                    // worldContent: worldContentRateContent,
+                    mainCharacter: mainCharacterRateContent,
+                    novelContent: novelContentRateContent,
+                    worldContent: worldContentRateContent,
                     content: ratingDetailContent,
                     ratingInNovelId: novel.id,
-                    lastReadChapterId: novel.id
+                    // lastReadChapterId: novel.id,
+                    lastReadChapterIdx: currentChapterRead,
+                    novelId: novel.id,
+                    ratedBy: userId,
                 })
         };
 
@@ -718,65 +790,187 @@ const NovelRating = (novel) => {
 };
 
 function NovelRatingDetail() {
+
+
     return (
         <>
-            <div>
-                <div className={"col-span-4 md:col-span-4 space-y-6 px-2"}>
-                    <div className="flex justify-between items-center">
-                        <div className="flex items-center"><input
-                                                                  type="checkbox"
-                                                                  className="w-4 h-4 text-primary bg-gray-100"/><span
-                            className="ml-3" id="annual-billing-label"><span className="font-medium text-primary">Hiện tất cả</span></span>
+            {(
+                <div>
+                    <div className={'col-span-4 md:col-span-4 space-y-6 px-2'}>
+                        <div className="flex justify-between items-center">
+                            <div className="flex items-center"><input
+                                type="checkbox"
+                                className="w-4 h-4 text-primary bg-gray-100" /><span
+                                className="ml-3" id="annual-billing-label"><span className="font-medium text-primary">Hiện tất cả</span></span>
+                            </div>
+                            <div><h3 data-x-text="`${book.review_count} đánh giá`" className="font-semibold">15 đánh
+                                giá</h3></div>
+                            <div className="relative inline-block text-left"><select data-x-bind="ReviewSort"
+                                                                                     className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 text-black sm:text-sm rounded-md dark:bg-black dark:text-white">
+                                <option value="-like_count">Lượt thích</option>
+                                <option value="-id">Mới nhất</option>
+                                <option value="id">Cũ nhất</option>
+                            </select></div>
                         </div>
-                        <div><h3 data-x-text="`${book.review_count} đánh giá`" className="font-semibold">15 đánh
-                            giá</h3></div>
-                        <div className="relative inline-block text-left"><select data-x-bind="ReviewSort"
-                                                                                 className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 text-black sm:text-sm rounded-md dark:bg-black dark:text-white">
-                            <option value="-like_count">Lượt thích</option>
-                            <option value="-id">Mới nhất</option>
-                            <option value="id">Cũ nhất</option>
-                        </select></div>
                     </div>
                 </div>
-            </div>
+
+            )}
         </>
     )
 }
+function CommentController({ novelId, totalComment }) {
+    const [comments, setComments] = useState([]);
+    const [page, setPage] = useState(0);
+    const [sortType, setSortType] = useState('createdAt'); // createdAt | totalLikes
+    const [sortOrder, setSortOrder] = useState('desc'); // asc | desc
+    const [hidden, setHidden] = useState(false);
+    const [hasMore, setHasMore] = useState(true);
 
+    const pageSize = 10;
 
-function CommentController({ comments, totalComment }) {
-    const [showReport, setShowReport] = useState(false);
-    const [totalCommentShow, setTotalCommentShow] = useState(10);
+    useEffect(() => {
+        if (novelId && !hidden) {
+            fetchComments(0, sortType, true).then(r => {
+            });
+        }
+    }, [novelId, sortType, hidden]);
 
-    if (!totalComment || totalComment <= 0) {
-        totalComment = 0;
-    }
+    const fetchComments = async (pageToLoad, sort, reset = false) => {
+        try {
+            const res = await getCommentOfNovel(novelId, {
+                page: pageToLoad + 1,
+                size: pageSize,
+                sortBy: (sort),
+                sortDirection: sortOrder
+            });
+            console.log(res.data.result.data)
+
+            const fetched = res.data.result.data || [];
+            setComments(prev =>
+                reset ? fetched : [...prev, ...fetched]
+            );
+            setHasMore(!res.data.last);
+            setPage(pageToLoad);
+        } catch (err) {
+            console.error('Failed to fetch comments', err);
+        }
+    };
+
+    const loadMore = () => {
+        if (hasMore && !hidden) {
+            fetchComments(page + 1, sortType).then(r => {});
+        }
+    };
+
+    const mapSortTypeToParam = (sort) => {
+        switch (sort) {
+            case 'NEWEST': return 'createdAt,desc';
+            case 'OLDEST': return 'createdAt,asc';
+            case 'MOST_LIKED': return 'likeCount,desc';
+            default: return 'createdAt,desc';
+        }
+    };
 
     function getTotalNextCommentToShow() {
-        const remaining = totalComment - totalCommentShow;
-        return remaining > 10 ? 10 : remaining;
+        const remaining = totalComment - comments.length;
+        return remaining > pageSize ? pageSize : remaining;
     }
 
     return (
-        <>
-            <div className="mt-3">
-                <CommentPart totalComment={totalComment} />
-                {comments.comments &&
-                    comments.comments.map((comment, index) => (
-                        index < totalCommentShow && (
-                            <div key={index} id={index.toString()}>
-                                <UserComment comment={comment} />
-                            </div>
-                        )
-                    ))
-                }
-                <span>Xem {getTotalNextCommentToShow()} bình luận</span>
-            </div>
-        </>
+        <div className="mt-3">
+            <CommentPart totalComment={totalComment} />
+
+            {!hidden && comments.map((comment, index) => (
+                <div key={comment.id || index} id={`comment-${index}`}>
+                    <UserComment comment={comment} />
+                </div>
+            ))}
+
+            {!hidden && hasMore && getTotalNextCommentToShow() > 0 && (
+                <div className="flex justify-center" onClick={loadMore}>
+                    <button className="inline-flex justify-center px-4 py-2 border border-yellow-primary shadow-sm text-sm font-medium rounded-md text-yellow-primary bg-inherit btn-outline-primary w-1/3"> Xem thêm {getTotalNextCommentToShow()} bình luận
+                    </button>
+                </div>
+            )}
+
+        </div>
     );
 }
 
-function CommentPart({totalComment}){
+// function CommentController({ comments, totalComment }) {
+//
+//
+//
+//     const [showReport, setShowReport] = useState(false);
+//     const [totalCommentShow, setTotalCommentShow] = useState(10);
+//
+//     if (!totalComment || totalComment <= 0) {
+//         totalComment = 0;
+//     }
+//
+//     function getTotalNextCommentToShow() {
+//         const remaining = totalComment - totalCommentShow;
+//         return remaining > 10 ? 10 : remaining;
+//     }
+//
+//     return (
+//         <>
+//             <div className="mt-3">
+//                 <CommentPart totalComment={totalComment} />
+//                 {comments &&
+//                     comments.map((comment, index) => (
+//                         index < totalCommentShow && (
+//                             <div key={index} id={index.toString()}>
+//                                 <UserComment comment={comment} />
+//                             </div>
+//                         )
+//                     ))
+//                 }
+//                 <span onClick={nextPage}>Xem {getTotalNextCommentToShow()} bình luận</span>
+//             </div>
+//         </>
+//     );
+// }
+
+function CommentPart({ totalComment }) {
+    const [content, setContent] = useState("");
+    const [chapter, setChapter] = useState({});
+    const user = useUser();
+    const currentReadingChapter = useCurrentNovelReadingChapter();
+    const currentNovel = useCurrentNovel();
+    useEffect(() => {
+        if (currentReadingChapter){
+
+        }
+    }, []);
+    // const
+    // {
+    //     "content":"Nao",
+    //     "commentedBy": "cbs",
+    //     "chapterId": "6666caca-f096-4506-b2dc-ebf9c6bcac1c",
+    //     "novelId": "0da33320-83fa-42ca-bc8c-b2b31eba8918",
+    //     "feedbackType": "COMMENT",
+    //     "commentedInNovelId": "0b5bc3fd-0805-49c0-b614-4792452eb534",
+    //     "parentId": "ec3d8e3f-1758-4a4e-a9fd-8c6b4908c66e"
+    //
+    // }
+
+    function handleSendRootComment() {
+        sendComment(
+            {
+                "content": content,
+                "commentedBy": user.id,
+                // "chapterId": currentReadingChapter.id,
+                "novelId": currentNovel.id,
+                "feedbackType": "COMMENT",
+                "commentedInNovelId": currentNovel.id,
+            }
+        ).then( r => {
+            console.log("Comment sent successfully", r);
+        })
+    }
+
     return (
         <>
             <div>
@@ -787,6 +981,8 @@ function CommentPart({totalComment}){
                             className="px-0 w-full text-gray-300 focus:ring-0 focus:outline-none placeholder-gray-400 bg-black"
                             placeholder="Thảo luận ..."
                             required
+                            onChange={(e) => setContent(e.target.value)}
+                            value={content}
                             style={{overflow: "hidden", overflowWrap: "break-word", resize: "none", textAlign: "start", height: "160px"}}
                         ></textarea>
                     </div>
@@ -802,7 +998,9 @@ function CommentPart({totalComment}){
                         </div>
                         <div className="font-bold">{totalComment} thảo luận</div>
                         <div
-                            className="select-none hover:cursor-pointer inline-flex justify-center px-4 py-2 shadow-sm text-sm font-medium rounded-md primary-text-color primary-btn-outline bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 btn-outline-primary w-16 h-9 disabled:bg-gray-500">
+                            className="select-none hover:cursor-pointer inline-flex justify-center px-4 py-2 shadow-sm text-sm font-medium rounded-md primary-text-color primary-btn-outline bg-black focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 btn-outline-primary w-16 h-9 disabled:bg-gray-500"
+                            onClick = {handleSendRootComment}
+                        >
                             GỬI
                         </div>
                     </div>

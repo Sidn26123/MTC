@@ -27,6 +27,8 @@ const userNovelStore = create((set) => ({
     bookShelf: { ...defaultPagination },
     bookMark: { ...defaultPagination },
     publishedByPublisher: { ...defaultPagination },
+    justFinishedNovelList: { ...defaultPagination },
+    bestNovel : [],
     actions: {
         setCurrentNovel: (novel) => set(() => ({
             current: { ...novel }
@@ -114,6 +116,13 @@ const userNovelStore = create((set) => ({
             bookMark: { ...state.bookMark, pageSize: size, currentPage: 1 }
         })),
 
+        setJustFinishedNovelList: (paginationData) => set(() => ({
+            justFinishedNovelList: paginationData
+        })),
+        setBestNovel: (bestNovel) => set(() => ({
+            bestNovel: bestNovel
+        })),
+
 
         resetCurrentNovel: () => set(() => ({
             current: {
@@ -154,6 +163,7 @@ export const useBookMarkData = () => userNovelStore((state) => state.bookMark.da
 export const useFilteredNovelListData = () => userNovelStore((state) => state.filteredNovelList.data || []);
 export const useJustReadNovelListData = () => userNovelStore((state) => state.justReadNovelList.data || []);
 export const usePromotedNovelListData = () => userNovelStore((state) => state.promotedNovelList.data || []);
+export const useJustFinishedNovelListData = () => userNovelStore((state) => state.justFinishedNovelList || []);
 
 // Hooks cho việc cập nhật currentPage
 export const useSetListNovelPage = () => userNovelStore((state) => state.actions.setListNovelPage);
@@ -181,3 +191,7 @@ export const useCurrentNovelSlug = () => userNovelStore((state) => state.current
 
 
 export const useSetListNovel = () => userNovelStore((state) => state.actions.setListNovel);
+
+export const useSetJustFinishedNovelList = () => userNovelStore((state) => state.actions.setJustFinishedNovelList);
+export const useBestNovel = () => userNovelStore((state) => state.bestNovel);
+export const useSetBestNovel = () => userNovelStore((state) => state.actions.setBestNovel);

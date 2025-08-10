@@ -11,4 +11,8 @@ public interface MarkedNovelRepository extends JpaRepository<MarkedNovel, String
     Page<MarkedNovel> findAllByUserId(String userId, Pageable pageable);
 
     Optional<MarkedNovel> findByUserIdAndNovelId(String userId, String novelId);
+
+    Page<MarkedNovel> findAllByUserIdAndIsDeletedIsFalse(String userId, Pageable pageable);
+
+    Page<MarkedNovel> findByUserIdAndNovelIdAndIsDeletedIsFalse(String userId, String novelId, Pageable pageable);
 }

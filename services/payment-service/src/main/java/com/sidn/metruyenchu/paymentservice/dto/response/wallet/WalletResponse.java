@@ -1,5 +1,6 @@
 package com.sidn.metruyenchu.paymentservice.dto.response.wallet;
 
+import com.sidn.metruyenchu.paymentservice.dto.response.currency.CurrencyResponse;
 import com.sidn.metruyenchu.paymentservice.enums.WalletStatus;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
@@ -18,6 +19,7 @@ public class WalletResponse {
     String userId;
     BigDecimal balance;
     String currencyId;
+    CurrencyResponse currency;
     WalletStatus walletStatus;
     LocalDateTime createdAt;
     LocalDateTime updatedAt;

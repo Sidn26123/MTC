@@ -5,6 +5,8 @@ import com.sidn.metruyenchu.identity_service.dto.request.UserCreationRequest;
 import com.sidn.metruyenchu.identity_service.dto.request.UserUpdateRequest;
 import com.sidn.metruyenchu.identity_service.dto.response.UserResponse;
 import com.sidn.metruyenchu.identity_service.service.UserService;
+import com.sidn.metruyenchu.shared_library.dto.BaseFilterRequest;
+import com.sidn.metruyenchu.shared_library.dto.PageResponse;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -31,14 +33,9 @@ public class UserController {
     }
 
     @GetMapping()
-    ApiResponse<List<UserResponse>> getAllUsers() {
-        var authentication= SecurityContextHolder.getContext().getAuthentication();
-
-//        log.info("Username: {}", authentication.getName());
-//        authentication.getAuthorities().forEach(grantedAuthority ->
-//                log.info("GrantedAuthority: {}", grantedAuthority.getAuthority()));
-        return ApiResponse.<List<UserResponse>>builder()
-                .result(userService.getUsers())
+    ApiResponse<PageResponse<UserResponse>> getAllUsers(BaseFilterRequest request) {
+        return ApiResponse.<PageResponse<UserResponse>>builder()
+                .result(userService.getUsers(request))
                 .build();
     }
 
@@ -74,5 +71,20 @@ public class UserController {
 
 
         return userService.getMyInfo();
+    }
+
+    @GetMapping("/getAdmin")
+    ApiResponse<List<UserResponse>> getAdminUsers() {
+        return ApiResponse.<List<UserResponse>>builder()
+                .result(userService.getAdminUsers())
+                .build();
+    }
+
+    @GetMapping("/checkPassword")
+    ApiResponse<Boolean> checkPassword(@RequestParam String userId, @RequestParam String password) {
+        boolean isValid = userService.checkPassword(userId, password);
+        return ApiResponse.<Boolean>builder()
+                .result(isValid)
+                .build();
     }
 }

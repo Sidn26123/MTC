@@ -37,6 +37,9 @@ public interface NovelClient {
     @PutMapping(value = "/internal/novel-stat/{novelId}/comments/increase")
     Optional<ApiResponse<NovelResponse>> commentNovel(@PathVariable String novelId, @RequestBody CommentNovelRequest request);
 
+    @PutMapping(value = "/internal/novel-stat/comments/increase")
+    Optional<ApiResponse<NovelResponse>> commentObject(@RequestBody CommentNovelRequest request);
+
     @PutMapping(value = "/internal/novel-stat/{novelId}/comments/decrease")
     Optional<ApiResponse<NovelResponse>> deleteComment(@PathVariable String novelId, @RequestBody CommentNovelRequest request);
 

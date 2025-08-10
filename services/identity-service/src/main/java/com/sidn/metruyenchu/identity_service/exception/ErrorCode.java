@@ -61,7 +61,7 @@ public enum ErrorCode {
     ROLE_NOT_EXISTED(1002, "Role không tồn tại", HttpStatus.INTERNAL_SERVER_ERROR),
 
 
-    ;
+    WRONG_PASSWORD(13, "Mật khẩu không đúng", HttpStatus.BAD_REQUEST);
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
         this.code = code;

@@ -14,4 +14,6 @@ public interface NovelPublishRequestRepository extends JpaRepository<NovelPublis
     Page<NovelPublishRequest> findAllByStatus(PublishRequestStatus request, Pageable pageable);
 
     Page<NovelPublishRequest> findAllByRequestedBy(String requestedBy, Pageable pageable);
+
+
 }

@@ -15,11 +15,7 @@ export const logIn = async (username, password) => {
     return response;
 };
 
-// export const logInWithGoogle = async () => {
-//     const response = await httpClient.get(API.LOGIN_GOOGLE);
-//     setToken(response.data?.result?.token);
-//     return response;
-// };
+
 
 export const googleCallback = async (code) => {
     const response = await httpClient.get(API.GOOGLE_CALLBACK + `?code=${code}`);
@@ -47,7 +43,14 @@ export const getUserIdFromContext = () => {
     if (!token) return null;
 
     const payload = parseJwt(token);
-    return payload ? payload.userId : null;
+    return payload ? payload.user_id : null;
+}
+
+export const getUserIdFromToken = (token) => {
+    if (!token) return null;
+
+    const payload = parseJwt(token);
+    return payload ? payload.user_id : null;
 }
 
 
@@ -56,3 +59,11 @@ export const logInWithGoogle = async () => {
     setToken(response.data?.result?.token);
     return response;
 };
+
+export const isLoggedIn = () => {
+    const token = getToken();
+    if (!token) return false;
+
+    const payload = parseJwt(token);
+    return payload && payload.exp > Date.now() / 1000; // Check if token is not expired
+}

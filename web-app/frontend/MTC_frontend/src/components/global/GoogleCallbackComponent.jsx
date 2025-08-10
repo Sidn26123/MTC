@@ -27,14 +27,14 @@ function GoogleCallbackComponent() {
   debugger;
 
   const fetchUserInfo = async (email) => {
-          try {
-              var myInfoStr = API.MY_INFO + "?username=" + email;
-              const response = await api.get(myInfoStr);
-              return response.data;
-          } catch (err) {
-              console.error('Lỗi khi lấy user info:', err);
-          }
-      };
+    try {
+      var myInfoStr = API.MY_INFO + "?username=" + email;
+      const response = await api.get(myInfoStr);
+      return response.data;
+    } catch (err) {
+      console.error('Lỗi khi lấy user info:', err);
+    }
+  };
 
   useEffect(() => {
     debugger;
@@ -77,13 +77,12 @@ function GoogleCallbackComponent() {
         const email = jwtPayload?.email;
         const userId = jwtPayload?.user_id;
         debugger;
-        
         if (!email) {
           console.error('Không thể đọc email từ token!');
           navigate('/login');
           return;
         }
-        
+
         debugger;
         // Nếu bạn cần lấy profile thì bật lại phần này
         // const profileResponse = await api.get(`${API.MY_INFO}?username=${encodeURIComponent(email)}`);
@@ -99,8 +98,8 @@ function GoogleCallbackComponent() {
 
 // getProfileById1
 
-        const profileResponse = await getProfileById(userId); 
-        // const profileResponse = await getProfileById1(userId); 
+        const profileResponse = await getProfileById(userId);
+        // const profileResponse = await getProfileById1(userId);
         console.log('profileResponse', profileResponse);
         debugger;
 
@@ -111,22 +110,22 @@ function GoogleCallbackComponent() {
         debugger;
         const user = profileResponse.data?.result;
         console.log('user', user);
-        // console.log(profileResponse); 
+        // console.log(profileResponse);
         // const profile = fetchUserInfo(user.email)
-        // const profile = await getProfileById(userId) 
+        // const profile = await getProfileById(userId)
         // console.log('profile', profile);
 
         loginAccount({
-                token: token,
-                refreshToken: null,
-                roles: scope,
-                userId: userId,
-            })
-          debugger;
+          token: token,
+          refreshToken: null,
+          roles: scope,
+          userId: userId,
+        })
+        debugger;
         debugger;
         setUser(user);
 
-        
+
         // login({
         //   token: response.data.token,
         //   refreshToken: null,
@@ -138,18 +137,18 @@ function GoogleCallbackComponent() {
         showSuccess('Đăng nhập thành công!');
         debugger;
         if(user && user.roles && user.roles.includes('ROLE_ADMIN')) {
-          navigate('/admin'); 
-        // } else if (user && user.roles && user.roles.includes('ROLE_CONTENT_MOD')) {
-        //   navigate('/content-mod');
-        // } else if (user && user.roles && user.roles.includes('ROLE_PUBLISHER')) {
-        //   navigate('/publisher');
+          navigate('/admin');
+          // } else if (user && user.roles && user.roles.includes('ROLE_CONTENT_MOD')) {
+          //   navigate('/content-mod');
+          // } else if (user && user.roles && user.roles.includes('ROLE_PUBLISHER')) {
+          //   navigate('/publisher');
         } else {
           navigate('/'); // Chuyển hướng về trang chính nếu không có vai trò đặc biệt
         }
-       // navigate('/');
+        // navigate('/');
         debugger;
       } catch (err) {
-        
+
         console.error('Lỗi trong quá trình xử lý callback:', err);
         navigate('/login');
       }

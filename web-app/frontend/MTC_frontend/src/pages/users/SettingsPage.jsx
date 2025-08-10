@@ -1,6 +1,6 @@
 import React from "react";
 
-function SettingsPage() {
+const SettingsPage = () => {
     return (
         <>
             A

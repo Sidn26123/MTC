@@ -1,5 +1,5 @@
 package com.sidn.metruyenchu.paymentservice.dto.request.transactions;
-import com.sidn.metruyenchu.paymentservice.enums.TransactionType;
+import com.sidn.metruyenchu.shared_library.enums.payment.TransactionType;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
@@ -17,4 +17,7 @@ public class TransactionsCreateRequest {
     TransactionType type;
     Integer amount;
     String currencyId;
+    String referenceId; // Optional - for external reference
+
 }
+
