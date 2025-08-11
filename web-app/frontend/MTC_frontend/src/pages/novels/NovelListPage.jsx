@@ -31,27 +31,29 @@ const NovelListPage = () => {
     const totalPages = data?.totalPages || 0;
     const totalElements = data?.totalElements || 0;
     const setListNovel = useSetListNovel();
+    const filterStore = useFilterStore();
 
     const setPage = useSetListNovelPage();
 
     const setSize = useSetListNovelPageSize();
 
     const handleChangePageInNavigator = (page) => {
+        filterStore.setPage(page);
+
     }
-    
+
 
     const handleFilter = () => {
-
         getFilteredNovels(extractFiltersFromStore()).then(r => {
-            setListNovel(r.data.result);
-
+            if (JSON.stringify(r.data.result) !== JSON.stringify(data)) {
+                setListNovel(r.data.result);
+            }
         });
-
     }
 
     useEffect(() => {
         handleFilter();
-    }, [page, pageSize]);
+    }, [extractFiltersFromStore()]);
 
 
     return (
@@ -76,7 +78,7 @@ const NovelListPage = () => {
                         pageSize={pageSize}
                         totalPages={totalPages}
                         totalElements={totalElements}
-                        onPageChange={setPage}
+                        onPageChange={handleChangePageInNavigator}
                         onPageSizeChange={setSize}
                     />
                 </div>

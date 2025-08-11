@@ -96,6 +96,8 @@ function ReportDetailPage() {
     const [handlerProfile, setHandlerProfile] = useState(null);
     const [requesterProfile, setRequesterProfile] = useState(null);
     const [commentList, setCommentList] = useState([]);
+    const [isReply, setIsReply] = useState(false);
+    const [replyToUsername, setReplyToUsername] = useState("");
     const user = useUser();
     const { reportId } = useParams();
 
@@ -185,6 +187,41 @@ function ReportDetailPage() {
                 console.error("Error closing report:", error);
             }
         );
+    }
+
+    function handleReopenReport() {
+        updateReportStatus(reportId, {
+            status: "PENDING"
+        }).then(
+            (response) => {
+                console.log("Report reopened successfully:", response.data);
+                // Cập nhật trạng thái của reportData
+                setReportData((prevData) => ({
+                    ...prevData,
+                    status: "PENDING",
+                }));
+            },
+            (error) => {
+                console.error("Error reopening report:", error);
+            }
+        );
+    }
+
+    function handleChangeReportStatus(){
+        if (reportData.status === "CLOSED") {
+            handleReopenReport();
+        } else {
+            handleCloseReport();
+        }
+    }
+
+    function onReply(username){
+        console.log(username);
+        setReplyToUsername(username);
+        setIsReply(!isReply);
+        if (isReply) {
+            setCommentText(`@${username} `); // Thêm @username vào ô nhập bình luận
+        }
     }
 
     return (
@@ -313,7 +350,7 @@ function ReportDetailPage() {
                             </div>
 
                             <button className="flex items-center gap-2 bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-md font-medium transition-colors"
-                                onClick={handleCloseReport}
+                                onClick={handleChangeReportStatus}
                             >
                                 <Lock className="w-4 h-4" /> {getNameReportStatus(reportData?.status)}
                             </button>
@@ -364,7 +401,7 @@ function ReportDetailPage() {
                                         setCommentText(e.target.value)
                                     }
                                     disabled={reportData && reportData.status === 'CLOSED'}
-                                    placeholder="Viết bình luận..."
+                                    placeholder= "Viết bình luận"
                                     className="w-full bg-gray-700 border border-gray-600 rounded-md p-3 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
                                     rows={3}
                                 />
@@ -391,7 +428,7 @@ function ReportDetailPage() {
                                         <div>
                                             {comment && (
                                                 <>
-                                                    <CommentInReportItem comment={comment} isLock={true} />
+                                                    <CommentInReportItem comment={comment} isLock={true} onReply={onReply} />
                                                 </>
                                             )}
                                         </div>

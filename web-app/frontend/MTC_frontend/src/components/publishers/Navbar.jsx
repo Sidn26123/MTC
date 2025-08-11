@@ -9,6 +9,8 @@ import { useSetListNovel } from '../../stores/novelStore.js';
 import { useMyWallet } from '../../stores/paymentStore.js';
 import { useSetUnreadCount, useUnreadCount } from '../../stores/notificationStore.js';
 import { useHasScope } from '../../services/authoriazationService.js';
+import { logOut } from '../../services/authenticationService.js';
+import { showSuccess } from '../../utils/ToastUtils.js';
 
 const Navbar = () => {
     const navigate = useNavigate();
@@ -20,7 +22,12 @@ const Navbar = () => {
     const canViewAdmin = useHasScope("ROLE_ADMIN");
     const unreadCount = useUnreadCount();
     const setUnreadCount = useSetUnreadCount();
-
+    const handleLogout = (event)=> {
+        event.preventDefault();
+        setUser(null);
+        logOut();
+        showSuccess("Đăng xuất thành công");
+    }
     return (
         <>
             <div>

@@ -11,9 +11,9 @@ import RegisterPage from '../../pages/users/RegisterPage.jsx';
 import RegisterPanel from './RegisterPanel.jsx';
 import { useHasScope } from '../../services/authoriazationService.js';
 import useUIStore, { useToggleNovelFilterPanel } from '../../stores/UIStore.js';
-import { getNovelProgressStatus } from '../../services/novelFilterService.js';
+import { extractFiltersFromStore, getNovelProgressStatus } from '../../services/novelFilterService.js';
 import { useSetNovelStatus } from '../../stores/selectors/novelFilterSelector.js';
-import { getNovels } from '../../services/novelService.js';
+import { getFilteredNovels, getNovels } from '../../services/novelService.js';
 import { useSetListNovel } from '../../stores/novelStore.js';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCoins } from '@fortawesome/free-solid-svg-icons';
@@ -55,8 +55,12 @@ function Navbar() {
     useEffect(() => {
         const fetchData = async () => {
             const result = await getNovelProgressStatus(); // Giả sử gọi API
-            const novel = await getNovels();
-            setListNovel(novel.data.result); // Gọi action của Zustand
+
+            getFilteredNovels(extractFiltersFromStore()).then(r => {
+                setListNovel(r.data.result);
+
+            });
+            // setListNovel(novel.data.result); // Gọi action của Zustand
         };
 
         if (isLoggedIn()){
@@ -284,58 +288,6 @@ function Navbar() {
                                 )}
 
                                 <ul className="py-2 list-disc pl-4">
-                                    {!canViewAdmin && (
-                                        <li>
-                                            <Link
-                                                to={'/admin/dashboard'}
-                                                className="block px-4 py-2 text-gray-700 hover:bg-gray-400"
-                                            >
-                                                Admin
-                                            </Link>
-                                        </li>
-                                    )}
-                                    {/*<div className={'px-8'}>*/}
-                                    {/*    <li>*/}
-                                    {/*        <Link*/}
-                                    {/*            to={'/nang-cap-tai-khoan'}*/}
-                                    {/*            className="block px-4 py-2 text-gray-700 hover:bg-gray-400 text-sm"*/}
-                                    {/*        >*/}
-                                    {/*            Nâng cấp tài khoản*/}
-                                    {/*        </Link>*/}
-                                    {/*    </li>*/}
-                                    {/*    <li>*/}
-                                    {/*        <Link*/}
-                                    {/*            to={'/tu-truyen'}*/}
-                                    {/*            className="block px-4 py-2 text-gray-700 hover:bg-gray-400 text-sm"*/}
-                                    {/*        >*/}
-                                    {/*            Tủ truyện*/}
-                                    {/*        </Link>*/}
-                                    {/*    </li>*/}
-                                    {/*    <li>*/}
-                                    {/*        <Link*/}
-                                    {/*            to={'/lich-su-giao-dich'}*/}
-                                    {/*            className="block px-4 py-2 text-gray-700 hover:bg-gray-400 text-sm"*/}
-                                    {/*        >*/}
-                                    {/*            Lịch sử giao dịch*/}
-                                    {/*        </Link>*/}
-                                    {/*    </li>*/}
-                                    {/*    <li>*/}
-                                    {/*        <Link*/}
-                                    {/*            to={'/cai-dat'}*/}
-                                    {/*            className="block px-4 py-2 text-gray-700 hover:bg-gray-400 text-sm"*/}
-                                    {/*        >*/}
-                                    {/*            Cài đặt*/}
-                                    {/*        </Link>*/}
-                                    {/*    </li>*/}
-                                    {/*    <li>*/}
-                                    {/*        <Link*/}
-                                    {/*            to={'/yeu-cau-ho-tro'}*/}
-                                    {/*            className="block px-4 py-2 text-gray-700 hover:bg-gray-400 text-sm"*/}
-                                    {/*        >*/}
-                                    {/*            Yêu cầu hỗ trợ*/}
-                                    {/*        </Link>*/}
-                                    {/*    </li>*/}
-                                    {/*</div>*/}
 
                                     <ul className="px-8 list-disc pl-[10px] marker:mr-[4px] text-sm text-gray-200 space-y-1">
                                         {/*<li className="ml-3 border-b-1 border-gray-500/25 py-[3px]">*/}
@@ -346,6 +298,16 @@ function Navbar() {
                                         {/*        Nâng cấp tài khoản*/}
                                         {/*    </Link>*/}
                                         {/*</li>*/}
+                                        {canViewAdmin && (
+                                            <li className="ml-3 border-b-1 border-gray-500/25 py-[3px]">
+                                                <Link
+                                            to={'/admin/analytics'}
+                                                className="block"
+                                                >
+                                                Giao diện quản trị viên
+                                                </Link>
+                                            </li>
+                                        )}
                                         <li className="ml-3 border-b-1 border-gray-500/25 py-[3px]">
                                             <Link
                                                 to="/tu-truyen"

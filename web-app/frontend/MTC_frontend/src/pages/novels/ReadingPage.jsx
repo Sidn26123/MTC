@@ -24,7 +24,7 @@ import {
 import {
     checkCanReadChapter, checkCanReadChapterOrNovel, checkChapterReadable, getChapterByNovelSlugAndIdx,
     getChapterContentByChapterId,
-    getCurrentChapterContent,
+    getCurrentChapterContent, navigateToChapter,
     startReadChapter,
 } from '../../services/chapterService.js';
 import { useLocation, useNavigate, useParams } from 'react-router';
@@ -206,6 +206,9 @@ import { promotion } from '../../services/paymentService.js';
 //         return <LockedChapterNotice itemId={currentChapter.id} itemType="CHAPTER" amount = {currentChapter.amountToUnlock}/>;
 //     }
 
+
+
+
 const ReadingPage = () => {
     const navigate = useNavigate();
     const { slug, id } = useParams();
@@ -224,7 +227,15 @@ const ReadingPage = () => {
     const [functionMode, setFunctionMode] = useState('none');
     const [showReport, setShowReport] = useState(false);
     const [showModal, setShowModal] = useState(false);
+    const [readingChapterProgress, setReadingChapterProgress] = useState(0);
+    const startTime = useMemo(() => new Date(), []);
 
+
+    function calDurationInReading(){
+        const endTime = new Date();
+        const duration = Math.floor((endTime - startTime) / 1000); // tính bằng giây
+        return duration;
+    }
     // Hàm kiểm tra quyền đọc và mua
     const checkReadPermission = async (chapterData) => {
         const canReadRes = await checkChapterReadable(chapterData.id);
@@ -244,6 +255,21 @@ const ReadingPage = () => {
             setPurchased(purchasedRes.data.result || false);
         }
     };
+
+    const handleNavigateNewChapter = async (isNext) => {
+        var novelId = currentNovel?.id;
+        var chapterId = currentChapter?.id;
+
+        await navigateToChapter(novelId, chapterId, {
+            currentChapterIdx: currentChapter?.chapterIdx,
+            userId: getUserIdFromContext(),
+            isNext: isNext,
+            novelId: novelId,
+            chapterId: chapterId,
+            progress: readingChapterProgress,
+            duration: calDurationInReading(),
+        })
+    }
 
     // Lấy dữ liệu chapter
     useEffect(() => {
@@ -293,7 +319,7 @@ const ReadingPage = () => {
                     await startReadChapter(currentNovel.id, {
                         userId: getUserIdFromContext(),
                         chapterId: r.data.result.id,
-                        chapterIdx,
+                        currentChapterIdx: currentChapter?.chapterIdx,
                         novelId: currentNovel.id,
                     });
                 }
@@ -315,10 +341,12 @@ const ReadingPage = () => {
     };
 
     const handleGoPreviousChapter = () => {
+        handleNavigateNewChapter(false);
         navigate(`/truyen/${slug}/chuong-${chapterIdx - 1}`);
     };
 
     const handleGoNextChapter = () => {
+        handleNavigateNewChapter(true);
         navigate(`/truyen/${slug}/chuong-${chapterIdx + 1}`);
     };
 
@@ -335,6 +363,23 @@ const ReadingPage = () => {
     if (!purchased) {
         return <LockedChapterNotice itemId={currentChapter.id} itemType="CHAPTER" amount={currentChapter.amountToUnlock} />;
     }
+
+    // useEffect(() => {
+    //     const handleKeyDown = (event) => {
+    //         if (event.key === "ArrowLeft") {
+    //             event.preventDefault();
+    //             handleGoPreviousChapter();
+    //         } else if (event.key === "ArrowRight") {
+    //             event.preventDefault();
+    //             handleGoNextChapter();
+    //         }
+    //     };
+    //
+    //     window.addEventListener("keydown", handleKeyDown);
+    //     return () => window.removeEventListener("keydown", handleKeyDown);
+    // }, [slug, chapterIdx]); // mỗi lần đổi chương, re-attach listener
+
+
     return (
         <>
             {canRead}
@@ -368,7 +413,6 @@ const ReadingPage = () => {
                             <div>
                                 <h2 className="text-center text-gray-600 dark:text-gray-400 text-balance">
                                     {' '}
-                                    {console.log("Cue", currentChapter)}
                                     {currentChapter.name}{' '}
                                 </h2>
                             </div>

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
-import { getAllSect, addSect, updateSect } from '../../services/novelService';
+import novelService from '../../services/novelService';
 
 const SectManage = () => {
     // const [data, setData] = useState([
@@ -29,12 +29,8 @@ const SectManage = () => {
     const [editId, setEditId] = useState(null);
 
     const fetchSects = async () => {
-        try {
-            const sects = await getAllSect();
-            setData(sects.result || []); // Assuming genres is an object with a 'result' property
-        } catch (error) {
-            console.error("Lỗi khi tải danh sách thể loại:", error);
-        }
+        const sects = await novelService.getAllSect();
+        setData(sects.result || []); // Assuming genres is an object with a 'result' property
     };
 
     useEffect(() => {
@@ -87,31 +83,26 @@ const SectManage = () => {
     const handleConfirm = async () => {
         if (inputValue.trim() === '') return;
 
-        try {
-            if (editId !== null) {
-                // Gọi API cập nhật
-                console.log("Updating sect with ID:", editId, "and name:", inputValue);
-                const updated = await updateSect({ id: editId, name: inputValue });
-                // Cập nhật vào danh sách local
-                setData(prev =>
-                    prev.map(item =>
-                        item.id === editId ? { ...item, name: updated.name } : item
-                    )
-                );
-            } else {
-                // Gọi API tạo mới
-                const created = await addSect({ name: inputValue });
-                // Thêm vào danh sách local
-                setData(prev => [...prev, created]);
-            }
-            await fetchSects();
-
-            setShowModal(false);
-            setInputValue('');
-        } catch (error) {
-            console.error("Lỗi khi thêm/cập nhật lưu phái:", error);
-            alert("Đã xảy ra lỗi. Vui lòng thử lại.");
+        if (editId !== null) {
+            // Gọi API cập nhật
+            console.log("Updating sect with ID:", editId, "and name:", inputValue);
+            const updated = await novelService.updateSect({ id: editId, name: inputValue });
+            // Cập nhật vào danh sách local
+            setData(prev =>
+                prev.map(item =>
+                    item.id === editId ? { ...item, name: updated.name } : item
+                )
+            );
+        } else {
+            // Gọi API tạo mới
+            const created = await novelService.addSect({ name: inputValue });
+            // Thêm vào danh sách local
+            setData(prev => [...prev, created]);
         }
+        await fetchSects();
+
+        setShowModal(false);
+        setInputValue('');
     };
 
 

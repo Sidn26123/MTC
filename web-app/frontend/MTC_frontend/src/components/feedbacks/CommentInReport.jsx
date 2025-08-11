@@ -3,18 +3,27 @@ import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import { getProfileById, getProfileById1 } from '../../services/userService.js';
 import { UserReply } from './Reply.jsx';
+import { getFullPathOfAvatar, getUserName } from '../../utils/ProfileUtils.js';
+import { HaveReplyUserText } from '../common/SpecialElements.jsx';
 dayjs.extend(relativeTime);
 
-export default function CommentInReportItem({ comment, index, isLock }) {
+export default function CommentInReportItem({ comment, index, isLock, onReply }) {
     const [isReply, setIsReply] = useState(false);
 
-
-    console.log("CommentInReportItem", comment, index, isLock);
+    console.log("CommentInReportItem comment:", comment);
     if (!comment) return null;
     const [profile, setProfile] = useState({});
 
+    function handleReply(username){
+        console.log("Replying to:", username);
+        setIsReply(!isReply);
+        if (onReply) {
+            onReply(username);
+        }
+    }
+
     useEffect(() => {
-        getProfileById(comment.commenter?.id).then(
+        getProfileById(comment?.commenterId).then(
             (response) => {
                 if (response.status === 404){
                     console.error("User profile not found.");
@@ -22,6 +31,7 @@ export default function CommentInReportItem({ comment, index, isLock }) {
                 }
                 if (response.data.result) {
                     setProfile(response.data.result);
+                    console.log("User profile fetched successfully:", response.data.result);
                 } else {
                     console.error("Failed to fetch user profile.");
                 }
@@ -40,14 +50,14 @@ export default function CommentInReportItem({ comment, index, isLock }) {
                     <p className="inline-flex items-center mr-3 text-sm text-gray-900 dark:text-white">
                         <img
                             className="mr-2 w-6 h-6 rounded-full"
-                            src={comment.avatar}
+                            src={getFullPathOfAvatar(profile?.avatarPath)}
                             alt={comment.commenter?.name}
                         />
                         <a
                             className="font-bold text-title"
-                            href={`/ho-so/${comment.commenter?.id}`}
+                            href={`/ho-so/${comment.commenterId}`}
                         >
-                            {comment.commenter?.name}
+                            {getUserName(profile)}
                         </a>
                     </p>
                     <p className="text-xs text-muted">
@@ -82,7 +92,7 @@ export default function CommentInReportItem({ comment, index, isLock }) {
 
             {/* Nội dung */}
             <p className="text-gray-700 dark:text-gray-400 line-clamp break-words">
-                {comment.content}
+                {HaveReplyUserText({ text: comment.content })}
             </p>
 
             {/* Attachments */}
@@ -106,16 +116,16 @@ export default function CommentInReportItem({ comment, index, isLock }) {
             {/* Actions */}
             <div className="flex space-x-6 mt-4">
                 <div className="flex space-x-6 mt-4">
+                    {/*<button*/}
+                    {/*    disabled={isLock}*/}
+                    {/*    type="button"*/}
+                    {/*    className="flex items-center space-x-1 text-xs text-gray-500 hover:underline dark:text-gray-400"*/}
+                    {/*>*/}
+                    {/*    👍 <span>{comment.like_count}</span>*/}
+                    {/*    <span className="hidden md:inline-flex">Thích</span>*/}
+                    {/*</button>*/}
                     <button
-                        disabled={isLock}
-                        type="button"
-                        className="flex items-center space-x-1 text-xs text-gray-500 hover:underline dark:text-gray-400"
-                    >
-                        👍 <span>{comment.like_count}</span>
-                        <span className="hidden md:inline-flex">Thích</span>
-                    </button>
-                    <button
-                        onClick={() => setIsReply(!isReply)}
+                        onClick={() => handleReply(profile?.username)}
                         type="button"
                         className="text-xs text-gray-500 hover:underline dark:text-gray-400"
                     >
@@ -125,11 +135,11 @@ export default function CommentInReportItem({ comment, index, isLock }) {
 
             </div>
             <div>
-                {isReply && (
-                    <div className={"mt-5"}>
-                        <UserReply />
-                    </div>
-                )}
+                {/*{isReply && (*/}
+                {/*    <div className={"mt-5"}>*/}
+                {/*        <UserReply />*/}
+                {/*    </div>*/}
+                {/*)}*/}
             </div>
         </article>
     );

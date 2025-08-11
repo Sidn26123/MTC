@@ -111,7 +111,7 @@ function ReadingNovels() {
                         {bookShelfItems.data && bookShelfItems.data.map((item, index) => {
                             return (
                                 <div key={index} className={"m-2"}>
-                                    <BookShelfNovelCard data={item}/>
+                                    <BookShelfNovelCard data={item} setPageData = {setPageData}/>
                                 </div>
                             )
                         })}
@@ -154,8 +154,7 @@ function NavigationBar() {
     )
 }
 
-function BookShelfNovelCard({data}) {
-    console.log(data);
+function BookShelfNovelCard({data, setPageData}) {
     const navigate = useNavigate();
     const handleUpdateNotice = (novelId, isNoticed) => {
         const payload = {
@@ -171,9 +170,8 @@ function BookShelfNovelCard({data}) {
 
     const handleDeleteItem = (readingNovelId) => {
         deleteBookshelfItem(readingNovelId, data.novel.id).then((response) => {
+            console.log(response)
             if (response.data.result) {
-                console.log("Deleted bookshelf item successfully");
-                // Optionally, you can refresh the bookshelf items
                 setPageData((prev) => ({
                     ...prev,
                     page: 1, // Reset to first page after deletion

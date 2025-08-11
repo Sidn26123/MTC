@@ -116,6 +116,7 @@ export const navigateToChapter = async (novelId, chapterId, data) => {
 }
 
 export const startReadChapter = async (chapterId, data) => {
+    console.log("Start read chapter data: ", data);
     const response = await api.post(`${API.CHAPTER}/${chapterId}/read`, data)
 }
 

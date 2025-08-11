@@ -1,5 +1,6 @@
 import api from '../middlewares/axios.js';
 import { API } from '../configurations/configuration.js';
+import { wrapApiFunctions } from '../components/wrapper/apiWrapper.js';
 
 export const sendRating = async (rating) => {
     console.log("Sending rating:", rating);
@@ -176,3 +177,11 @@ export const updateReportStatus = async (reportId, data) => {
         throw error; // Re-throw the error for further handling if needed
     }
 }
+
+const apiFunctions = {
+    sendRating,
+    sendComment,
+    getRatingOfNovel
+};
+
+export default wrapApiFunctions(apiFunctions);

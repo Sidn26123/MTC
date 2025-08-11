@@ -103,7 +103,10 @@ const NovelFilter = ({onClose}) => {
     const novelTypes = useNovelType();
     const changePage = useSetPage();
     const setNovelProgressStatus = useSetNovelStatus();
-    useInitData();
+    if (!novelProgressStatus){
+        useInitData();
+
+    }
     // useEffect(() => {
     //     const fetchData = async () => {
     //         // const result = await getNovelProgressStatus(); // Giả sử gọi API
@@ -131,6 +134,7 @@ const NovelFilter = ({onClose}) => {
         setIsLoading(true);
 
         getFilteredNovels(extractFiltersFromStore()).then(r => {
+            console.log("NovelFilter: r ", r);
             setListNovel(r.data.result);
             setIsLoading(false);
         });

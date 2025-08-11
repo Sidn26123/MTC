@@ -12,6 +12,7 @@ import { useUser } from "../../stores/userStores.js";
 import { logOut } from '../../services/authenticationService.js';
 
 import useUserStore from '../../stores/userStores.js';
+import { getFullPathOfAvatar } from '../../utils/ProfileUtils.js';
 
 const UserManagePage = () => {
   const setUser = useUserStore((state) => state.setUser);
@@ -142,7 +143,7 @@ const UserManagePage = () => {
         <div className="p-8">
           <div className="uppercase tracking-wide text-sm text-indigo-500 font-semibold">Profile</div>
           <div className="flex items-center">
-            <img className="h-16 w-16 rounded-full mr-4" src={userInfo?.avatarPath || "https://react-demo.tailadmin.com/images/user/owner.jpg"} alt="Profile" />
+            <img className="h-16 w-16 rounded-full mr-4" src={getFullPathOfAvatar(userInfo?.avatarPath) || "https://react-demo.tailadmin.com/images/user/owner.jpg"} alt="Profile" />
             <div>
               <h1 className="text-xl font-medium 	text-white">{userInfo?.username}</h1>
               <p className="	text-white">Admin</p>

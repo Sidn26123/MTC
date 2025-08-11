@@ -1,6 +1,8 @@
 import { API, API_CATEGORY } from '../configurations/configuration';
 import api from '../middlewares/axios.js';
 import { useSetListNovel } from '../stores/novelStore.js';
+import { wrapApiFunctions } from '../components/wrapper/apiWrapper.js';
+import { getRatingOfNovel, sendComment, sendRating } from './feedbackService.js';
 
 export const getNovels = async () => {
     const response = await api.get(API.NOVEL +"/novels")
@@ -151,3 +153,41 @@ export const updateNovelState = async (novelId, newStatusId) => {
     return response.data;
 }
 
+
+const apiFunctions = {
+    // novels
+    getNovels,
+    getNovelBySlug,
+    getNovelById,
+    getFilteredNovels,
+    isNovelBookmarked,
+    getAllMyNovels,
+    getTopPromotionNovels,
+    getBestNovels,
+
+    // genres
+    getAllGenres,
+    addGenre,
+    updateGenre,
+
+    // sect
+    getAllSect,
+    addSect,
+    updateSect,
+
+    // world scene
+    getAllWorldScene,
+    addWorldScene,
+    updateWorldScene,
+
+    // main character traits
+    getAllMainCharacterTraits,
+    addMainCharacterTrait,
+    updateMainCharacterTrait,
+
+    // novel state
+    getAllNovelState,
+    updateNovelState
+};
+
+export default wrapApiFunctions(apiFunctions);

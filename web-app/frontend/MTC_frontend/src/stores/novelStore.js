@@ -164,7 +164,7 @@ export const useFilteredNovelListData = () => userNovelStore((state) => state.fi
 export const useJustReadNovelListData = () => userNovelStore((state) => state.justReadNovelList.data || []);
 export const usePromotedNovelListData = () => userNovelStore((state) => state.promotedNovelList.data || []);
 export const useJustFinishedNovelListData = () => userNovelStore((state) => state.justFinishedNovelList || []);
-
+export const useListNovelPage = () => userNovelStore((state) => state.listNovel.currentPage);
 // Hooks cho việc cập nhật currentPage
 export const useSetListNovelPage = () => userNovelStore((state) => state.actions.setListNovelPage);
 export const useSetFilteredNovelListPage = () => userNovelStore((state) => state.actions.setFilteredNovelListPage);

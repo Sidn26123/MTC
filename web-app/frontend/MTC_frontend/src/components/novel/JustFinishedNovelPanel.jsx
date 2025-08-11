@@ -9,9 +9,11 @@ import {
     useSetPublishedByPublisher,
 } from '../../stores/novelStore.js';
 import { getJustPublishedChapters } from '../../services/chapterService.js';
+import { useNavigate } from 'react-router';
 
 
 const JustFinishedNovelPanel = () => {
+    const navigate = useNavigate();
     const justFinishedNovelList = useJustFinishedNovelListData();
     const setJustFinishedNovelList = useSetJustFinishedNovelList();
     useEffect(() => {
@@ -59,7 +61,7 @@ const JustFinishedNovelPanel = () => {
                     return (
                         <SwiperSlide key={index}>
 
-                            <div className="flex flex-col space-y-2 mx-auto w-full">
+                            <div className="flex flex-col space-y-2 mx-auto w-full" onClick={()=> navigate(`/truyen/${item.novel.slug}`)}>
                                 <a href={item.novel.link} title={item.novel.name} className="mx-auto block">
                                     <img
                                         src={item.novel.novelCoverImage}

@@ -104,6 +104,7 @@ const useFilterManageStore = create(
                 setSearchText: (text) => set({ searchText: text }),
                 setSortBy: (value) => set({ sortBy: value }),
                 setSortOrder: (value) => set({ sortOrder: value }),
+                setSortDirection: (value) => set({ sortDirection: value }),
                 setNovelStatus: (list) => set({ novelProgressStatus: list }),
                 setNovelType: (list) => set({ novelType: list }),
                 setGenres: (list) => set({ genres: list }),

@@ -79,7 +79,7 @@ export const extractFiltersFromStore = () => {
         ratingFrom,
         ratingTo,
         sortBy,
-        sortOrder,
+        sortDirection,
         page,
         size,
     } = useFilterStore.getState();
@@ -112,8 +112,8 @@ export const extractFiltersFromStore = () => {
         avgRateTo: ratingTo !== -1 ? ratingTo : undefined,
 
         // Sắp xếp
-        sortBy,
-        sortDirection: sortOrder?.toUpperCase() === 'DESC' ? 'DESC' : 'ASC',
+        sortBy: sortBy,
+        sortDirection: sortDirection,
 
         // Phân trang mặc định
         page: page,

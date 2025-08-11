@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react'; 
-import { getAllMainCharacterTraits, addMainCharacterTrait, updateMainCharacterTrait } from '../../services/novelService';
+import novelService, { getAllMainCharacterTraits, addMainCharacterTrait, updateMainCharacterTrait } from '../../services/novelService';
 
 const MainCharacterManage = () => {
   
@@ -16,12 +16,8 @@ const MainCharacterManage = () => {
     const [editId, setEditId] = useState(null);
 
     const fetchMainCharacters = async () => {
-        try {
-            const MainCharacters = await getAllMainCharacterTraits();
-            setData(MainCharacters.result || []); // Assuming genres is an object with a 'result' property
-        } catch (error) {
-            console.error("Lỗi khi tải danh sách tính cách nhân vật chính:", error);
-        }
+        const MainCharacters = await novelService.getAllMainCharacterTraits();
+        setData(MainCharacters.result || []); // Assuming genres is an object with a 'result' property
     };
 
     useEffect(() => {
@@ -54,31 +50,25 @@ const MainCharacterManage = () => {
     const handleConfirm = async () => {
         if (inputValue.trim() === '') return;
 
-        try {
-            if (editId !== null) {
-                // Gọi API cập nhật
-                console.log("Updating MainCharacter with ID:", editId, "and name:", inputValue);
-                const updated = await updateMainCharacterTrait({ id: editId, name: inputValue });
-                // Cập nhật vào danh sách local
-                setData(prev =>
-                    prev.map(item =>
-                        item.id === editId ? { ...item, name: updated.name } : item
-                    )
-                );
-            } else {
-                // Gọi API tạo mới
-                const created = await addMainCharacterTrait({ name: inputValue });
-                // Thêm vào danh sách local
-                setData(prev => [...prev, created]);
-            }
-            await fetchMainCharacters();
-
-            setShowModal(false);
-            setInputValue('');
-        } catch (error) {
-            console.error("Lỗi khi thêm/cập nhật tính cách nhân vật chính:", error);
-            alert("Đã xảy ra lỗi. Vui lòng thử lại.");
+        if (editId !== null) {
+            // Gọi API cập nhật
+            const updated = await novelService.updateMainCharacterTrait({ id: editId, name: inputValue });
+            // Cập nhật vào danh sách local
+            setData(prev =>
+                prev.map(item =>
+                    item.id === editId ? { ...item, name: updated.name } : item
+                )
+            );
+        } else {
+            // Gọi API tạo mới
+            const created = await novelService.addMainCharacterTrait({ name: inputValue });
+            // Thêm vào danh sách local
+            setData(prev => [...prev, created]);
         }
+        await fetchMainCharacters();
+
+        setShowModal(false);
+        setInputValue('');
     };
 
 

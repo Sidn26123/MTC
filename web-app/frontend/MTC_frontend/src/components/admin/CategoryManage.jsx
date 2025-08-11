@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useEffect } from 'react';
-import { getAllGenres, addGenre, updateGenre } from '../../services/novelService';
+import novelService, { getAllGenres, addGenre, updateGenre } from '../../services/novelService';
+import { showError } from '../../utils/ToastUtils.js';
+import {showErrorWrapper} from '../wrapper/commonWrapper.jsx';
 
 const CategoryManage = () => {
     // const [data, setData] = useState([
@@ -34,12 +36,8 @@ const CategoryManage = () => {
     );
 
     const fetchGenres = async () => {
-        try {
-            const genres = await getAllGenres();
-            setData(genres.result || []); // Assuming genres is an object with a 'result' property
-        } catch (error) {
-            console.error("Lỗi khi tải danh sách thể loại:", error);
-        }
+        const genres = await novelService.getAllGenres();
+        setData(genres.result || []); // Assuming genres is an object with a 'result' property
     };
 
     useEffect(() => {
@@ -83,31 +81,26 @@ const CategoryManage = () => {
     const handleConfirm = async () => {
         if (inputValue.trim() === '') return;
 
-        try {
-            if (editId !== null) {
-                // Gọi API cập nhật
-                console.log("Updating genre with ID:", editId, "and name:", inputValue);
-                const updated = await updateGenre({ id: editId, name: inputValue });
-                // Cập nhật vào danh sách local
-                setData(prev =>
-                    prev.map(item =>
-                        item.id === editId ? { ...item, name: updated.name } : item
-                    )
-                );
-            } else {
-                // Gọi API tạo mới
-                const created = await addGenre({ name: inputValue });
-                // Thêm vào danh sách local
-                setData(prev => [...prev, created]);
-            }
-            await fetchGenres();
-
-            setShowModal(false);
-            setInputValue('');
-        } catch (error) {
-            console.error("Lỗi khi thêm/cập nhật thể loại:", error);
-            alert("Đã xảy ra lỗi. Vui lòng thử lại.");
+        if (editId !== null) {
+            // Gọi API cập nhật
+            console.log("Updating genre with ID:", editId, "and name:", inputValue);
+            const updated = await novelService.updateGenre({ id: editId, name: inputValue });
+            // Cập nhật vào danh sách local
+            setData(prev =>
+                prev.map(item =>
+                    item.id === editId ? { ...item, name: updated.name } : item
+                )
+            );
+        } else {
+            // Gọi API tạo mới
+            const created = await novelService.addGenre({ name: inputValue });
+            // Thêm vào danh sách local
+            setData(prev => [...prev, created]);
         }
+        await fetchGenres();
+
+        setShowModal(false);
+        setInputValue('');
     };
 
 
