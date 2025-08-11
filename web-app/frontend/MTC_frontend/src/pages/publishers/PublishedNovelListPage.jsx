@@ -28,15 +28,14 @@ function PublishedNovelPage() {
     const setMyPublishedNovels = useSetMyPublishedNovels();
     const myPublishedNovels = useMyPublishedNovels();
     const [pageData, setPageData] = useState(initPageData());
-
     const fetchNovels = async (page = 1, size = pageData.pageSize) => {
         if (!user?.id) return;
 
         try {
             const filter = {
-                currentPublisher: "a3651d8d-f9e0-4a57-930f-5bbf9ff21a6d",
-                page,
-                size,
+                currentPublisher: user.userId,
+                page: page,
+                size: size === undefined ? 10 : pageData.pageSize,
             };
             const response = await getFilteredNovels(filter);
             setMyPublishedNovels(response.data.result);

@@ -42,6 +42,13 @@ const NovelListPage = () => {
 
     }
 
+    const handleChangePageSizeInNavigator = (size) => {
+        filterStore.setSize(size);
+        setSize(size);
+        setPage(1); // Reset về trang đầu tiên khi thay đổi kích thước trang
+        // navigate(`/novels?page=0&size=${size}`); // Chuyển hướng đến trang đầu tiên với kích thước mới
+    }
+
 
     const handleFilter = () => {
         getFilteredNovels(extractFiltersFromStore()).then(r => {
@@ -79,7 +86,7 @@ const NovelListPage = () => {
                         totalPages={totalPages}
                         totalElements={totalElements}
                         onPageChange={handleChangePageInNavigator}
-                        onPageSizeChange={setSize}
+                        onPageSizeChange={handleChangePageSizeInNavigator}
                     />
                 </div>
 
