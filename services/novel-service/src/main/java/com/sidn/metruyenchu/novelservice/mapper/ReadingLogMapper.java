@@ -4,6 +4,7 @@ import com.sidn.metruyenchu.novelservice.dto.request.chapter.mongo.ReadingLogCre
 import com.sidn.metruyenchu.novelservice.dto.response.chapter.ReadingLogResponse;
 import com.sidn.metruyenchu.novelservice.entity.ReadingLog;
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.NullValuePropertyMappingStrategy;
 
 import java.util.List;
@@ -15,4 +16,7 @@ public interface ReadingLogMapper {
     ReadingLogResponse toReadingLogResponse(ReadingLog readingLog);
 
     List<ReadingLogResponse> toReadingLogResponses(List<ReadingLog> logs);
+
+
+    void update(@MappingTarget ReadingLog readingLog, ReadingLogCreateRequest request);
 }

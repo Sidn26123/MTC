@@ -290,5 +290,19 @@ public class TransactionsService {
         return prefix + "-" + System.currentTimeMillis() + "-" + String.format("%04d", (int) (Math.random() * 10000));
     }
 
+    public List<BigDecimal> getMonthlyUserSpending(int year) {
+        List<Object[]> rawData = transactionsRepository.getMonthlyUserSpending(year);
+
+        List<BigDecimal> monthlySpending = new ArrayList<>(Collections.nCopies(12, BigDecimal.ZERO));
+
+        for (Object[] row : rawData) {
+            Integer month = ((Number) row[0]).intValue();
+            BigDecimal total = (BigDecimal) row[1];
+            monthlySpending.set(month - 1, total);
+        }
+
+        return monthlySpending;
+    }
+
 
 }

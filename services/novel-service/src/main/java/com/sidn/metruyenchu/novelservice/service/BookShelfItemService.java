@@ -89,14 +89,14 @@ public class BookShelfItemService {
 
 
     public BookShelfItemResponse getBookShelfItemByNovelId(String bookShelfId, String novelId) {
-        BookShelfItem item = bookShelfItemRepository.findByNovelIdAndBookShelfId(novelId, bookShelfId)
+        BookShelfItem item = bookShelfItemRepository.findByNovelIdAndBookShelfIdAndIsDeletedIsFalse(novelId, bookShelfId)
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKSHELF_ITEM_NOT_FOUND));
 
         return bookShelfItemMapper.toResponse(item);
     }
 
     public BookShelfItem getBookShelfItemOfUser(BookShelfItemGetRequest request){
-        Optional<BookShelfItem> item = bookShelfItemRepository.findByNovelIdAndBookShelfId(request.getNovelId(), request.getBookShelfId());
+        Optional<BookShelfItem> item = bookShelfItemRepository.findByNovelIdAndBookShelfIdAndIsDeletedIsFalse(request.getNovelId(), request.getBookShelfId());
         return item.orElse(null);
 
     }
@@ -117,9 +117,9 @@ public class BookShelfItemService {
         BookShelfItem item = bookShelfItemRepository.findById(itemId)
                 .orElseThrow(() -> new AppException(ErrorCode.BOOKSHELF_ITEM_NOT_FOUND));
 
-        item.setIsDeleted(true); // Đánh dấu là đã xoá
+//        item.setIsDeleted(true); // Đánh dấu là đã xoá
         try {
-            bookShelfItemRepository.save(item);
+            bookShelfItemRepository.delete(item);
         } catch (Exception e) {
             throw new AppException(ErrorCode.UNKNOWN_ERROR);
         }
@@ -142,7 +142,7 @@ public class BookShelfItemService {
     public PageResponse<BookShelfItemResponse> getBookShelfItemsInBookShelf(String bookShelfId, BookShelfItemGetRequest request) {
         Pageable pageable = PageUtils.from(request);
 
-        var pageData = bookShelfItemRepository.findAllByBookShelfId(bookShelfId, pageable);
+        var pageData = bookShelfItemRepository.findAllByBookShelfIdAndIsDeletedIsFalse(bookShelfId, pageable);
 
         return PageUtils.toPageResponse(pageData, bookShelfItemMapper::toResponse, request.getPage());
     }
@@ -194,7 +194,7 @@ public class BookShelfItemService {
     }
 
     public PageResponse<BookShelfItemResponse> getBookShelfItemsInActiveBookShelf(String userId, BookShelfItemGetRequest request) {
-        List<BookShelf> bookShelfList = bookShelfRepository.findAllByUserId(userId);
+        List<BookShelf> bookShelfList = bookShelfRepository.findAllByUserIdAndIsDeletedIsFalse(userId);
         BookShelf bookShelf = bookShelfList.stream()
                 .filter(BookShelf::getIsActive)
                 .findFirst()
@@ -204,6 +204,6 @@ public class BookShelfItemService {
 
         var pageData = bookShelfItemRepository.findAllByBookShelfId(bookShelf.getId(), pageable);
 
-        return null;
+        return PageUtils.toPageResponse(pageData, bookShelfItemMapper::toResponse, request.getPage());
     }
 }

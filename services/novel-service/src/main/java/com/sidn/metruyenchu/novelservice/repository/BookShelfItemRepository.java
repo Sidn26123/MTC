@@ -19,4 +19,8 @@ public interface BookShelfItemRepository extends JpaRepository<BookShelfItem, St
     Optional<BookShelfItem> findByBookShelfIdAndNovelId(String bookShelfId, String novelId);
 
     Optional<BookShelfItem> findByNovelId(String novelId);
+
+    Optional<BookShelfItem> findByNovelIdAndBookShelfIdAndIsDeletedIsFalse(String novelId, String bookShelfId);
+
+    Page<BookShelfItem> findAllByBookShelfIdAndIsDeletedIsFalse(String bookShelfId, Pageable pageable);
 }

@@ -51,4 +51,17 @@ public interface TransactionsRepository extends JpaRepository<Transactions, Stri
     
     @Query("SELECT COUNT(t) FROM Transactions t WHERE t.userId = :userId AND t.status = :status")
     Long countByUserIdAndStatus(@Param("userId") String userId, @Param("status") TransactionStatus status);
+
+    @Query("""
+        SELECT MONTH(t.completedAt),
+               COALESCE(SUM(t.amount), 0)
+        FROM Transactions t
+        WHERE YEAR(t.completedAt) = :year
+          AND t.status = 'COMPLETED'
+          AND t.type = 'PURCHASE'
+
+        GROUP BY MONTH(t.completedAt)
+        ORDER BY MONTH(t.completedAt)
+    """)
+    List<Object[]> getMonthlyUserSpending(@Param("year") int year);
 }

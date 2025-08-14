@@ -2,6 +2,7 @@ package com.sidn.metruyenchu.novelservice.service;
 
 import com.sidn.metruyenchu.novelservice.dto.request.chapter.mongo.DailyReadingStat;
 import com.sidn.metruyenchu.novelservice.dto.request.chapter.mongo.ReadingLogCreateRequest;
+import com.sidn.metruyenchu.novelservice.dto.request.chapter.mongo.ReadingLogUpdateRequest;
 import com.sidn.metruyenchu.novelservice.dto.request.chapter.mongo.UserReadingStat;
 
 import com.sidn.metruyenchu.novelservice.dto.response.chapter.ReadingLogResponse;
@@ -40,6 +41,22 @@ public class ReadingLogService {
         ReadingLog log = readingLogMapper.toReadingLog(request);
         // readAt sẽ được set tự động trong @PrePersist
         return readingLogMapper.toReadingLogResponse(readingLogRepository.save(log));
+    }
+
+    @Transactional
+    public void update(String logId, ReadingLogUpdateRequest request) {
+        ReadingLog existingLog = readingLogRepository.findById(logId)
+                .orElseThrow(() -> new IllegalArgumentException("Reading log not found"));
+
+        // Cập nhật các trường cần thiết
+        existingLog.setDuration(request.getDuration());
+        existingLog.setProgress(request.getProgress());
+        existingLog.setDevice(request.getDevice());
+        existingLog.setIpAddress(request.getIpAddress());
+        existingLog.setUserAgent(request.getUserAgent());
+        existingLog.setIsFinished(request.getIsFinished());
+
+        readingLogRepository.save(existingLog);
     }
 
     public List<ReadingLogResponse> getByUser(String userId) {

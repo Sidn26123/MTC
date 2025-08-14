@@ -169,8 +169,8 @@ public class ChapterController {
     }
 
     @PostMapping("/{chapterId}/read")
-    ApiResponse<Void> readChapter(@PathVariable String chapterId, @RequestBody StartReadChapterRequest request) {
-        return ApiResponse.<Void>builder()
+    ApiResponse<String> readChapter(@PathVariable String chapterId, @RequestBody StartReadChapterRequest request) {
+        return ApiResponse.<String>builder()
                 .result(chapterService.startReadChapter(request))
                 .build();
     }

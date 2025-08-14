@@ -1,6 +1,8 @@
 package com.sidn.metruyenchu.novelservice.exception;
 
-import com.sidn.metruyenchu.novelservice.dto.ApiResponse;
+import com.sidn.metruyenchu.shared_library.dto.ApiResponse;
+import com.sidn.metruyenchu.shared_library.exceptions.AppException;
+import com.sidn.metruyenchu.shared_library.exceptions.ErrorCode;
 import jakarta.validation.ConstraintViolation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

@@ -22,6 +22,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -89,5 +92,22 @@ public class PaymentRequestService {
                 .orElseThrow(() -> new AppException(ErrorCode.PAYMENT_REQUEST_NOT_FOUND));
 
         paymentRequestRepository.delete(paymentRequest);
+    }
+
+    public List<BigDecimal> getMonthlyRevenue(int year) {
+        // Lấy dữ liệu từ DB
+        List<Object[]> rawData = paymentRequestRepository.getMonthlyRevenue(year);
+
+        // Khởi tạo danh sách 12 tháng = 0
+        List<BigDecimal> monthlyRevenue = new ArrayList<>(Collections.nCopies(12, BigDecimal.ZERO));
+
+        // Gán dữ liệu từ DB vào đúng tháng (tháng trong DB = 1..12)
+        for (Object[] row : rawData) {
+            Integer month = ((Number) row[0]).intValue();
+            BigDecimal total = (BigDecimal) row[1];
+            monthlyRevenue.set(month - 1, total);
+        }
+
+        return monthlyRevenue;
     }
 }

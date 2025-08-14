@@ -17,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 
@@ -151,6 +152,13 @@ public class TransactionController {
         return ApiResponse.<Map<String, Object>>builder()
                 .result(transactionsService.getUserTransactionStatistics(userId))
                 .build();
+    }
+
+    @GetMapping("/year/{year}")
+    public List<BigDecimal> getUserSpending(
+            @PathVariable int year
+    ) {
+        return transactionsService.getMonthlyUserSpending( year);
     }
 }
 

@@ -6,13 +6,16 @@ import com.sidn.metruyenchu.novelservice.dto.request.bookshelfItem.BookShelfItem
 import com.sidn.metruyenchu.novelservice.dto.request.bookshelfItem.BookShelfItemUpdateRequest;
 import com.sidn.metruyenchu.novelservice.dto.request.chapter.*;
 import com.sidn.metruyenchu.novelservice.dto.request.chapter.mongo.ReadingLogCreateRequest;
+import com.sidn.metruyenchu.novelservice.dto.request.chapter.mongo.ReadingLogUpdateRequest;
 import com.sidn.metruyenchu.novelservice.dto.response.bookshelfItem.BookShelfItemResponse;
 import com.sidn.metruyenchu.novelservice.dto.response.chapter.*;
 import com.sidn.metruyenchu.novelservice.entity.*;
 import com.sidn.metruyenchu.novelservice.enums.ChapterState;
 import com.sidn.metruyenchu.novelservice.enums.NovelVisibility;
-import com.sidn.metruyenchu.novelservice.exception.AppException;
-import com.sidn.metruyenchu.novelservice.exception.ErrorCode;
+//import com.sidn.metruyenchu.novelservice.exception.AppException;
+//import com.sidn.metruyenchu.novelservice.exception.ErrorCode;
+import com.sidn.metruyenchu.shared_library.exceptions.AppException;
+import com.sidn.metruyenchu.shared_library.exceptions.ErrorCode;
 import com.sidn.metruyenchu.novelservice.mapper.ChapterMapper;
 import com.sidn.metruyenchu.novelservice.mapper.NovelMapper;
 import com.sidn.metruyenchu.novelservice.repository.ChapterRepository;
@@ -37,6 +40,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import static com.sidn.metruyenchu.novelservice.utils.NovelUtils.getWordCount;
 import static com.sidn.metruyenchu.novelservice.utils.TokenUtils.getUserIdFromContext;
 
 
@@ -150,7 +154,7 @@ public class ChapterService {
 
         // Thiết lập trạng thái chương cho chương
         chapter.setChapterStatus(chapterStatusDetails);
-
+        chapter.setWordCount(request.getContent() != null ? getWordCount(request.getContent()) : 0);
         // Lấy tổng số chương hiện tại của tiểu thuyết
         Integer totalChapters = novel.getTotalChapters();
         log.info("Tổng số chương: {}", totalChapters);
@@ -323,6 +327,11 @@ public class ChapterService {
                 orElseThrow(() -> new AppException(ErrorCode.CHAPTER_NOT_FOUND));
         log.info("Chapter ID: {}", request);
         chapterMapper.update(chapter, request);
+
+        if (request.getContent() != null) {
+            chapter.setWordCount(getWordCount(request.getContent()));
+            log.info("Word count: {}", getWordCount(request.getContent()));
+        }
 //        chapterMapper.updateChapterFromRequest(chapter, request);
         try {
             chapter = chapterRepository.save(chapter);
@@ -580,7 +589,7 @@ public class ChapterService {
         }
 
         //Nếu là tác giả thì có thể đọc
-        if (chapter.getNovel().getAuthor().getId().equals(userId)) {
+        if (chapter.getNovel().getCurrentPublisher().equals(userId)) {
             return true;
         }
 
@@ -635,7 +644,7 @@ public class ChapterService {
         );
     }
 
-    public Void startReadChapter(StartReadChapterRequest request){
+    public String startReadChapter(StartReadChapterRequest request){
         request.setUserId(getUserIdFromContext());
         //ấy bookshelf hiện tại của user
         BookShelf bookShelf = bookShelfService.getCurrentActiveBookShelfOfUser(request.getUserId());
@@ -652,7 +661,7 @@ public class ChapterService {
                         .build()
         );
         BookShelfItemResponse bookShelfItemResponse = null;
-        log.info("{}", bookShelfItem);
+        log.info("Bookshelf {}", bookShelfItem);
         if (bookShelfItem == null) {
             bookShelfItemResponse = bookShelfItemService.addItemToBookShelf(
                     bookShelf.getId(),
@@ -662,6 +671,7 @@ public class ChapterService {
                             .novelId(request.getNovelId())
                             .build()
             );
+            log.info("BookShelfItemResponse create: {} - {}", bookShelfItemResponse.getId(), bookShelfItemResponse.getCurrentChapterIdx());
         }
 
         //Neu da co thì update lại chương mới
@@ -675,7 +685,17 @@ public class ChapterService {
             );
             log.info("BookShelfItemResponse update: {} - {}",bookShelfItemResponse.getId(), bookShelfItemResponse.getCurrentChapterIdx());
         }
-        return null;
+        Chapter chapter = chapterRepository.findByIdAndIsDeletedIsFalse(request.getChapterId())
+                .orElseThrow(() -> new AppException(ErrorCode.CHAPTER_NOT_FOUND));
+        Novel novel = chapter.getNovel();
+        String userId = getUserIdFromContext();
+        var obj =  readingLogService.create(
+                ReadingLogCreateRequest.builder()
+                        .chapterId(chapter.getId())
+                        .userId(userId)
+                        .novelId(novel.getId())
+                        .build());
+        return obj.getId();
     }
 
 
@@ -703,17 +723,17 @@ public class ChapterService {
             isFinished = false;
         }
 
-
-        readingLogService.create(
-                ReadingLogCreateRequest.builder()
-                        .chapterId(chapter.getId())
-                        .userId(userId)
-                        .novelId(novel.getId())
-                        .duration(request.getDuration())
-                        .progress(request.getProgress())
-                        .isFinished(isFinished)
-                        .build()
-        );
+        String logId = request.getLogId();
+        if (logId != null){
+            readingLogService.update(
+                    logId,
+                    ReadingLogUpdateRequest.builder()
+                            .duration(request.getDuration())
+                            .progress(request.getProgress())
+                            .isFinished(isFinished)
+                            .build()
+            );
+        }
 
         return null;
     }

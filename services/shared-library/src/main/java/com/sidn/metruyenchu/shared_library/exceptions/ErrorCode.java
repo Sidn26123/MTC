@@ -212,7 +212,12 @@ public enum ErrorCode {
     PAYMENT_REQUEST_FAILED(6009, "Yêu cầu thanh toán không thành công", HttpStatus.BAD_REQUEST),
     PAYMENT_REQUEST_NOT_FOUND(6010, "Yêu cầu thanh toán không tồn tại", HttpStatus.NOT_FOUND),
     CONTENT_PURCHASE_ALREADY_EXISTS(6011, "Nội dung đã được mua trước đó", HttpStatus.BAD_REQUEST),
-    CONTENT_PURCHASE_NOT_FOUND(6012, "Nội dung mua không tồn tại", HttpStatus.NOT_FOUND);
+    CONTENT_PURCHASE_NOT_FOUND(6012, "Nội dung mua không tồn tại", HttpStatus.NOT_FOUND),
+    CHAPTER_STATUS_NOT_FOUND(1011, "Trạng thái chương không tồn tại", HttpStatus.NOT_FOUND),
+    USER_NOT_HAVE_PERMISSION(1012, "Người dùng không có quyền thực hiện hành động này", HttpStatus.FORBIDDEN),
+    BOOKSHELF_NOT_FOUND(1013, "Giá sách không tồn tại", HttpStatus.NOT_FOUND),
+    BOOKSHELF_ALREADY_EXISTS(1014, "Giá sách đã tồn tại", HttpStatus.BAD_REQUEST);
+
 
     ErrorCode(int code, String message, HttpStatusCode statusCode) {
         this.code = code;

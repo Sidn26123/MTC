@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -66,5 +67,10 @@ public class PaymentRequestController {
     public ApiResponse<Void> deletePaymentRequest(@PathVariable String id) {
         paymentRequestService.hardDeletePaymentRequest(id);
         return ApiResponse.<Void>builder().build();
+    }
+
+    @GetMapping("/venu/{year}")
+    public List<BigDecimal> getRevenueByYear(@PathVariable int year) {
+        return paymentRequestService.getMonthlyRevenue(year);
     }
 }

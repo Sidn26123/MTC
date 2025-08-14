@@ -12,4 +12,6 @@ public interface BookShelfRepository extends JpaRepository<BookShelf, String> {
     List<BookShelf> findAllByUserId(String userId);
     Page<BookShelf> findAllByUserId(String userId, Pageable pageable);
     List<BookShelf> findAllByUserIdAndIsActiveIsTrue(String userId);
+
+    List<BookShelf> findAllByUserIdAndIsDeletedIsFalse(String userId);
 }

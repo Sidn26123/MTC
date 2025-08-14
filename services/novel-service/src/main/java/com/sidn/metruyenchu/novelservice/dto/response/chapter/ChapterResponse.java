@@ -18,6 +18,7 @@ public class ChapterResponse {
     String publisher;
     Integer chapterIdx;
     Long viewCount;
+    Integer wordCount;
 //    String content;
     List<ChapterStatusResponse> chapterStatus;
     Integer amountToUnlock;

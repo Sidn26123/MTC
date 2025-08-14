@@ -21,5 +21,17 @@ public class NovelUtils {
         return slug;
     }
 
+    public static Integer getWordCount(String content) {
+        if (content == null || content.isEmpty()) {
+            return 0;
+        }
+
+        // Tách từ bằng cách sử dụng khoảng trắng và các ký tự đặc biệt
+        String[] words = content.trim().split("\\s+");
+
+        // Trả về số lượng từ
+        return words.length;
+    }
+
 
 }
