@@ -5,6 +5,7 @@ import api from '../middlewares/axios.js';
 import { useChapterActions, useCurrentChapterIdx } from '../stores/chapterStore.js';
 import { useCurrentNovelSlug } from '../stores/novelStore.js';
 import { getCurrentFormattedTimeForApi } from '../utils/DatetimeUtil.js';
+import { showError } from '../utils/ToastUtils.js';
 export const getChapterContentByChapterId = async ({novelSlug, chapterIdx}) => {
     // return await httpClient.get(API.MY_INFO, {
     //     headers: {
@@ -20,8 +21,8 @@ export const getChapterContentByChapterId = async ({novelSlug, chapterIdx}) => {
     return response;
 };
 
-export const getCurrentChapterContent = async ({novelSlug, chapterIdx}) => {
 
+export const getCurrentChapterContent = async ({novelSlug, chapterIdx}) => {
 
     let url = `${API.CHAPTER}/truyen/${novelSlug}/chuong-${chapterIdx}`;
     let response;
@@ -29,7 +30,7 @@ export const getCurrentChapterContent = async ({novelSlug, chapterIdx}) => {
         response = await api.get(url);
     }
     catch (error) {
-        console.log("Error: ", error);
+        showError(error.response.data.message || "Lỗi khi lấy nội dung chương");
         return error.response;
     }
     console.log(response.data.result);
@@ -165,5 +166,11 @@ export const checkChapterReadable = async (chapterId) => {
 export const updateChapter = async (chapterId, data) => {
     const response = await api.put(`${API.CHAPTER}/${chapterId}`, data);
     console.log("Update chapter response: ", response);
+    return response;
+}
+
+export const deleteChapter = async (chapterId) => {
+    const response = await api.delete(`${API.CHAPTER}/${chapterId}`);
+    console.log("Delete chapter response: ", response);
     return response;
 }

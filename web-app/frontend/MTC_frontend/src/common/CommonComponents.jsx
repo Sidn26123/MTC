@@ -235,14 +235,21 @@ const DateTimePicker1 = () => {
 }
 
 
-const CustomDatePicker = ({value, onChange}) =>{
+const CustomDatePicker = ({value, onChange, onClose}) =>{
     // const [value, onChange] = useState(new Date());
 
     return (
         <>
             <div className={"p-5"}>
-                <DateTimePicker onChange={onChange} value={value} />
-
+                {/*<DateTimePicker onChange={onChange} value={value} onClockClose={onClose}/>*/}
+                <DateTimePicker
+                    onChange={(val) => onChange(val)}
+                    value={value} // null sẽ hiển thị trống
+                    clearIcon={<span>✖</span>} // Có thể dùng null để ẩn nút clear
+                    calendarIcon={null} // Ẩn icon lịch nếu muốn
+                    format="dd/MM/yyyy HH:mm"
+                    placeholder="Chọn ngày giờ"
+                />
             </div>
         </>
     )

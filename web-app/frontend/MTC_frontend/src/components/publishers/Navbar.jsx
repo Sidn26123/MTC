@@ -18,6 +18,7 @@ const Navbar = () => {
     const [showFilter, setShowFilter] = useState(false);
     const [showLoginPanel, setShowLoginPanel] = useState(0);
     const user = useUserStore((state) => state.user);
+    const setUser = useUserStore((state) => state.setUser);
     const myWallet = useMyWallet();
     const canViewAdmin = useHasScope("ROLE_ADMIN");
     const unreadCount = useUnreadCount();

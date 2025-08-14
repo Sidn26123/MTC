@@ -201,7 +201,7 @@ const PageNavigator = ({
             <div className="flex flex-row gap-x-1 items-center">
                 <input
                     type="text"
-                    value={currentPageSize}
+                    value={currentPageSize }
                     onChange={handlePageSizeInputChange}
                     onKeyDown={handlePageSizeInputKeyDown}
                     onBlur={handlePageSizeInputBlur}

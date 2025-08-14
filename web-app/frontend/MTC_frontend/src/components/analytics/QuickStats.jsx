@@ -2,7 +2,8 @@
 
 import { ChevronRight, Info } from "lucide-react"
 import PropTypes from "prop-types"
-import React from "react"
+import React, { useEffect } from 'react';
+import { useCurrentPublishedNovel, useSetCurrentChosenNovelRatings } from '../../stores/publisherStore.js';
 
 function StatItem({ label, value, hasInfo = false }) {
     return (
@@ -19,14 +20,39 @@ function StatItem({ label, value, hasInfo = false }) {
 
 
 export function QuickStats() {
+    const currentNovel = useCurrentPublishedNovel();
+    const rating = useCurrentNovelRatings();
+    const setRating = useSetCurrentChosenNovelRatings();
+    useEffect(() => {
+        getRatingOfNovel(currentNovel.id).then(
+            (data) => {
+                console.log(data);
+                if (data && data.data) {
+                    setRating(data.data);
+                }
+            }
+        )
+    }, []);
     return (
         <div className="bg-gray-600 rounded-lg p-6 mb-8">
-            <h2 className="text-xl font-semibold text-white mb-6">Thống kê nhanh tháng này</h2>
+            <h2 className="text-xl font-semibold text-white mb-6">
+                Thống kê nhanh tháng này
+            </h2>
             <RatingBars />
+
+            {rating && rating.data && rating.data.map((item, index) => (
+                <div className="flex flex-col gap-y-2 mb-5" key={index}>
+                    <RatingDetail rating={item}/>
+                </div>
+            ))}
         </div>
-    )
+    );
 }
 import { Star } from "lucide-react";
+import { useCurrentChosenNovelRatings } from '../../stores/publisherStore.js';
+import { RatingDetail } from '../feedbacks/RatingDetail.jsx';
+import { useCurrentNovelRatings } from '../../stores/feedbackStore.js';
+import { getRatingOfNovel } from '../../services/feedbackService.js';
 
 const ratingData = {
     "1": 0,

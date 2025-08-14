@@ -37,6 +37,7 @@ import { useSetCurrentNovelReadingChapter } from '../../stores/bookshelfStore.js
 import { useMyWallet, useSetMyWallet, useUpdateWalletBalance } from '../../stores/paymentStore.js';
 import { showError, showSuccess } from '../../utils/ToastUtils.js';
 import { promotion } from '../../services/paymentService.js';
+import Content from '../../components/common/Content.jsx';
 
 
 
@@ -767,25 +768,61 @@ const CommentBox = () => {
     );
 };
 
-const Content = ({ content }) => {
-    const lines = content.replace(/\\n/g, '\n').split('\n').filter(line => line.trim() !== '');
-    return (
-        <>
-            {/*{lines.map((line, index) => (*/}
-            {/*    <div className={"leading-relaxed"}>*/}
+// const Content = ({ content }) => {
+//     const lines = content.replace(/\\n/g, '\n').split('\n').filter(line => line.trim() !== '');
+//     return (
+//         <>
+//             {/*{lines.map((line, index) => (*/}
+//             {/*    <div className={"leading-relaxed"}>*/}
+//
+//             {/*    </div>*/}
+//             {/*    <React.Fragment key={index}>*/}
+//             {/*        {line}*/}
+//             {/*        <br />*/}
+//             {/*        <br />*/}
+//             {/*    </React.Fragment>*/}
+//             {/*))}*/}
+//             {lines.map((line, index) => (
+//                 <div key={index} className="mb-4 text-lg font-palatino text-[20px] leading-relaxed">
+//                     {line}
+//                 </div>
+//             ))}
+//         </>
+//     );
+// };
+const CanvasText = ({ text, width = 800, fontSize = 20, fontFamily = "Palatino" }) => {
+    const canvasRef = useRef(null);
 
-            {/*    </div>*/}
-            {/*    <React.Fragment key={index}>*/}
-            {/*        {line}*/}
-            {/*        <br />*/}
-            {/*        <br />*/}
-            {/*    </React.Fragment>*/}
-            {/*))}*/}
-            {lines.map((line, index) => (
-                <div key={index} className="mb-4 text-lg font-palatino text-[20px] leading-relaxed">
-                    {line}
-                </div>
-            ))}
-        </>
+    useEffect(() => {
+        const canvas = canvasRef.current;
+        const ctx = canvas.getContext("2d");
+
+        const lines = text.split("\n");
+        const lineHeight = fontSize * 1.5;
+
+        canvas.width = width;
+        canvas.height = lines.length * lineHeight;
+
+        ctx.fillStyle = "#000";
+        ctx.font = `${fontSize}px ${fontFamily}`;
+        ctx.textBaseline = "top";
+        ctx.imageSmoothingEnabled = true;
+
+        lines.forEach((line, i) => {
+            ctx.fillText(line, 0, i * lineHeight);
+        });
+    }, [text, width, fontSize, fontFamily]);
+
+    return (
+        <canvas
+            ref={canvasRef}
+            style={{
+                display: "block",
+                maxWidth: "100%",
+                height: "auto",
+            }}
+        />
     );
 };
+
+;

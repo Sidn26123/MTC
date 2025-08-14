@@ -1,6 +1,5 @@
 import { useCurrentPublishedNovel } from '../../stores/publisherStore.js';
 import React from 'react';
-import { NovelStat } from '../novels/NovelOverviewPage.jsx';
 import AnalyticsNovelPage from './AnalyticsNovelPage.jsx';
 
 

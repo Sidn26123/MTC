@@ -20,3 +20,12 @@ export const roundToTwoDecimalPlaces = (num) => {
     }
     return Math.round((num + Number.EPSILON) * 100) / 100;
 }
+
+export function getWordCount(content) {
+    if (!content || content.trim() === "") {
+        return 0;
+    }
+    // Tách từ bằng khoảng trắng (1 hoặc nhiều) và loại bỏ khoảng trắng thừa
+    const words = content.trim().split(/\s+/);
+    return words.length;
+}

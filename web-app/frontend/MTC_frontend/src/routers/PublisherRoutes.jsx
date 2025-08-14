@@ -16,14 +16,18 @@ import ManageDraftPage from '../pages/users/ManageDraftPage.jsx';
 import ReportListPage from '../pages/users/ReportListPage.jsx';
 import { NovelManagementPage } from '../pages/publishers/NovelManagementPage.jsx';
 import ReportRequestPage from '../pages/publishers/ReportRequestPage.jsx';
+import { useUser } from '../stores/userStores.js';
 
 const publisherRoutesPrefix = "/bookhub";
 
 const PublisherRoutes = ({ user }) => {
-    const isAuthenticated = user && user.id;
-
+    var isAuthenticated = user && user.id;
+    // if (!user){
+    //     const userData = useUser();
+    //     isAuthenticated = userData?.user?.id || false;
+    // }
     return (
-        <Route element={<ProtectedRoute isAllowed={isAuthenticated} redirectTo={"/"}/>}>
+        // <Route element={<ProtectedRoute isAllowed={isAuthenticated} redirectTo={"/"}/>}>
             <Route element={<PublisherLayout />}>
                 <Route path={`${publisherRoutesPrefix}/dashboard`} element={<PublishedNovelPage />} />
                 <Route path={`${publisherRoutesPrefix}/published`} element={<PublishedNovelPage />} />
@@ -43,7 +47,7 @@ const PublisherRoutes = ({ user }) => {
                 <Route path={`${publisherRoutesPrefix}/novels/:novelSlug/manage`} element={<NovelManagementPage />} />
                 <Route path={`${publisherRoutesPrefix}/chapters/:chapterId/edit`} element={<ChapterEditPage />} />
             </Route>
-        </Route>
+        // </Route>
     );
 };
 

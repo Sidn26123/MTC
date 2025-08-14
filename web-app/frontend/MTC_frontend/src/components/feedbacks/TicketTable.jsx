@@ -12,7 +12,7 @@ const TicketTable = ({ tickets }) => {
                 </div>
             </div>
             <div className="table-row-group">
-                {tickets && tickets.data.map((ticket, index) => (
+                {tickets && tickets.result && tickets.result.data.map((ticket, index) => (
                     <div
                         key={ticket.id}
                         className={`table-row ${

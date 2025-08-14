@@ -93,6 +93,17 @@ export const fetchTickets = async (status) => {
     }
 }
 
+export const filterMyReportToHandle = async (data) => {
+    try {
+        const res = await api.get(API.REPORT + "/filter" , {
+            params: data,
+        });
+        return res;
+    } catch (error) {
+        console.error(error);
+    }
+}
+
 export const fetchMyPullReports = async () => {
     try {
         const res = await api.get(API.REPORT + "/filter", {

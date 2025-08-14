@@ -61,12 +61,26 @@ export const usePublisherStore = create((set) => ({
     myPublishedNovels: [],
     chapterPrepareForPublish: [],
     currentChapterList: [],
+    currentChapters: {},
     currentChoseChapter: {},
+    currentChoseNovelComments: {},
+    currentChoseNovelRatings: {},
+    currentReportToHandle: {},
+
     drafts: [],
     actions: {
-        setMyPublishedNovels: (paginationData) => set((state) => ({
-            myPublishedNovels: paginationData
-        })),
+        // setMyPublishedNovels: (paginationData) => set((state) => ({
+        //     myPublishedNovels: paginationData
+        // })),
+        setMyPublishedNovels: (paginationData) =>
+            set((prev) => ({
+                myPublishedNovels: {
+                    ...prev.myPublishedNovels, // giữ nguyên data cũ
+                    ...Object.fromEntries(
+                        Object.entries(paginationData).filter(([_, v]) => v !== undefined && v !== null)
+                    )
+                }
+            })),
         setCurrentChapterList: (paginationData) => set((state) => ({
             currentChapterList: paginationData
         })),
@@ -87,6 +101,18 @@ export const usePublisherStore = create((set) => ({
         })),
         setCurrentChosenChapter: (chapter) => set((state) => ({
             currentChoseChapter: chapter
+        })),
+        setCurrentChapters: (chapters) => set((state) => ({
+            currentChapters: chapters
+        })),
+        setCurrentChosenNovelComments: (comments) => set((state) => ({
+            currentChoseNovelComments: comments
+        })),
+        setCurrentChosenNovelRatings: (ratings) => set((state) => ({
+            currentChoseNovelRatings: ratings
+        })),
+        setCurrentReportToHandle: (report) => set((state) => ({
+            currentReportToHandle: report
         })),
     },
     // --- Pagination States ---
@@ -119,3 +145,12 @@ export const useSetChapterPrepareForPublish = () => usePublisherStore((state) =>
 export const useSetDrafts = () => usePublisherStore((state) => state.actions.setDrafts);
 export const useSetCurrentChapterList = () => usePublisherStore((state) => state.actions.setCurrentChapterList);
 export const useSetCurrentChosenChapter = () => usePublisherStore((state) => state.actions.setCurrentChosenChapter);
+
+export const useSetCurrentChapters = () => usePublisherStore((state) => state.actions.setCurrentChapters);
+export const useCurrentChapters = () => usePublisherStore((state) => state.currentChapters);
+export const useSetCurrentChosenNovelComments = () => usePublisherStore((state) => state.actions.setCurrentChosenNovelComments);
+export const useCurrentChosenNovelComments = () => usePublisherStore((state) => state.currentChoseNovelComments);
+export const useSetCurrentChosenNovelRatings = () => usePublisherStore((state) => state.actions.setCurrentChosenNovelRatings);
+export const useCurrentChosenNovelRatings = () => usePublisherStore((state) => state.currentChoseNovelRatings);
+export const useSetCurrentReportToHandle = () => usePublisherStore((state) => state.actions.setCurrentReportToHandle);
+export const useCurrentReportToHandle = () => usePublisherStore((state) => state.currentReportToHandle);
