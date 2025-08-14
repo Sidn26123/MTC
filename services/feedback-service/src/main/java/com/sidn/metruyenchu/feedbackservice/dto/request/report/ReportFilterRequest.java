@@ -1,7 +1,7 @@
 package com.sidn.metruyenchu.feedbackservice.dto.request.report;
 
+import com.sidn.metruyenchu.feedbackservice.dto.BaseFilterRequest;
 import com.sidn.metruyenchu.feedbackservice.enums.ReportHandleStatus;
-import com.sidn.metruyenchu.shared_library.dto.BaseFilterRequest;
 import com.sidn.metruyenchu.shared_library.enums.feedback.ReportStatus;
 import com.sidn.metruyenchu.feedbackservice.enums.TargetType;
 import com.sidn.metruyenchu.shared_library.enums.feedback.AssigneeRole;
