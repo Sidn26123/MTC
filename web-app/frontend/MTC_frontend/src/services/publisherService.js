@@ -65,3 +65,33 @@ export const createDraft = async (data) => {
     const response = await api.post(API.DRAFT + "/create", data);
     return response;
 }
+
+export const fetchCommentsStats = async (filters) => {
+    const response = await api.get(API.FEEDBACK + '/stats/comment', { params: filters });
+    return response.data;
+}
+
+export const getTopCommentedStats = async (filters) => {
+    const response = await api.post(API.FEEDBACK + '/stats/novels/top-commented/pie-chart', filters);
+    return response.data;
+}
+
+export const getCommentBarType = async (filters) => {
+    const response = await api.post(API.FEEDBACK + '/stats/novels/timeline/bar-chart', filters);
+    return response.data;
+}
+
+export const getSingleNovelCommentsTimeline = async (novelId, filters) => {
+    const response = await api.get(
+        API.FEEDBACK + '/stats/novels/' +novelId + '/timeline/bar-chart',
+        { params: filters }
+    );
+    return response.data;
+}
+export const getDailyHourlyCommentsForNovel = async (novelId, filters) => {
+    const response = await api.get(
+        API.FEEDBACK + '/stats/novels/' + novelId + '/daily-hourly/bar-chart',
+        { params: filters }
+    );
+    return response.data;
+}
