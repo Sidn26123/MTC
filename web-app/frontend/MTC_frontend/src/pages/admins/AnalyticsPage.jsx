@@ -37,6 +37,7 @@ import DonutGenreAnalystic from "../../components/analytics/DonutGenreAnalystic"
 import DonutSectAnalystic from "../../components/analytics/DonutSectAnaLystic";
 import DonutCharacterTraitAnalystic from "../../components/analytics/DonutCharacterTraitAnalystic";
 import NovelApprovedAnalystic from "../../components/analytics/NovelApprovedAnalystic";
+import LineChart from "../../components/analytics/LineChart";
 
 function AnalyticsPage() {
   return (
@@ -55,6 +56,7 @@ function AnalyticsPage() {
         <TableAnalystic title="Thống kê bối cảnh thế giới" />
         <NovelApprovedAnalystic title="Thống kê truyện đã duyệt" />
       </div>
+      <LineChart title="Thống kê doanh thu" />
     </div>
   );
 }
