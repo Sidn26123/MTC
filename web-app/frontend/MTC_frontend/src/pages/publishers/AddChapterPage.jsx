@@ -7,7 +7,7 @@ import 'react-clock/dist/Clock.css';
 import { formatPublishDateTime } from '../../utils/DatetimeUtil.js';
 import { faArrowUpFromBracket, faDeleteLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Link, redirect, useNavigate } from 'react-router';
+import { Link, redirect, useLocation, useNavigate } from 'react-router';
 import {
     useGenres, useMainCharacterTrait,
     useNovelAttribute,
@@ -20,7 +20,7 @@ import { usePublishedByPublisher } from '../../stores/novelStore.js';
 import {
     useCurrentChosenPublishedNovel,
     useCurrentPublishedNovel,
-    usePublisherStore,
+    usePublisherStore, useSetCurrentChosenPublishedNovel,
 } from '../../stores/publisherStore.js';
 import { uploadChapter, uploadChapters } from '../../services/chapterService.js';
 import { showError, showSuccess } from '../../utils/ToastUtils.js';
@@ -29,328 +29,20 @@ import {faEye, faTimes } from "@fortawesome/free-solid-svg-icons";
 import Content from '../../components/common/Content.jsx';
 
 
-// const AddChapterPage = () => {
-//     const navigate = useNavigate();
-//     const [chapterContent, setChapterContent] = useState("");
-//     const [chapterList, setChapterList] = useState([]);
-//     const [chapterContentError, setChapterContentError] = useState("");
-//
-//     const currentPublishedNovel = useCurrentPublishedNovel();
-//     // const currentNovel = useNovelState();
-//     const [showDateTimePicker, setShowDateTimePicker] = React.useState(false);
-//     const [value, setValue] = useState(undefined);
-//     const [formattedDate, setFormattedDate] = useState("");
-//     const [mode, setMode] = useState("writing"); // writing, confirm
-//     const getFormattedDate = (date) => {
-//         return formatPublishDateTime(date, "dd/MM/yyyy HH:mm");
-//     };
-//     const typeAdd = [{id: "normal", name: "Đăng thường"}, {id: "insert", name: "Chèn chương"}];
-//     const [currentType, setCurrentType] = useState(typeAdd[0]);
-//
-//     // Thêm state để lưu file content
-//     const [chapterFile, setChapterFile] = useState(null);
-//
-//     function handleFileUpload(e) {
-//         const file = e.target.files[0];
-//         if (!file) return;
-//
-//         // Chỉ cho phép file .txt
-//         if (file.type !== "text/plain") {
-//             showError("Chỉ chấp nhận file .txt");
-//             return;
-//         }
-//
-//         const reader = new FileReader();
-//         reader.onload = (event) => {
-//             const text = event.target.result;
-//             setChapterContent(text); // Gán thẳng vào chapterContent để xử lý chung
-//         };
-//         reader.readAsText(file, "UTF-8");
-//     }
-//
-//
-//     const publishChapter = () => {
-//         const updatedList = chapterList.map((ch, i) => {
-//             if (ch.content.trim() === "") {
-//                 setChapterContentError("Nội dung chương không được để trống.");
-//                 return ch; // không thay đổi
-//             }
-//             return {
-//                 ...ch,
-//                 isInsertMode: currentType.id === "insert",
-//                 chapterIdx: ch.index,
-//                 chapterStatus: ["011ea719-cb1c-46a6-b8c6-0607127dbc6c"],
-//                 novelId: currentPublishedNovel.id,
-//                 name: ch.title,
-//             };
-//         });
-//
-//         Promise.all(
-//             updatedList.map(ch =>
-//                 uploadChapter(ch).then(r => ({ ch, r
-//                 }))
-//             )
-//         ).then(results => {
-//             console.log("Upload results: ", results);
-//             const successChapters = results.filter(res => res.r.status === 200).map(res => res.ch.index);
-//
-//             setChapterList(prev => prev.filter(item => !successChapters.includes(item.index)));
-//
-//             showSuccess("Đăng chương thành công");
-//             navigate("/bookhub/novels/" + currentPublishedNovel.slug +"/chapters");
-//         });
-//
-//         // showSuccess("Đăng chương thành công");
-//         // navigate("/bookhub/published");
-//     }
-//
-//     // Cập nhật giá trị khi component render
-//     useEffect(() => {
-//         if (!(value === undefined || value === null)) {
-//             setFormattedDate(getFormattedDate(value));
-//         }
-//     }, [value]);
-//
-//
-//     function handleSelectField(selected) {
-//         setCurrentType(getObjectFromList(typeAdd, "id", selected.id));
-//     }
-//
-//
-//     function getWordCount(content) {
-//         if (!content || content.trim() === "") return 0;
-//         return content.trim().split(/\s+/).length;
-//     }
-//
-//     function splitChapter(content) {
-//         const chapters = []; // {title: "", content: "", index: 0, wordCount: 0}
-//
-//         const lines = content.split('\n');
-//         let currentChapterIndex = -1;
-//         const startIndex = currentPublishedNovel.totalChapters;
-//
-//         for (let i = 0; i < lines.length; i++) {
-//             const line = lines[i].trim();
-//
-//             if (checkLineIsHeader(line)) {
-//                 // Tạo chapter mới
-//                 currentChapterIndex++;
-//                 chapters.push({
-//                     title: line,
-//                     content: "",
-//                     index: startIndex + currentChapterIndex,
-//                     wordCount: 0
-//                 });
-//             } else {
-//                 if (line.startsWith("#Chương")) {
-//                     chapters[currentChapterIndex].content = line.replace(/^#/, "").trim() + "\n";
-//                 } else {
-//                     chapters[currentChapterIndex].content += line + "\n";
-//                 }
-//             }
-//         }
-//
-//         // Tính wordCount cho từng chương
-//         return chapters.map(ch => ({
-//             ...ch,
-//             wordCount: getWordCount(ch.content)
-//         }));
-//     }
-//
-//
-//     function checkLineIsHeader(line) {
-//         // Loại bỏ khoảng trắng đầu cuối dòng
-//         const trimmedLine = line.trim();
-//
-//         // Regex kiểm tra các định dạng tiêu đề chương
-//         const headerRegex = /^Chương\s+\d+(:|$)/i;
-//
-//         const isValid = headerRegex.test(trimmedLine);
-//         return isValid;
-//     }
-//
-//     function checkHasValidHeader(content) {
-//         const lines = content.split('\n');
-//         if (checkLineIsHeader(lines[0])) {
-//             return true;
-//         }
-//         return false; // Không tìm thấy tiêu đề chương hợp lệ ở line đầu tiên
-//     }
-//
-//     function handleSplitChapter() {
-//         console.log(splitChapter(chapterContent));
-//     }
-//
-//     function handleFinishAddContent() {
-//         if (!checkHasValidHeader(chapterContent)) {
-//             setChapterContentError('Tên chương không hợp lệ.');
-//             return;
-//         }
-//
-//         setChapterContentError('');
-//         var chapters = splitChapter(chapterContent);
-//         setChapterList(chapters);
-//         setMode('confirm');
-//     }
-//
-//     return (
-//         <div>
-//             {mode === 'writing' ? (
-//                 <div
-//                     className={
-//                         'flex flex-col bg-background-light rounded-md p-5'
-//                     }
-//                 >
-//                     <div className={''}>
-//                         <h1>Thêm chương</h1>
-//                         <span>Truyện đầu tiên</span>
-//                     </div>
-//                     <div
-//                         className={
-//                             'flex flex-row justify-between items-center mt-10'
-//                         }
-//                     >
-//                         <div className={'flex flex-col gap-y-2 w-1/2 p-2 pl-3'}>
-//                             <span className={'text-sm'}>Loại</span>
-//                             <CategoryDropdown
-//                                 dropdown={typeAdd}
-//                                 placeholder={'Chọn thể loại'}
-//                                 onSelect={(selected) =>
-//                                     handleSelectField(selected)
-//                                 }
-//                                 defaultValue={currentType}
-//                             />
-//                         </div>
-//                         <div className={'flex flex-col gap-y-1 w-1/2'}>
-//                             <span>STT</span>
-//                             <input
-//                                 className={
-//                                     'w-full border border-gray-500 rounded-md p-1  hover:border-gray-400 focus:border-gray-400 focus:outline-none focus:ring-0'
-//                                 }
-//                                 disabled={currentType.id === 'normal'}
-//                                 value={currentPublishedNovel.totalChapters + 1}
-//                             />
-//                         </div>
-//                     </div>
-//                     <div className={'flex flex-col mt-10 p-3'}>
-//                         <span>Nội dung các chương</span>
-//                         {/*<textarea*/}
-//                         {/*    className={*/}
-//                         {/*        'w-full min-h-48 border border-gray-500 rounded-md p-2 mt-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none focus:ring-0'*/}
-//                         {/*    }*/}
-//                         {/*    onChange={(e) => setChapterContent(e.target.value)}*/}
-//                         {/*    value={chapterContent}*/}
-//                         {/*/>*/}
-//                         <textarea
-//                             className="w-full min-h-48 border border-gray-500 rounded-md p-2 mt-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none focus:ring-0"
-//                             placeholder="Tên chương phải theo format: Chương [Số chương]: [Tên chương]"
-//                             onChange={(e) => setChapterContent(e.target.value)}
-//                             value={chapterContent}
-//                             onFocus={() => {
-//                                 if (chapterContent.trim() === '') {
-//                                     setChapterContent(
-//                                         `Chương ${currentPublishedNovel.totalChapters + 1}: `
-//                                     );
-//                                 }
-//                             }}
-//                         />
-//                         {chapterContentError && (
-//                             <span className={'text-xs text-red-500 mt-3'}>
-//                                 {chapterContentError}
-//                             </span>
-//                         )}
-//                         <span className={'text-xs text-gray-500 mt-3'}>
-//                             Số từ: {chapterContent.length}
-//                         </span>
-//                     </div>
-//                     <div className="flex flex-col mt-5">
-//                         <span>Upload file .txt</span>
-//                         <input
-//                             type="file"
-//                             accept=".txt"
-//                             onChange={handleFileUpload}
-//                             className="mt-2"
-//                         />
-//                         <span className="text-xs text-gray-500 mt-1">
-//                             Nếu bạn upload file .txt, nội dung sẽ tự động hiển
-//                             thị ở ô soạn thảo.
-//                         </span>
-//                     </div>
-//
-//                     <div
-//                         className={
-//                             'flex flex-row justify-between items-center gap-x-5 mt-10'
-//                         }
-//                     >
-//                         <div
-//                             className={
-//                                 'flex flex-col gap-y-2 w-1/2 ml-2 relative'
-//                             }
-//                         >
-//                             <span>Hen gio</span>
-//                             <input
-//                                 className={
-//                                     'w-full select-none border border-gray-500 rounded-md p-2 mt-2 hover:border-gray-400 hover:cursor-pointer focus:border-gray-400 focus:outline-none focus:ring-0'
-//                                 }
-//                                 readOnly
-//                                 value={formattedDate}
-//                                 onClick={() =>
-//                                     setShowDateTimePicker(!showDateTimePicker)
-//                                 }
-//                             />
-//                             {showDateTimePicker && (
-//                                 <div className={'absolute text-gray-500'}>
-//                                     <div className={''}>
-//                                         <CustomDatePicker
-//                                             value={value}
-//                                             onChange={setValue}
-//                                         />
-//                                     </div>
-//                                 </div>
-//                             )}
-//                         </div>
-//                         <div className={'flex flex-col gap-y-2 w-1/2'}>
-//                             <span>Thu phi</span>
-//                             <input
-//                                 className={
-//                                     'w-full border border-gray-500 rounded-md p-2 mt-2 hover:border-gray-400 focus:border-gray-400 focus:outline-none focus:ring-0'
-//                                 }
-//                             />
-//                         </div>
-//                     </div>
-//                     <div
-//                         className={
-//                             'flex flex-row justify-center items-center gap-x-5 mt-10'
-//                         }
-//                     >
-//                         <button
-//                             className={
-//                                 'bg-yellow-primary w-48 text-white rounded-md p-2 mt-10 hover:bg-yellow-500 focus:outline-none focus:ring-0 hover:cursor-pointer'
-//                             }
-//                             onClick={handleFinishAddContent}
-//                         >
-//                             Thêm
-//                         </button>
-//                     </div>
-//                 </div>
-//             ) : (
-//                 <ConfirmAddNovel
-//                     chapter={splitChapter(chapterContent)}
-//                     onBack={() => setMode('writing')}
-//                     onNext={() => publishChapter()}
-//                 />
-//             )}
-//         </div>
-//     );
-// }
-
 const AddChapterPage = () => {
     const navigate = useNavigate();
-    const [chapterContent, setChapterContent] = useState("");
+
+    const location = useLocation();
+    const initialContent = location.state?.chapterContent || '';
+
+
+
+    const [chapterContent, setChapterContent] = useState(initialContent);
     const [chapterList, setChapterList] = useState([]);
     const [chapterContentError, setChapterContentError] = useState("");
 
     const currentPublishedNovel = useCurrentPublishedNovel();
+    // const setCurrentPublishedNovel = useSetCurrentChosenPublishedNovel();
     const [showDateTimePicker, setShowDateTimePicker] = React.useState(false);
     const [value, setValue] = useState(undefined);
     const [formattedDate, setFormattedDate] = useState("");
@@ -510,6 +202,12 @@ const AddChapterPage = () => {
             navigate("/bookhub/novels/" + currentPublishedNovel.slug +"/chapters");
         });
     }
+
+    useEffect(() => {
+        if (currentPublishedNovel === null ){
+
+        }
+    }, []);
 
     // Cập nhật giá trị khi component render
     useEffect(() => {
