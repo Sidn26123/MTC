@@ -92,16 +92,9 @@ export const reportRating = async (data) => {
     return response;
 }
 
-export const fetchTickets = async (status) => {
+export const filterReport = async (data) => {
     try {
-        const res = await api.get(API.REPORT + "/filter", {
-            params: {
-                page: 0,
-                size: 10,
-                status: status,
-            },
-
-        });
+        const res = await api.post(API.REPORT + "/filter", data);
         return res;
     } catch (error) {
         console.error(error);
@@ -110,9 +103,7 @@ export const fetchTickets = async (status) => {
 
 export const filterMyReportToHandle = async (data) => {
     try {
-        const res = await api.get(API.REPORT + "/filter" , {
-            params: data,
-        });
+        const res = await api.post(API.REPORT + "/filter" , data);
         return res;
     } catch (error) {
         console.error(error);

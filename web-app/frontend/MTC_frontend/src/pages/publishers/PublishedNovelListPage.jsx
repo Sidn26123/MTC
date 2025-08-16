@@ -145,13 +145,10 @@ const PublishedNovelTable = ({ novels, updateData,  fetchNovels, headers }) => {
         </tr>
     );
     const filterOptions = {
-        displayName: [
-            { label: 'Truyện hot', value: 'hot' },
-            { label: 'Truyện mới', value: 'new' }
-        ],
+
         novelStates: [
-            { label: 'Đang cập nhật', value: 'CREATED' },
-            { label: 'Hoàn thành', value: 'PENDING' }
+            { name: 'Đang cập nhật', id: 'CREATED' },
+            { name: 'Hoàn thành', id: 'PENDING' }
         ]
     };
     return (

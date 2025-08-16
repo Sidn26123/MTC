@@ -33,6 +33,6 @@ export const useUser = () => useUserStore((state) => state.user);
 export const useSetUser = () => useUserStore((state) => state.setUser);
 export const useProfile = () => useUserStore((state) => state.profile);
 export const useCurrentNovelPublisher = () => useUserStore((state) => state.currentNovelPublisher);
-export const useSetCurrentNovelPublisher = () => useUserStore((state) => state.setCurrentNovelPublisher());
+export const useSetCurrentNovelPublisher = () => useUserStore((state) => state.setCurrentNovelPublisher);
 export const useUpdateUser = () => useUserStore((state) => state.updateUser);
 export const useSetProfile = () => useUserStore((state) => state.setProfile);

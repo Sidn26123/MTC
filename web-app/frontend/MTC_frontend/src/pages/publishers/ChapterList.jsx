@@ -57,7 +57,7 @@ const ChapterList = () => {
             </div>
             <div className="flex flex-row gap-x-2">
                 <Link
-                    to={`/bookhub/novels/${currentPublishedNovelChosen.id}/update`}
+                    to={`/bookhub/novels/${currentPublishedNovelChosen.slug}/update`}
                 >
                     <button className="bg-cus-gray text-white rounded-md p-2 hover:bg-yellow-500">
                         Sửa

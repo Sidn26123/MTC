@@ -13,3 +13,18 @@ export const getUnreadCount = async () => {
     const response = await api.get(API.NOTIFICATION + "/unread-count");
     return response;
 }
+
+export const readNotification = async (notificationId) => {
+    const response = await api.put(API.NOTIFICATION + "/"+ notificationId + "/read");
+    return response;
+}
+
+export const markAllRead = async () => {
+    const response = await api.get(API.NOTIFICATION + "/mark-all-read");
+    return response;
+}
+
+export const archiveNotification = async (notificationId) => {
+    const response = await api.get(API.NOTIFICATION + "/"+ notificationId + "/archive");
+    return response;
+}

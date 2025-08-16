@@ -109,7 +109,7 @@ const SidebarLinks = ({onLinkClick} ) => (
     <Link to={`${adminRoutesPrefix}/policies`} onClick={onLinkClick}>Quản lý Điều Khoản Dịch Vụ</Link>
     <Link to={`${adminRoutesPrefix}/reports`} onClick={onLinkClick}>Xử lý báo cáo</Link>
     {/* <Link to="/admin/settings" onClick={onLinkClick}>Cài đặt</Link> */}
-    <span onClick={logOut}>Đăng xuất</span>
+    {/*<span onClick={logOut}>Đăng xuất</span>*/}
   </nav>
 );
 

@@ -98,22 +98,24 @@ const CommonTable = ({
     }, [searchValue]);
 
     const handleSort = (headerKey) => {
+        console.log(currentSort)
         if (updateData) {
             // Determine new sort direction
             let newDirection = 'asc';
             if (currentSort && currentSort.key === headerKey) {
                 newDirection = currentSort.direction === 'asc' ? 'desc' : 'asc';
+                console.log(newDirection)
             }
 
-            // updateData({
-            //     size: pageSize,
-            //     page: 1,
-            //     sortBy: headerKey,
-            //     sortDirection: newDirection,
-            // });
-        } else if (onSort) {
-            onSort(headerKey);
+            updateData({
+                page: 1,
+                sortBy: headerKey,
+                sortDirection: newDirection,
+            });
         }
+        // else if (onSort) {
+        //     onSort(headerKey);
+        // }
     };
 
     const handleFilterClick = (filterKey, event) => {
@@ -140,32 +142,22 @@ const CommonTable = ({
             }
         }
         // console.log("Updated filters:", newFilters);
-        if (updateData){
-            updateData({
-                size: 10,
-                page: 2,
-                sortBy: "createdAt",
-                sortDirection: "DESC",
-            });
-        }
+        // if (updateData){
+        //     updateData({
+        //         size: 10,
+        //         page: 2,
+        //         sortBy: "createdAt",
+        //         sortDirection: "DESC",
+        //     });
+        // }
 
         setActiveFilters(newFilters);
     };
 
     const applyFilters = () => {
-        console.log({
-            size: 10,
-            page: 1,
-            // sortBy: currentSort?.key,
-            // sortDirection: currentSort?.direction,
-            ...activeFilters
-        });
+
         if (updateData) {
             updateData({
-                size: pageSize,
-                page: 1,
-                sortBy: currentSort?.key,
-                sortDirection: currentSort?.direction,
                 ...activeFilters
             });
         }
@@ -267,14 +259,14 @@ const CommonTable = ({
 
                         <div className="space-y-2">
                             {getCurrentFilterOptions().map((option) => (
-                                <label key={option.value} className="flex items-center">
+                                <label key={option.id} className="flex items-center">
                                     <input
                                         type="checkbox"
-                                        checked={activeFilters[currentFilterKey]?.includes(option.value) || false}
-                                        onChange={(e) => handleFilterChange(option.value, e.target.checked)}
+                                        checked={activeFilters[currentFilterKey]?.includes(option.id) || false}
+                                        onChange={(e) => handleFilterChange(option.id, e.target.checked)}
                                         className="rounded border-gray-300 text-blue-600 shadow-sm focus:border-blue-300 focus:ring focus:ring-blue-200 focus:ring-opacity-50"
                                     />
-                                    <span className="ml-2 text-sm text-gray-700">{option.label}</span>
+                                    <span className="ml-2 text-sm text-gray-700">{option.name}</span>
                                 </label>
                             ))}
                         </div>

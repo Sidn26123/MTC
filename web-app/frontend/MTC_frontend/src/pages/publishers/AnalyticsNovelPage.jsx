@@ -34,12 +34,10 @@ function AnalyticsNovelPage() {
 
     const getRatings = async () => {
         const data = await filterRating(ratingFilter)
-        console.log("Ratings data:", data.data.result);
         setCurrentChoseNovelRatings(data.data.result || []);
     }
 
     const handleChangePage = (page) => {
-        console.log(page);
         setRatingFilter({
             ...ratingFilter,
             page: page,
@@ -302,7 +300,7 @@ function AnalyticsNovelPage() {
                             headers={[
                                 { label: "STT" },
                                 { label: "THÔNG TIN" },
-                                { label: "ĐÁNH GÍA" },
+                                { label: "ĐÁNH GIÁ" },
                                 { label: "THÔNG TIN" },
                                 { label: "TRẠNG THÁI" },
 

@@ -1,9 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import TicketTable from '../../components/feedbacks/TicketTable';
 import { useIsLoading, useSetTickets, useTickets, useTicketsStatus } from '../../stores/feedbackStore.js';
-import { fetchTickets } from '../../services/feedbackService.js';
+import { filterReport } from '../../services/feedbackService.js';
 import { CategoryDropdown } from '../../common/CommonComponents.jsx';
 import { UserReport } from '../../components/feedbacks/Report.jsx';
+import { getUserIdFromContext } from '../../services/authenticationService.js';
+import { hasScope } from '../../services/authoriazationService.js';
+import { useAuthRoles } from '../../stores/authStore.js';
 
 const MyReportPage = () => {
     const isLoading = useIsLoading();
@@ -11,21 +14,30 @@ const MyReportPage = () => {
     const tickets = useTickets();
     const setTickets = useSetTickets();
     const [showReport, setShowReport] = React.useState(false);
+    const userId = getUserIdFromContext();
+    const userRoles = useAuthRoles();
+
+    const isAdmin = hasScope(userRoles, "ROLE_ADMIN");
     // d8b250b5-649b-4b0f-9063-491f02488ac7
+    const [filterData, setFilterData] = useState({
+        reporterId: userId
+
+    })
     useEffect(() => {
-        fetchTickets(status).then(r => {
-            console.log("Tickets fetched:", r);
-            setTickets(r.data.result || []);
+        filterReport(filterData).then(r => {
+            setTickets(r.data || []);
         });
-    }, [status]);
+    }, [filterData]);
 
     const handleStatusChange = (e) => {
         // useTicketStore.setState({ status: e.target.value });
         console.log(e)
-        fetchTickets(e.id).then(r => {
-            console.log("Tickets fetched after status change:", r);
-            setTickets(r.data.result || []);
-        });
+        setFilterData({
+            ...filterData,
+            status: e.id,
+            }
+        )
+
     };
 
     return (

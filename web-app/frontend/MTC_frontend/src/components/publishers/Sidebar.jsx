@@ -13,7 +13,7 @@ const Sidebar = () => {
     return (
         <div className="flex flex-col justify-start min-h-screen background-color-lighter ">
             <div className="flex items-center w-full p-4 mb-2">
-                <Link to= {`${publisherRoutesPrefix}/dashboard`} className="flex items-center rtl:space-x-reverse">
+                <Link to= {``} className="flex items-center rtl:space-x-reverse">
                     <img src="https://flowbite.com/docs/images/logo.svg" className="h-8" alt="Flowbite Logo" />
 
                 </Link>
