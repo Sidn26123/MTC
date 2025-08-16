@@ -51,15 +51,37 @@ const ChapterList = () => {
         <>
             <div className="flex flex-col">
                 <span className="text-lg">Danh sách chương</span>
-                <span className="text-gray-500">{currentPublishedNovelChosen.name}</span>
+                <span className="text-gray-500">
+                    {currentPublishedNovelChosen.name}
+                </span>
             </div>
             <div className="flex flex-row gap-x-2">
-                <Link to={`/bookhub/novels/${currentPublishedNovelChosen.id}/update`}>
+                <Link
+                    to={`/bookhub/novels/${currentPublishedNovelChosen.id}/update`}
+                >
                     <button className="bg-cus-gray text-white rounded-md p-2 hover:bg-yellow-500">
                         Sửa
                     </button>
                 </Link>
-                <Link to={`/bookhub/novels/${currentPublishedNovelChosen.slug}/upload-chapters`}>
+                <Link
+                    to={`/bookhub/novels/${currentPublishedNovelChosen.slug}/upload-chapters`}
+                >
+                    <button className="bg-cus-gray text-white rounded-md p-2 hover:bg-yellow-500">
+                        Thêm
+                    </button>
+                </Link>
+            </div>
+            <div className="flex flex-row gap-x-2">
+                <Link
+                    to={`/bookhub/novels/${currentPublishedNovelChosen.id}/update`}
+                >
+                    <button className="bg-cus-gray text-white rounded-md p-2 hover:bg-yellow-500">
+                        Sửa
+                    </button>
+                </Link>
+                <Link
+                    to={`/bookhub/novels/${currentPublishedNovelChosen.slug}/upload-chapters`}
+                >
                     <button className="bg-cus-gray text-white rounded-md p-2 hover:bg-yellow-500">
                         Thêm
                     </button>
@@ -68,25 +90,43 @@ const ChapterList = () => {
         </>
     );
 
-    const renderRow = (chapter, index) => (
-        <tr key={chapter.id} className="border-b border-gray-500 hover:bg-gray-500/10">
-            <td className="px-6 py-4 font-medium text-gray-300 whitespace-nowrap">
-                {/*{index + 1 + (chapterList.currentPage - 1) * chapterList.pageSize}*/}
-                {chapter.chapterIdx}
-            </td>
-            <td className="px-6 py-4">{chapter.name}</td>
-            <td className="px-6 py-4">
-                {chapter.publishedAt
-                    ? new Date(chapter.publishedAt).toLocaleString()
-                    : "Chưa xuất bản"}
-            </td>
-            <td className="px-6 py-4">{chapter.wordCount ?? 20}</td>
-            <td className="px-6 py-4">{chapter.viewCount ?? 0}</td>
-            <td className="px-6 py-4">
-                <SpecItem item={chapter} />
-            </td>
-        </tr>
-    );
+    const renderRow = (chapter, index) => {
+        console.log('Rendering chapter:', chapter);
+        const now = new Date();
+        let timeColor = "text-gray-300"; // mặc định
+
+        if (!chapter.isPublished && chapter.publishedAt) {
+            const publishedDate = new Date(chapter.publishedAt);
+            if (now < publishedDate) {
+                timeColor = "text-yellow-400"; // chưa tới giờ xuất bản
+            } else if (now >= publishedDate) {
+                timeColor = "text-red-500"; // đã qua giờ nhưng chưa publish
+            }
+        }
+
+        return (
+            <tr
+                key={chapter.id}
+                className="border-b border-gray-500 hover:bg-gray-500/10"
+            >
+                <td className="px-6 py-4 font-medium text-gray-300 whitespace-nowrap">
+                    {chapter.chapterIdx}
+                </td>
+
+                <td className="px-6 py-4">{chapter.name}</td>
+                <td className={`px-6 py-4 ${timeColor}`}>
+                    {chapter.publishedAt
+                        ? new Date(chapter.publishedAt).toLocaleString()
+                        : 'Chưa xuất bản'}
+                </td>
+                <td className="px-6 py-4">{chapter.wordCount ?? 20}</td>
+                <td className="px-6 py-4">{chapter.viewCount ?? 0}</td>
+                <td className="px-6 py-4">
+                    <SpecItem item={chapter} />
+                </td>
+            </tr>
+        );
+    };
 
     return (
         <>

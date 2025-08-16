@@ -67,6 +67,21 @@ export const reportNovel = async (data) => {
     return response;
 }
 
+export const filterComment = async (data) => {
+    const response = await api.post(API.FEEDBACK_COMMENT + "/filter", data);
+    return response;
+}
+
+export const filterRating = async (data) => {
+    const response = await api.post(API.FEEDBACK_RATING + "/filter", data);
+    return response;
+}
+
+export const getRatingOfNovelGroupByStart = async (novelId) => {
+    const response = await api.get(API.FEEDBACK_RATING + '/novel/' + novelId + '/stats');
+    return response;
+}
+
 export const reportComment = async (data) => {
     const response = await api.post(API.REPORT + "/comment", data);
     return response;

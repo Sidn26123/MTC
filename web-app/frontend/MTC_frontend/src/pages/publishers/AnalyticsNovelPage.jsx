@@ -1,99 +1,3 @@
-// import React, { useEffect, useState } from 'react';
-// import { DefaultNavigator } from '../../components/global/Navigators.jsx';
-// import { OverviewStats } from '../../components/analytics/OverviewStats.jsx';
-// import { DetailedStats } from '../../components/analytics/DetailStats.jsx';
-// import { fetchCommentsStats, getSingleNovelCommentsTimeline } from '../../services/publisherService.js';
-// import { QuickStats } from '../../components/analytics/QuickStats.jsx';
-// import ChartToolbar from '../../components/analytics/ChartToolbar.jsx';
-// import ChartContainer from '../../components/analytics/ChartContainer.jsx';
-// import PieChartStats from '../../components/analytics/PieChartStats.jsx';
-// import LineChartStats from '../../components/analytics/LineChartStats.jsx';
-// import BarChartStats from '../../components/analytics/BarChartStats.jsx';
-// import HeatmapStats from '../../components/analytics/HeatMapStats.jsx';
-// import WordCloudStats from '../../components/analytics/WordCloudStats.jsx';
-// import LineChart from '../../components/analytics/LineChart.jsx';
-// import ReusableLineChart from '../../components/analytics/LineChartStats.jsx';
-//
-// function AnalyticsNovelPage() {
-//     const [stats, setStats] = useState(null);
-//     const [filters, setFilters] = useState({
-//         from: '2025-06-01',
-//         to: '2025-08-31',
-//         novelIds: ["0da33320-83fa-42ca-bc8c-b2b31eba8918"]
-//     });
-//
-//     const getData = async () => {
-//         const data = await fetchCommentsStats(filters);
-//         setStats(data);
-//     };
-//
-//     useEffect(() => {
-//         getData();
-//     }, [filters]);
-//
-//     if (!stats) return <div>Đang tải dữ liệu...</div>;
-//
-//     return (
-//         <>
-//             <div className="min-h-screen border-1 border-gray-500 border-rounded">
-//
-//                 <div className="container mx-auto px-4 py-8 space-y-8">
-//                     <OverviewStats />
-//                     <QuickStats />
-//                     {/*<DetailedStats />*/}
-//
-//                 </div>
-//                 <div className="flex flex-row gap-4">
-//                     <div className="w-1/2">
-//                         <ReusableLineChart
-//                             title="Biểu đồ comment theo ngày"
-//                             fetchData={async (year) => {
-//                                 return await getSingleNovelCommentsTimeline(
-//                                     "0da33320-83fa-42ca-bc8c-b2b31eba8918",
-//                                     {
-//                                         year,
-//                                         startDate: "2025-06-01",
-//                                         endDate: "2025-06-30",
-//                                         timeRange: "DAILY"
-//                                     }
-//                                 );
-//                             }}
-//                             defaultData={[0, 0, 0, 0]}
-//                             years={[2023, 2024, 2025]}
-//                             datasetLabel="Số comment"
-//                             color="rgba(255, 99, 132, 1)"
-//                         />
-//                     </div>
-//
-//                     <div className="w-1/2">
-//                         <ReusableLineChart
-//                             title="Biểu đồ comment theo ngày"
-//                             fetchData={async (year) => {
-//                                 return await getSingleNovelCommentsTimeline(
-//                                     "0da33320-83fa-42ca-bc8c-b2b31eba8918",
-//                                     {
-//                                         year,
-//                                         startDate: "2025-06-01",
-//                                         endDate: "2025-06-30",
-//                                         timeRange: "DAILY"
-//                                     }
-//                                 );
-//                             }}
-//                             defaultData={[0, 0, 0, 0]}
-//                             years={[2023, 2024, 2025]}
-//                             datasetLabel="Số comment"
-//                             color="rgba(255, 99, 132, 1)"
-//                         />
-//                     </div>
-//                 </div>
-//
-//             </div>
-//         </>
-//     );
-// }
-//
-// export default AnalyticsNovelPage;
-
 import React, { useEffect, useState, useRef } from 'react';
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
@@ -101,24 +5,177 @@ import { fetchCommentsStats, getSingleNovelCommentsTimeline } from '../../servic
 import ReusableLineChart from '../../components/analytics/LineChartStats.jsx';
 import { OverviewStats } from '../../components/analytics/OverviewStats.jsx';
 import { QuickStats } from '../../components/analytics/QuickStats.jsx';
+import { filterComment, filterRating } from '../../services/feedbackService.js';
+import CommonTable from '../../components/common/CommonTable.jsx';
+import { useCurrentChosenNovelRatings, useSetCurrentChosenNovelRatings } from '../../stores/publisherStore.js';
+import { Star, ThumbsUp, ThumbsDown, MessageCircle, Calendar } from 'lucide-react';
+
+
+
 function AnalyticsNovelPage() {
     const [stats, setStats] = useState(null);
     const reportRef = useRef(null); // ref để chụp ảnh toàn bộ báo cáo
-
+    const currentChoseNovelRatings = useCurrentChosenNovelRatings();
+    const setCurrentChoseNovelRatings = useSetCurrentChosenNovelRatings();
     const [filters, setFilters] = useState({
         from: '2025-06-01',
         to: '2025-08-31',
         novelIds: ['0da33320-83fa-42ca-bc8c-b2b31eba8918']
     });
 
+    const [ratingFilter, setRatingFilter] = useState({
+        'rateMin': 1.0
+    })
+
     const getData = async () => {
         const data = await fetchCommentsStats(filters);
         setStats(data);
     };
 
+    const getRatings = async () => {
+        const data = await filterRating(ratingFilter)
+        console.log("Ratings data:", data.data.result);
+        setCurrentChoseNovelRatings(data.data.result || []);
+    }
+
+    const handleChangePage = (page) => {
+        console.log(page);
+        setRatingFilter({
+            ...ratingFilter,
+            page: page,
+        })
+    };
+
+    const handlePageSizeChange = (newSize) => {
+
+    };
+
+    const handleSearch = (query) => {
+    };
+
+    const handleSort = (sortBy, sortOrder) => {
+    };
+
+
+
+    const renderRow = (rating, index) => {
+        const formatDate = (dateString) => {
+            if (!dateString) return '—';
+            return new Date(dateString).toLocaleDateString('vi-VN', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric'
+            });
+        };
+
+        const renderStars = (rate) => {
+            const safeRate = Number(rate) || 0;
+            const stars = [];
+            const fullStars = Math.floor(safeRate);
+            const hasHalfStar = safeRate % 1 !== 0;
+
+            for (let i = 0; i < 5; i++) {
+                if (i < fullStars) {
+                    stars.push(
+                        <Star key={i} className="w-4 h-4 fill-amber-400 text-amber-400" />
+                    );
+                } else if (i === fullStars && hasHalfStar) {
+                    stars.push(
+                        <div key={i} className="relative w-4 h-4">
+                            <Star className="absolute w-4 h-4 text-gray-300" />
+                            <div className="absolute overflow-hidden w-2">
+                                <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
+                            </div>
+                        </div>
+                    );
+                } else {
+                    stars.push(
+                        <Star key={i} className="w-4 h-4 text-gray-300" />
+                    );
+                }
+            }
+            return stars;
+        };
+
+        return (
+            <tr
+                key={String(rating.id || index)}
+                className="border-b border-gray-100 hover:bg-slate-50/50 transition-all duration-200"
+            >
+                {/* STT */}
+                <td className="px-6 py-4">{index + 1}</td>
+
+                {/* User Info */}
+                <td className="px-6 py-4">
+                    <div className="flex items-center gap-3">
+                        <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-medium text-sm">
+                            {String(rating.ratedBy || 'U').slice(0, 2).toUpperCase()}
+                        </div>
+                        <div className="flex flex-col">
+                            <span className="text-sm font-medium text-gray-900">User</span>
+                            <span className="text-xs text-gray-500 flex items-center gap-1">
+                            <Calendar className="w-3 h-3" />
+                                {formatDate(rating.createdAt)}
+                        </span>
+                        </div>
+                    </div>
+                </td>
+
+                {/* Rating */}
+                <td className="px-6 py-4">
+                    <div className="flex items-center gap-2">
+                        <div className="flex gap-0.5">
+                            {renderStars(rating.rate)}
+                        </div>
+                        <span className="text-sm font-semibold text-gray-700 bg-amber-50 px-2 py-0.5 rounded-full">
+                        {Number(rating.rate || 0)}/5
+                    </span>
+                    </div>
+                </td>
+
+                {/* Engagement */}
+                <td className="px-6 py-4">
+                    <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-1.5 text-green-600">
+                            <ThumbsUp className="w-4 h-4" />
+                            <span>{Number(rating.totalLikes || 0)}</span>
+                        </div>
+                        <div className="flex items-center gap-1.5 text-red-500">
+                            <ThumbsDown className="w-4 h-4" />
+                            <span>{Number(rating.totalDislikes || 0)}</span>
+                        </div>
+                        {Number(rating.totalReplies) > 0 && (
+                            <div className="flex items-center gap-1.5 text-blue-600">
+                                <MessageCircle className="w-4 h-4" />
+                                <span>{Number(rating.totalReplies)}</span>
+                            </div>
+                        )}
+                    </div>
+                </td>
+
+                {/* Status */}
+                <td className="px-6 py-4">
+                    {rating.isHidden ? (
+                        <span className="badge bg-yellow-100 text-yellow-800">Ẩn</span>
+                    ) : rating.isDeleted ? (
+                        <span className="badge bg-red-100 text-red-800">Đã xóa</span>
+                    ) : (
+                        <span className="badge bg-green-100 text-green-800">Hoạt động</span>
+                    )}
+                </td>
+            </tr>
+        );
+    };
+
+
+
     useEffect(() => {
         getData();
     }, [filters]);
+
+    useEffect(() => {
+        getRatings();
+    }, [ratingFilter]);
 
     const handleDownloadPDF = async () => {
         // const element = reportRef.current;
@@ -238,7 +295,28 @@ function AnalyticsNovelPage() {
                         <OverviewStats />
                         <QuickStats />
                     </div>
+                    <CommentListWithToolbar />
+                    {currentChoseNovelRatings  &&(
+                        <CommonTable
+                            data={currentChoseNovelRatings.data}
+                            headers={[
+                                { label: "STT" },
+                                { label: "THÔNG TIN" },
+                                { label: "ĐÁNH GÍA" },
+                                { label: "THÔNG TIN" },
+                                { label: "TRẠNG THÁI" },
 
+                            ]}
+                            renderRow={renderRow}
+                            currentPage={currentChoseNovelRatings.currentPage}
+                            pageSize={currentChoseNovelRatings.pageSize}
+                            totalPages={currentChoseNovelRatings.totalPages}
+                            totalElements={currentChoseNovelRatings.totalElements}
+                            onPageChange={handleChangePage}
+                            onPageSizeChange={handlePageSizeChange}
+                            onSearch={handleSearch}
+                        />
+                    )}
                     <div className="flex flex-row gap-4">
                         <div className="w-1/2">
                             <ReusableLineChart
@@ -260,7 +338,6 @@ function AnalyticsNovelPage() {
                                 color="rgba(255, 99, 132, 1)"
                             />
                         </div>
-
                         <div className="w-1/2">
                             <ReusableLineChart
                                 title="Biểu đồ comment theo ngày"
@@ -287,5 +364,109 @@ function AnalyticsNovelPage() {
         </>
     );
 }
+
+const CommentListWithToolbar = () => {
+    const [comments, setComments] = useState([]);
+    const [sortBy, setSortBy] = useState("createdAt"); // LATEST | MOST_REPLIES
+    const [sortDirection, setSortDirection] = useState("DESC"); // ASC | DESC
+    const [page, setPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
+
+    const fetchComments = async () => {
+        try {
+            const res = await filterComment({
+                page: page,
+                size:  10,
+                sortBy: sortBy,
+                sortDirection: sortDirection,
+                novelId: "0da33320-83fa-42ca-bc8c-b2b31eba8918"
+            });
+            if (res.data?.result) {
+                setComments(res.data.result.data || []);
+                setTotalPages(res.data.result.totalPages);
+            }
+        } catch (err) {
+            console.error("Lỗi fetch comments:", err);
+        }
+    };
+
+    useEffect(() => {
+        fetchComments();
+    }, [sortBy, sortDirection, page]);
+
+    return (
+        <div className="border rounded p-4 space-y-4">
+            {/* Toolbar */}
+            <div className="flex items-center justify-between">
+                <div className="flex gap-2">
+                    <select
+                        value={sortBy}
+                        onChange={(e) => setSortBy(e.target.value)}
+                        className="border rounded px-2 py-1 bg-gray-400"
+                    >
+                        <option value="createdAt">Thời gian comment</option>
+                        <option value="totalReplies">Tổng trả lời</option>
+                    </select>
+
+                    <select
+                        value={sortDirection}
+                        onChange={(e) => setSortDirection(e.target.value)}
+                        className="border rounded px-2 py-1"
+                    >
+                        <option value="DESC">Giảm dần</option>
+                        <option value="ASC">Tăng dần</option>
+                    </select>
+                </div>
+            </div>
+
+            {/* Danh sách comment */}
+            <ul className="divide-y divide-gray-300">
+                {comments.length === 0 ? (
+                    <li className="py-4 text-gray-500 text-center">
+                        Không có comment nào
+                    </li>
+                ) : (
+                    comments.map((c) => (
+                        <li key={c.id} className="py-3">
+                            <div className="flex justify-between">
+                                <div>
+                                    <p className="font-medium">{c.content}</p>
+                                    <p className="text-xs text-gray-500">
+                                        {new Date(c.createdAt).toLocaleString()}
+                                    </p>
+                                </div>
+                                <div className="text-sm text-gray-600">
+                                    {c.totalReplies} replies
+                                </div>
+                            </div>
+                        </li>
+                    ))
+                )}
+            </ul>
+
+            {/* Pagination */}
+            <div className="flex justify-center items-center gap-2 mt-4">
+                <button
+                    disabled={page <= 1}
+                    onClick={() => setPage((p) => p - 1)}
+                    className="px-3 py-1 border rounded disabled:opacity-50"
+                >
+                    Prev
+                </button>
+                <span>
+          {page} / {totalPages}
+        </span>
+                <button
+                    disabled={page >= totalPages}
+                    onClick={() => setPage((p) => p + 1)}
+                    className="px-3 py-1 border rounded disabled:opacity-50"
+                >
+                    Next
+                </button>
+            </div>
+        </div>
+    );
+};
+
 
 export default AnalyticsNovelPage;

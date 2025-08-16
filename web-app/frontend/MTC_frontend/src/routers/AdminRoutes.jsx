@@ -10,6 +10,7 @@ import AnalyticsPage from '../pages/admins/AnalyticsPage.jsx';
 import PolicyManagePage from '../pages/admins/PolicyManagePage.jsx';
 import ReportManagePage from '../pages/admins/ReportManagePage.jsx';
 import { hasScope } from '../services/authoriazationService.js';
+import MyReportPage from '../pages/users/MyReportPage.jsx';
 
 const adminRoutesPrefix = "/admin";
 
@@ -28,7 +29,9 @@ const AdminRoutes = ({ user, userRoles}) => {
                 <Route path={`${adminRoutesPrefix}/category`} element={<CategoryManagePage />} />
                 <Route path={`${adminRoutesPrefix}/analytics`} element={<AnalyticsPage />} />
                 <Route path={`${adminRoutesPrefix}/policies`} element={<PolicyManagePage />} />
-                <Route path={`${adminRoutesPrefix}/reports`} element={<ReportManagePage />} />
+                <Route path={`${adminRoutesPrefix}/reports`} element={<MyReportPage />} />
+                <Route path={`${adminRoutesPrefix}/reports/:reportId`} element={<ReportManagePage />} />
+
                 {/* <Route path="settings" element={<Settings />} /> */}
             </Route>
         </Route>

@@ -3,6 +3,7 @@
 import { BookOpen, Lock, DollarSign, Star, Gift, Users, Bookmark, MessageSquare, Eye, TrendingUp } from "lucide-react"
 import PropTypes from "prop-types"
 import React from "react"
+import { useCurrentPublishedNovel } from '../../stores/publisherStore.js';
 
 function StatCard({ icon, label, value, iconColor }) {
     return (
@@ -25,11 +26,14 @@ StatCard.propTypes = {
 }
 
 export function OverviewStats() {
+    const novel = useCurrentPublishedNovel();
+    console.log("Current Novel in OverviewStats:", novel);
+
     const stats = [
         {
             icon: <BookOpen className="w-5 h-5" />,
-            label: "Tổng 1 chương",
-            value: "1",
+            label: "Tổng chương",
+            value: novel?.totalChapters ? novel.totalChapters : "0",
             iconColor: "bg-orange-600",
         },
         {
@@ -40,46 +44,46 @@ export function OverviewStats() {
         },
         {
             icon: <Star className="w-5 h-5" />,
-            label: "0 điểm chất lượng",
-            value: "0",
+            label: "Đánh giá",
+            value: novel?.avgRate ? `${novel.avgRate} điểm / (${novel.totalRates})` : "0 điểm",
             iconColor: "bg-pink-600",
         },
         {
             icon: <DollarSign className="w-5 h-5" />,
-            label: "Tổng tiền mở khóa 0 đ",
+            label: "Tổng tiền mở khóa",
             value: "0 đ",
             iconColor: "bg-green-600",
         },
         {
             icon: <Gift className="w-5 h-5" />,
-            label: "Được đề cử 0 lần",
-            value: "0",
+            label: "Lượt đề cử",
+            value: novel?.totalPromotions ? novel.totalPromotions : "0",
             iconColor: "bg-red-600",
         },
 
         {
             icon: <Users className="w-5 h-5" />,
-            label: "0 người đang theo dõi",
+            label: "Người đang theo dõi",
             value: "0",
             iconColor: "bg-gray-600",
         },
 
         {
             icon: <Bookmark className="w-5 h-5" />,
-            label: "Đánh dấu 0 lượt",
-            value: "0",
+            label: "Lượt đánh dấu",
+            value: novel?.totalBookmarks ? novel.totalBookmarks : "0",
             iconColor: "bg-green-600",
         },
         {
             icon: <Eye className="w-5 h-5" />,
-            label: "Đã có 0 lượt đọc",
-            value: "0",
+            label: "Lượt đọc",
+            value: novel?.totalViews ? novel.totalViews : "0",
             iconColor: "bg-red-600",
         },
         {
             icon: <MessageSquare className="w-5 h-5" />,
-            label: "0 lượt thảo luận",
-            value: "0",
+            label: "Lượt thảo luận",
+            value: novel?.totalComments ? novel.totalComments : "0",
             iconColor: "bg-blue-600",
         },
         {
