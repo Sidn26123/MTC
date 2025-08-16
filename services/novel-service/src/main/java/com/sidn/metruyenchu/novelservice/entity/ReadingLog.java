@@ -41,6 +41,9 @@ public class ReadingLog {
     @CreationTimestamp
     LocalDateTime readAt;
 
+    @Column(name = "end_at")
+    LocalDateTime endAt;
+
     @Column(name = "duration")
     Integer duration; // thời gian đọc chương, đơn vị giây
 

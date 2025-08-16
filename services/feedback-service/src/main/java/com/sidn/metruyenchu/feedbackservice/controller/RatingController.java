@@ -4,6 +4,7 @@ import com.sidn.metruyenchu.feedbackservice.dto.ApiResponse;
 import com.sidn.metruyenchu.feedbackservice.dto.BaseFilterRequest;
 import com.sidn.metruyenchu.feedbackservice.dto.PageResponse;
 import com.sidn.metruyenchu.feedbackservice.dto.request.rating.RatingCreationRequest;
+import com.sidn.metruyenchu.feedbackservice.dto.request.rating.RatingFilterRequest;
 import com.sidn.metruyenchu.feedbackservice.dto.request.rating.RatingUpdateRequest;
 import com.sidn.metruyenchu.feedbackservice.dto.response.RatingResponse;
 import com.sidn.metruyenchu.feedbackservice.service.RatingService;
@@ -77,6 +78,13 @@ public class RatingController {
         return ApiResponse.<Map<Integer,Long>>
                 builder()
                 .result(reviewService.getRatingCountGroupedByStar(novelId))
+                .build();
+    }
+
+    @PostMapping("/filter")
+    public ApiResponse<PageResponse<RatingResponse>> filterRatings(@RequestBody RatingFilterRequest request) {
+        return ApiResponse.<PageResponse<RatingResponse>>builder()
+                .result(reviewService.filter(request))
                 .build();
     }
 

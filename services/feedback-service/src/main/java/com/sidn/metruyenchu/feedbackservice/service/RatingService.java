@@ -2,10 +2,7 @@ package com.sidn.metruyenchu.feedbackservice.service;
 
 import com.sidn.metruyenchu.feedbackservice.dto.BaseFilterRequest;
 import com.sidn.metruyenchu.feedbackservice.dto.PageResponse;
-import com.sidn.metruyenchu.feedbackservice.dto.request.rating.DeleteRatingRequest;
-import com.sidn.metruyenchu.feedbackservice.dto.request.rating.RatingCreationRequest;
-import com.sidn.metruyenchu.feedbackservice.dto.request.rating.RatingRequest;
-import com.sidn.metruyenchu.feedbackservice.dto.request.rating.RatingUpdateRequest;
+import com.sidn.metruyenchu.feedbackservice.dto.request.rating.*;
 import com.sidn.metruyenchu.feedbackservice.dto.response.RatingResponse;
 import com.sidn.metruyenchu.feedbackservice.dto.response.feign.ChapterResponse;
 import com.sidn.metruyenchu.feedbackservice.dto.response.feign.NovelResponse;
@@ -15,6 +12,8 @@ import com.sidn.metruyenchu.feedbackservice.exception.ErrorCode;
 import com.sidn.metruyenchu.feedbackservice.mapper.RatingMapper;
 import com.sidn.metruyenchu.feedbackservice.repository.RatingRepository;
 import com.sidn.metruyenchu.feedbackservice.repository.httpclient.NovelClient;
+import com.sidn.metruyenchu.feedbackservice.spectifications.CommentSpecification;
+import com.sidn.metruyenchu.feedbackservice.spectifications.RatingSpecification;
 import com.sidn.metruyenchu.feedbackservice.utils.PageUtils;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -221,4 +220,14 @@ public class RatingService {
         return ratingStats;
     }
 
+    public PageResponse<RatingResponse> filter(RatingFilterRequest request){
+        Pageable pageable = PageUtils.from(request);
+        Page<Rating> ratingPage = ratingRepository.findAll(RatingSpecification.filter(request), pageable);
+
+        return PageUtils.toPageResponse(
+                ratingPage,
+                ratingMapper::toResponse,
+                request.getPage()
+        );
+    }
 }

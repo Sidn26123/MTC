@@ -84,11 +84,12 @@ public class NotificationService {
 //        notification.setMetadata(dto.getMetadata());
         notification.setPriority(dto.getPriority() != null ? dto.getPriority() : NotificationPriority.LOW);
         notification.setScheduledAt(dto.getScheduledAt());
+        notification.setTitle(dto.getTitle() != null ? dto.getTitle() : "New Notification");
         Duration expiresAt = Duration.parse("PT72H");
         if (dto.getExpiresAt() != null) {
             notification.setExpiresAt(LocalDateTime.now().plus(expiresAt));
         }
-        
+        notification.setContent("You have a new notification from ");
         Notification saved = notificationRepository.save(notification);
         
         // Send immediately if not scheduled
@@ -217,7 +218,7 @@ public class NotificationService {
                 .senderId(raterId)
                 .notificationType(NotificationType.STORY_RATED)
                 .priority(NotificationPriority.LOW)
-                .metadata(Map.of("storyId", storyId, "raterId", raterId, "rating", rating))
+//                .metadata(Map.of("storyId", storyId, "raterId", raterId, "rating", rating))
 //                .variables(Map.of(
 //                    "raterName", getUserName(raterId),
 //                    "storyTitle", getStoryTitle(storyId),
@@ -235,7 +236,7 @@ public class NotificationService {
                 .senderId(reporterId)
                 .notificationType(NotificationType.STORY_REPORTED)
                 .priority(NotificationPriority.HIGH)
-                .metadata(Map.of("storyId", storyId, "reporterId", reporterId))
+//                .metadata(Map.of("storyId", storyId, "reporterId", reporterId))
 //                .variables(Map.of(
 //                    "storyTitle", getStoryTitle(storyId),
 //                    "reportReason", reportReason
@@ -245,12 +246,12 @@ public class NotificationService {
         createNotification(dto);
     }
     
-    public void notifyReportAssignment(String assigneeId, ReportResponse report) {
+    public void notifyReportAssignment(String assigneeId) {
         NotificationRequest dto = NotificationRequest.builder()
                 .recipientId(assigneeId)
                 .notificationType(NotificationType.REPORT_ASSIGNED)
                 .priority(NotificationPriority.MEDIUM)
-                .metadata(Map.of("reportId", report.getId()))
+//                .metadata(Map.of("reportId", reportId))
 //                .variables(Map.of(
 //                    "reportTitle", report.getTitle(),
 //                    "reportType", report.getReportType().getDisplayName()
@@ -260,12 +261,12 @@ public class NotificationService {
         createNotification(dto);
     }
     
-    public void notifyReportStatusChange(String reporterId, ReportResponse report) {
+    public void notifyReportStatusChange(String reporterId) {
         NotificationRequest dto = NotificationRequest.builder()
                 .recipientId(reporterId)
                 .notificationType(NotificationType.REPORT_STATUS_CHANGED)
                 .priority(NotificationPriority.MEDIUM)
-                .metadata(Map.of("reportId", report.getId()))
+//                .metadata(Map.of("reportId", report.getId()))
 //                .variables(Map.of(
 //                    "reportTitle", report.getTitle(),
 //                    "newStatus", report.getStatus().getDisplayName()

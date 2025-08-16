@@ -1,6 +1,7 @@
 package com.sidn.metruyenchu.notificationservice.controller;
 
 import com.sidn.metruyenchu.notificationservice.dto.request.NotificationRequest;
+import com.sidn.metruyenchu.shared_library.dto.request.notification.*;
 import com.sidn.metruyenchu.notificationservice.dto.response.NotificationResponse;
 import com.sidn.metruyenchu.notificationservice.mapper.NotificationMapper;
 import com.sidn.metruyenchu.notificationservice.service.NotificationService;
@@ -9,9 +10,7 @@ import com.sidn.metruyenchu.shared_library.dto.PageResponse;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import static com.sidn.metruyenchu.notificationservice.utils.TokenUtils.getUserIdFromContext;
@@ -85,4 +84,64 @@ public class NotificationController {
         service.deleteNotification(id, userId);
         return ApiResponse.<Void>builder().build();
     }
+
+    // New endpoints for specific notification types
+    @PostMapping("/novel/liked")
+    public ApiResponse<Void> notifyStoryLiked(@RequestBody StoryLikedNotificationRequest request) {
+        service.notifyStoryLiked(request.getStoryId(), request.getLikerId(), request.getPublisherId());
+        return ApiResponse.<Void>builder().build();
+    }
+
+    @PostMapping("/novel/followed")
+    public ApiResponse<Void> notifyStoryFollowed(@RequestBody StoryFollowedNotificationRequest request) {
+        service.notifyStoryFollowed(request.getStoryId(), request.getFollowerId(), request.getPublisherId());
+        return ApiResponse.<Void>builder().build();
+    }
+
+    @PostMapping("/novel/commented")
+    public ApiResponse<Void> notifyStoryCommented(@RequestBody StoryCommentedNotificationRequest request) {
+        service.notifyStoryCommented(
+                request.getNovelId(),
+                request.getCommenterId(),
+                request.getPublisherId(),
+                request.getCommentContent()
+        );
+        return ApiResponse.<Void>builder().build();
+    }
+
+    @PostMapping("/novel/rated")
+    public ApiResponse<Void> notifyStoryRated(@RequestBody StoryRatedNotificationRequest request) {
+        service.notifyStoryRated(
+                request.getStoryId(),
+                request.getRaterId(),
+                request.getPublisherId(),
+                request.getRating()
+        );
+        return ApiResponse.<Void>builder().build();
+    }
+
+    @PostMapping("/novel/reported")
+    public ApiResponse<Void> notifyStoryReported(@RequestBody StoryReportedNotificationRequest request) {
+        service.notifyStoryReported(
+                request.getStoryId(),
+                request.getReporterId(),
+                request.getPublisherId(),
+                request.getReportReason()
+        );
+        return ApiResponse.<Void>builder().build();
+    }
+
+    @PostMapping("/report/assigned")
+    public ApiResponse<Void> notifyReportAssignment(@RequestBody ReportAssignmentNotificationRequest request) {
+        service.notifyReportAssignment(request.getAssigneeId());
+        return ApiResponse.<Void>builder().build();
+    }
+
+    @PostMapping("/report/status-changed")
+    public ApiResponse<Void> notifyReportStatusChange(@RequestBody ReportStatusChangeNotificationRequest request) {
+        service.notifyReportStatusChange(request.getReporterId());
+        return ApiResponse.<Void>builder().build();
+    }
+
+
 }

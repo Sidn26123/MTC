@@ -1,6 +1,7 @@
 package com.sidn.metruyenchu.novelservice.mapper;
 
 import com.sidn.metruyenchu.novelservice.dto.request.chapter.mongo.ReadingLogCreateRequest;
+import com.sidn.metruyenchu.novelservice.dto.request.chapter.mongo.ReadingLogUpdateRequest;
 import com.sidn.metruyenchu.novelservice.dto.response.chapter.ReadingLogResponse;
 import com.sidn.metruyenchu.novelservice.entity.ReadingLog;
 import org.mapstruct.Mapper;
@@ -18,5 +19,5 @@ public interface ReadingLogMapper {
     List<ReadingLogResponse> toReadingLogResponses(List<ReadingLog> logs);
 
 
-    void update(@MappingTarget ReadingLog readingLog, ReadingLogCreateRequest request);
+    void update(@MappingTarget ReadingLog readingLog, ReadingLogUpdateRequest request);
 }

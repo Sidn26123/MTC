@@ -30,4 +30,6 @@ public class ChapterResponse {
     LocalDateTime publishedAt;
     Boolean isDeleted;
     Boolean isActive;
+    Boolean isPublished;
+
 }

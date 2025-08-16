@@ -36,6 +36,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -722,17 +723,30 @@ public class ChapterService {
         if (request.getDuration() < 20 || request.getProgress() < 0.8f) {
             isFinished = false;
         }
-
+        LocalDateTime currentDateTime = LocalDateTime.now();
+        // get validtime localdatetime minus 30 min
+        LocalDateTime validTime = currentDateTime.minusMinutes(30);
         String logId = request.getLogId();
+        LocalDateTime near = readingLogService.getNearestUserRead(userId, chapter.getId());
+        if (near != null && !near.isAfter(validTime)) {
+            novel.setTotalViews(novel.getTotalViews() + 1);
+            chapter.setTotalViews(chapter.getTotalViews() + 1);
+        }
         if (logId != null){
+
             readingLogService.update(
                     logId,
                     ReadingLogUpdateRequest.builder()
                             .duration(request.getDuration())
                             .progress(request.getProgress())
                             .isFinished(isFinished)
+                            .endAt(currentDateTime)
                             .build()
             );
+
+            ReadingLog readingLog = readingLogService.findEntityById(logId);
+
+
         }
 
         return null;

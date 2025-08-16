@@ -7,9 +7,11 @@ import com.sidn.metruyenchu.novelservice.dto.request.chapter.mongo.UserReadingSt
 
 import com.sidn.metruyenchu.novelservice.dto.response.chapter.ReadingLogResponse;
 import com.sidn.metruyenchu.novelservice.entity.ReadingLog;
+import com.sidn.metruyenchu.shared_library.exceptions.ErrorCode;
 import com.sidn.metruyenchu.novelservice.mapper.ReadingLogMapper;
 import com.sidn.metruyenchu.novelservice.repository.ReadingLogRepository;
 
+import com.sidn.metruyenchu.shared_library.exceptions.AppException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -49,12 +51,8 @@ public class ReadingLogService {
                 .orElseThrow(() -> new IllegalArgumentException("Reading log not found"));
 
         // Cập nhật các trường cần thiết
-        existingLog.setDuration(request.getDuration());
-        existingLog.setProgress(request.getProgress());
-        existingLog.setDevice(request.getDevice());
-        existingLog.setIpAddress(request.getIpAddress());
-        existingLog.setUserAgent(request.getUserAgent());
-        existingLog.setIsFinished(request.getIsFinished());
+        readingLogMapper.update(existingLog, request);
+
 
         readingLogRepository.save(existingLog);
     }
@@ -132,7 +130,15 @@ public class ReadingLogService {
     }
 
     public LocalDateTime getNearestUserRead(String userId, String chapterId){
-        return null;
+        return readingLogRepository.findTopByUserIdAndChapterIdOrderByReadAtDesc(userId, chapterId)
+                .map(ReadingLog::getReadAt)
+                .orElseThrow(() -> new AppException(ErrorCode.NOVEL_NOT_FOUND));
     }
+
+    public ReadingLog findEntityById(String logId) {
+        return readingLogRepository.findById(logId)
+                .orElseThrow(() -> new AppException(ErrorCode.NOVEL_NOT_FOUND));
+    }
+
 }
 

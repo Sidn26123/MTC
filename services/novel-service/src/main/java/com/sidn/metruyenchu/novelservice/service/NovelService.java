@@ -69,10 +69,8 @@ public class NovelService {
     public PageResponse<NovelResponse> getNovels(
             NovelFilterRequest request
     ) {
-        log.info("{} {}", request.getPage(), request.getSize());
 
         Pageable pageable = PageUtils.from(request);
-        log.info("{} {}", pageable.getPageSize(), pageable.getPageNumber());
         Page<Novel> novels = novelRepository.findAll(NovelSpecification.filter(request), pageable);
 
 

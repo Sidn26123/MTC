@@ -2,6 +2,9 @@ package com.sidn.metruyenchu.notificationservice.exception;
 
 import com.sidn.metruyenchu.notificationservice.dto.ApiFeignResponse;
 import com.sidn.metruyenchu.notificationservice.dto.ApiResponse;
+import com.sidn.metruyenchu.shared_library.exceptions.ErrorCode;
+import com.sidn.metruyenchu.shared_library.exceptions.AppException;
+
 import feign.FeignException;
 import jakarta.validation.ConstraintViolation;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +13,6 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
 import java.util.Map;
 import java.util.Objects;
 

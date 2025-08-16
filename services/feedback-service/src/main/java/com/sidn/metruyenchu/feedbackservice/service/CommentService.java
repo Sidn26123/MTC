@@ -11,6 +11,8 @@ import com.sidn.metruyenchu.feedbackservice.dto.response.projection.GeneralCount
 import com.sidn.metruyenchu.feedbackservice.dto.response.stat.*;
 import com.sidn.metruyenchu.feedbackservice.entity.Comment;
 import com.sidn.metruyenchu.feedbackservice.enums.TimeRangeType;
+import com.sidn.metruyenchu.feedbackservice.repository.httpclient.NotificationClient;
+import com.sidn.metruyenchu.shared_library.dto.request.notification.StoryCommentedNotificationRequest;
 import com.sidn.metruyenchu.shared_library.enums.feedback.FeedbackType;
 import com.sidn.metruyenchu.shared_library.exceptions.AppException;
 import com.sidn.metruyenchu.shared_library.exceptions.ErrorCode;
@@ -53,6 +55,7 @@ public class CommentService {
     CommentMapper commentMapper;
 
     NovelClient novelClient;
+    NotificationClient notificationClient;
     private final LikeRepository likeRepository;
     RatingService ratingService;
 
@@ -97,6 +100,9 @@ public class CommentService {
 
 
 //        updateCommentStat(request.getFeedbackType(), request.getParentId(), 1);
+
+
+
         comment = commentRepository.save(comment);
         if (request.getNovelId() != null && request.getChapterId() != null) {
             novelClient.commentNovel(request.getNovelId(),
@@ -105,7 +111,12 @@ public class CommentService {
                             .novelId(request.getNovelId())
                             .chapterIdx(chapterResponse != null ? chapterResponse.getChapterIdx() : 0)
                             .build());
-
+            notificationClient.notifyStoryCommented(StoryCommentedNotificationRequest.builder()
+                            .commenterId(userId)
+                            .commentContent(request.getContent())
+                            .novelId(request.getNovelId())
+                            .publisherId(novelResponse != null ? novelResponse.getCurrentPublisher() : "")
+                    .build());
         }
 
 //        try{
