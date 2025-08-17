@@ -22,15 +22,17 @@ import {
 } from '../../stores/publisherStore.js';
 import { initPageData } from '../../utils/PageUtils.js';
 import { CommonTable } from '../../components/common/CommonTable.jsx';
+import { getUserIdFromContext } from '../../services/authenticationService.js';
 
 
 function PublishedNovelPage() {
     const user = useUser();
     const setMyPublishedNovels = useSetMyPublishedNovels();
     const myPublishedNovels = useMyPublishedNovels();
+    const userId = getUserIdFromContext();
     // const [pageData, setPageData] = useState(initPageData());
     const [filter, setFilter] = useState({
-        currentPublisher: user?.userId || '',
+        currentPublisher: userId || '',
         page: 1,
         size: myPublishedNovels.pageSize || 10,
     })

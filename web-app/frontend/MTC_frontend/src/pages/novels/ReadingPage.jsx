@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import AdvertiseItem from "../../components/global/AdvertiseItem.jsx";
 import {
     faBackward,
@@ -38,6 +38,7 @@ import { useMyWallet, useSetMyWallet, useUpdateWalletBalance } from '../../store
 import { showError, showSuccess } from '../../utils/ToastUtils.js';
 import { promotion } from '../../services/paymentService.js';
 import Content from '../../components/common/Content.jsx';
+import { useScrollPercent, useScrollProgress } from '../../common/CommonComponents.jsx';
 
 
 
@@ -230,8 +231,11 @@ const ReadingPage = () => {
     const [showModal, setShowModal] = useState(false);
     const [readingChapterProgress, setReadingChapterProgress] = useState(0);
     const startTime = useMemo(() => new Date(), []);
-
-
+    const [logId, setLogId] = useState(null);
+    const ref = useRef(null);
+    const percent = useScrollPercent(ref);
+    const logIdRef = useRef(null);
+    const { scrollProgress, maxScrollProgress } = useScrollProgress([chapterIdx]);
     function calDurationInReading(){
         const endTime = new Date();
         const duration = Math.floor((endTime - startTime) / 1000); // tính bằng giây
@@ -260,16 +264,18 @@ const ReadingPage = () => {
     const handleNavigateNewChapter = async (isNext) => {
         var novelId = currentNovel?.id;
         var chapterId = currentChapter?.id;
-
-        await navigateToChapter(novelId, chapterId, {
+        var data = {
             currentChapterIdx: currentChapter?.chapterIdx,
             userId: getUserIdFromContext(),
             isNext: isNext,
             novelId: novelId,
             chapterId: chapterId,
-            progress: readingChapterProgress,
+            progress: maxScrollProgress,
             duration: calDurationInReading(),
-        })
+            logId: logId,
+        }
+        console.log("Navigate to new chapter with data:", data);
+        await navigateToChapter(novelId, chapterId, data)
     }
 
     // Lấy dữ liệu chapter
@@ -317,12 +323,17 @@ const ReadingPage = () => {
                 });
 
                 if (currentNovel?.id) {
-                    await startReadChapter(currentNovel.id, {
+                    console.log("LOGGG")
+
+                    var logId = await startReadChapter(currentChapter.id, {
                         userId: getUserIdFromContext(),
                         chapterId: r.data.result.id,
                         currentChapterIdx: currentChapter?.chapterIdx,
                         novelId: currentNovel.id,
                     });
+                    console.log("logId:", logId.data.result);
+                    logIdRef.current = logId.data.result;
+                    setLogId(logId.data.result);
                 }
             } catch (err) {
                 console.error("Fetch content error:", err);
@@ -330,7 +341,24 @@ const ReadingPage = () => {
         };
         fetchContent();
         return () => { ignore = true; };
-    }, [currentChapter.id, chapterIdx, purchased]);
+    }, [currentChapter.id, purchased]);
+
+    useEffect(() => {
+        return () => {
+            var data = {
+                currentChapterIdx: currentChapter?.chapterIdx,
+                userId: getUserIdFromContext(),
+                novelId: currentNovel?.id,
+                isExit: true,
+                chapterId: currentChapter?.id,
+                progress: maxScrollProgress,
+                duration: calDurationInReading(),
+                logId: logIdRef.current,
+            }
+            console.log("Out: ", data)
+            navigateToChapter(currentNovel?.id, currentChapter?.id, data)
+        }
+    }, []);
 
     const changeFunctionModel = (mode) => {
         setFunctionMode(mode === functionMode ? 'none' : mode);
@@ -493,7 +521,9 @@ const ReadingPage = () => {
                             <br />
                             <br />
                             {curChapterContent !== undefined && (
-                                <Content content={curChapterContent} />
+                                <div ref={ref}>
+                                    <Content content={curChapterContent} />
+                                </div>
                             )}
                             {/*    */}
                             {/*Thong bao cua truyen*/}

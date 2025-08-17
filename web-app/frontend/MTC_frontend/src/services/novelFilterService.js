@@ -24,6 +24,7 @@ const processCategoryResponse = (response) => {
 };
 
 export const fetchAllCategories = async () => {
+    console.log("B")
     try {
         const [
             novelProgressStatus,

@@ -58,13 +58,14 @@ export const useInitData = () => {
     const setListNovel = useSetListNovel();
 
     useEffect(() => {
+        console.log("onot");
         const initData = async () => {
             try {
                 const [novel, allCategories] = await Promise.all([
                     getNovels(),
                     fetchAllCategories()
                 ]);
-
+                console.log("ALL: ", allCategories)
                 setListNovel(novel.data.result);
                 setNovelProgressStatus(allCategories.novelProgressStatus);
                 setNovelAttributes(allCategories.novelAttributes);
@@ -80,7 +81,9 @@ export const useInitData = () => {
             }
         };
 
-        initData().then(r => {});
+        initData().then(r => {
+            console.log("sads")
+        });
     }, []);
 };
 
@@ -103,8 +106,9 @@ const NovelFilter = ({onClose}) => {
     const novelTypes = useNovelType();
     const changePage = useSetPage();
     const setNovelProgressStatus = useSetNovelStatus();
+    useInitData();
+
     if (!novelProgressStatus){
-        useInitData();
 
     }
     // useEffect(() => {

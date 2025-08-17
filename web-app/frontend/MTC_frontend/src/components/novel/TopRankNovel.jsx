@@ -468,7 +468,6 @@ const RankedBookItem = ({ index, item }) => {
     function handleNavigate(novelSlug) {
         navigate(`/truyen/${novelSlug}`);
     }
-    console.log("RankedBookItem", item, index);
     return (
         <div className="box-content divide-y divide-dotted divide-auto" onClick={() => handleNavigate(item.novelSlug)}>
             {isTop && item ? (

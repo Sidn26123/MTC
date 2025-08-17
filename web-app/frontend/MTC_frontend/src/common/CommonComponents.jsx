@@ -310,6 +310,70 @@ export const NovelCoverImage_S = ({ src, alt, onClick }) => {
 };
 
 
+export const useScrollPercent = (ref) => {
+    const [scrollPercent, setScrollPercent] = useState(0);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            if (!ref.current) return;
+            const { scrollTop, scrollHeight, clientHeight } = ref.current;
+            const scrolled = (scrollTop / (scrollHeight - clientHeight)) * 100;
+            setScrollPercent(scrolled);
+        };
+
+        const el = ref.current;
+        if (el) el.addEventListener("scroll", handleScroll);
+
+        return () => {
+            if (el) el.removeEventListener("scroll", handleScroll);
+        };
+    }, [ref]);
+
+    return scrollPercent;
+};
+
+export const useScrollProgress = (resetDependencies = []) => {
+    const [scrollProgress, setScrollProgress] = useState(0);
+    const [maxScrollProgress, setMaxScrollProgress] = useState(0);
+
+    // Reset khi dependencies thay đổi
+    useEffect(() => {
+        setScrollProgress(0);
+        setMaxScrollProgress(0);
+        // Optional: scroll về đầu trang
+        window.scrollTo(0, 0);
+    }, resetDependencies);
+
+    useEffect(() => {
+        let ticking = false;
+
+        const handleScroll = () => {
+            if (!ticking) {
+                requestAnimationFrame(() => {
+                    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                    const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                    const currentProgress = Math.min((scrollTop / scrollHeight) * 100, 100);
+
+                    setScrollProgress(currentProgress);
+                    setMaxScrollProgress(prev => Math.max(prev, currentProgress));
+
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+
+        return () => {
+            window.removeEventListener('scroll', handleScroll);
+        };
+    }, []);
+
+    return { scrollProgress, maxScrollProgress };
+};
+
+
 export {
     FullScreenWrapper,
     SimpleDropdown,

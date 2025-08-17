@@ -49,7 +49,6 @@ const CanvasLine = ({ text, fontSize = 20, fontFamily = "Palatino", watermark = 
 
 const Content = ({ content }) => {
     const lines = content.replace(/\\n/g, '\n').split('\n').filter(line => line.trim() !== '');
-    console.log("Content lines:", lines);
 
 
     const renderLine = (line, index) => {
@@ -57,7 +56,6 @@ const Content = ({ content }) => {
         // Hỗ trợ: ![alt text](https://example.com/image.jpg?query=abc)
         const imageRegex = /!\[([^\]]*?)\]\((https?:\/\/[^\s)]+)\)/g;
         const imageMatches = [...line.matchAll(imageRegex)];
-        console.log("Image matches in line:", imageMatches);
         if (imageMatches.length > 0) {
             // Nếu có ảnh trong dòng
             let lastIndex = 0;

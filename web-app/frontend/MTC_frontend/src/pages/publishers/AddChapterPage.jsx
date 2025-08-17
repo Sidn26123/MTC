@@ -31,15 +31,14 @@ import Content from '../../components/common/Content.jsx';
 
 const AddChapterPage = () => {
     const navigate = useNavigate();
-
     const location = useLocation();
+
     const initialContent = location.state?.chapterContent || '';
-
-
-
     const [chapterContent, setChapterContent] = useState(initialContent);
     const [chapterList, setChapterList] = useState([]);
     const [chapterContentError, setChapterContentError] = useState("");
+    const [chapterFiles, setChapterFiles] = useState([]);
+
 
     const currentPublishedNovel = useCurrentPublishedNovel();
     // const setCurrentPublishedNovel = useSetCurrentChosenPublishedNovel();
@@ -75,7 +74,12 @@ const AddChapterPage = () => {
         const reader = new FileReader();
         reader.onload = (event) => {
             const text = event.target.result;
-            setChapterContent(text); // Gán thẳng vào chapterContent để xử lý chung
+            let finalText = chapterContent + "\n" + text.trim() + "\n"; // Thêm dòng mới trước và sau nội dung
+            if (chapterContent.trim() === "") {
+                finalText = "Chương " + (currentPublishedNovel.totalChapters + 1) + ": \n" + finalText; // Thêm tiêu đề chương nếu chưa có
+            }
+
+            setChapterContent(finalText); // Gán thẳng vào chapterContent để xử lý chung
         };
         reader.readAsText(file, "UTF-8");
     }
@@ -231,6 +235,42 @@ const AddChapterPage = () => {
         return content.trim().split(/\s+/).length;
     }
 
+    // function splitChapter(content) {
+    //     const chapters = []; // {title: "", content: "", index: 0, wordCount: 0}
+    //
+    //     const lines = content.split('\n');
+    //     let currentChapterIndex = -1;
+    //     const startIndex = currentPublishedNovel.totalChapters;
+    //
+    //     for (let i = 0; i < lines.length; i++) {
+    //         const line = lines[i].trim();
+    //
+    //         if (checkLineIsHeader(line)) {
+    //             // Tạo chapter mới
+    //             currentChapterIndex++;
+    //             chapters.push({
+    //                 title: line,
+    //                 content: "",
+    //                 index: startIndex + currentChapterIndex,
+    //                 wordCount: 0
+    //             });
+    //         } else {
+    //             if (line.startsWith("#Chương")) {
+    //                 chapters[currentChapterIndex].content = line.replace(/^#/, "").trim() + "\n";
+    //             } else {
+    //                 chapters[currentChapterIndex].content += line + "\n";
+    //             }
+    //         }
+    //     }
+    //
+    //     // Tính wordCount cho từng chương
+    //     return chapters.map(ch => ({
+    //         ...ch,
+    //         wordCount: getWordCount(ch.content)
+    //     }));
+    // }
+
+
     function splitChapter(content) {
         const chapters = []; // {title: "", content: "", index: 0, wordCount: 0}
 
@@ -259,12 +299,48 @@ const AddChapterPage = () => {
             }
         }
 
-        // Tính wordCount cho từng chương
-        return chapters.map(ch => ({
-            ...ch,
-            wordCount: getWordCount(ch.content)
-        }));
+        // Xử lý tách chương nếu vượt 5000 từ
+        const processed = [];
+        chapters.forEach((ch, idx) => {
+            let words = ch.content.split(/\s+/);
+            if (words.length <= 5000) {
+                processed.push({
+                    ...ch,
+                    wordCount: words.length
+                });
+            } else {
+                let start = 0;
+                let part = 1;
+                while (start < words.length) {
+                    let end = start + 5000;
+                    if (end >= words.length) end = words.length;
+                    else {
+                        // tìm dấu "." gần nhất để cắt
+                        while (end < words.length && !words[end].endsWith(".")) {
+                            end++;
+                        }
+                        if (end >= words.length) end = words.length;
+                    }
+
+                    let chunkWords = words.slice(start, end);
+                    let chunkContent = chunkWords.join(" ");
+
+                    processed.push({
+                        title: `${ch.title} (Phần ${part})`,
+                        content: chunkContent,
+                        index: ch.index + part - 1, // giữ index liên tục
+                        wordCount: chunkWords.length
+                    });
+
+                    start = end;
+                    part++;
+                }
+            }
+        });
+
+        return processed;
     }
+
 
     function checkLineIsHeader(line) {
         // Loại bỏ khoảng trắng đầu cuối dòng

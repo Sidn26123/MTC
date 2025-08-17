@@ -284,18 +284,18 @@ export const NovelStat = ({novel, gotoRating, gotoComment}) => {
 
 
     function getCurrentPublisherFullName(currentNovelPublisher) {
-        // return currentNovelPublisher.firstName + " " + currentNovelPublisher.lastName;
+        return currentNovelPublisher.firstName + " " + currentNovelPublisher.lastName;
     }
 
     function goReadingPage() {
-        // if (idx === 0){
-        //     // If idx is 0, it means user has not read any chapter yet, so we should navigate to the first chapter
-        //     navigate(`chuong-${1}`)
-        // }
-        // else{
-        //     navigate(`chuong-${idx}`)
-        //
-        // }
+        if (idx === 0){
+            // If idx is 0, it means user has not read any chapter yet, so we should navigate to the first chapter
+            navigate(`chuong-${1}`)
+        }
+        else{
+            navigate(`chuong-${idx}`)
+
+        }
     }
 
     return (
