@@ -91,7 +91,6 @@ const ChapterList = () => {
     );
 
     const renderRow = (chapter, index) => {
-        console.log('Rendering chapter:', chapter);
         const now = new Date();
         let timeColor = "text-gray-300"; // mặc định
 

@@ -20,7 +20,7 @@ import { usePublishedByPublisher } from '../../stores/novelStore.js';
 import {
     useCurrentChosenPublishedNovel,
     useCurrentPublishedNovel,
-    usePublisherStore, useSetCurrentChosenPublishedNovel,
+    usePublisherStore, useSetCurrentChosenPublishedNovel, useSetCurrentPublishedNovel,
 } from '../../stores/publisherStore.js';
 import { uploadChapter, uploadChapters } from '../../services/chapterService.js';
 import { showError, showSuccess } from '../../utils/ToastUtils.js';
@@ -41,7 +41,7 @@ const AddChapterPage = () => {
 
 
     const currentPublishedNovel = useCurrentPublishedNovel();
-    const setCurrentPublishedNovel = useSetCurrentChosenPublishedNovel();
+    const setCurrentPublishedNovel = useSetCurrentPublishedNovel();
     const [showDateTimePicker, setShowDateTimePicker] = React.useState(false);
     const [value, setValue] = useState(undefined);
     const [formattedDate, setFormattedDate] = useState("");
@@ -189,6 +189,7 @@ const AddChapterPage = () => {
                 chapterStatus: ["011ea719-cb1c-46a6-b8c6-0607127dbc6c"],
                 novelId: currentPublishedNovel.id,
                 name: ch.title,
+                // publishedAt: formattedDate ? formattedDate : null,
             };
         });
 
@@ -206,14 +207,16 @@ const AddChapterPage = () => {
         //     navigate("/bookhub/novels/" + currentPublishedNovel.slug +"/chapters");
         // });
 
-        uploadChapters(updatedList).then(response => {
+        uploadChapters(updatedList).then(async response => {
             if (response.status === 200) {
                 showSuccess("Đăng chương thành công");
                 setChapterList([]); // Xóa danh sách chương sau khi đăng
+                const d = await getNovelById(currentPublishedNovel.id);
+                console.log("updateload: ", d);
                 // console.log(getNovelById(currentPublishedNovel.id))
-                // setCurrentPublishedNovel(
-                //     getNovelById(currentPublishedNovel.id).data.result
-                // )
+                setCurrentPublishedNovel(
+                    d.data.result
+                )
                 navigate("/bookhub/novels/" + currentPublishedNovel.slug + "/chapters");
             } else {
                 showError("Đăng chương thất bại: " + response.data.message);
