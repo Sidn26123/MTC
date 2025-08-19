@@ -399,12 +399,11 @@ function Navbar() {
                                         </Link>
                                     </li>
                                     <li className={'list-none'}>
-                                        <span
-                                            onClick={() => navigate('/chatbot')}
+                                        <Link to={'/chatbot'}
                                             className="block px-4 py-2 text-gray-700 hover:bg-gray-400"
                                         >
                                             Chatbot
-                                        </span>
+                                        </Link>
                                     </li>
                                     {user.username && (
                                         <li className={'list-none'}>
