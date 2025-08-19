@@ -39,6 +39,7 @@ import { showError, showSuccess } from '../../utils/ToastUtils.js';
 import { promotion } from '../../services/paymentService.js';
 import Content from '../../components/common/Content.jsx';
 import { useScrollPercent, useScrollProgress } from '../../common/CommonComponents.jsx';
+import { useUser } from '../../stores/userStores.js';
 
 
 
@@ -236,6 +237,9 @@ const ReadingPage = () => {
     const percent = useScrollPercent(ref);
     const logIdRef = useRef(null);
     const { scrollProgress, maxScrollProgress } = useScrollProgress([chapterIdx]);
+    const user = useUser();
+
+
     function calDurationInReading(){
         const endTime = new Date();
         const duration = Math.floor((endTime - startTime) / 1000); // tính bằng giây
@@ -355,9 +359,18 @@ const ReadingPage = () => {
                 logId: logIdRef.current,
             }
             console.log("Out: ", data)
-            navigateToChapter(currentNovel?.id, currentChapter?.id, data)
+            if (user){
+                navigateToChapter(currentNovel?.id, currentChapter?.id, data)
+
+            }
         }
     }, []);
+
+    useEffect(() => {
+        if (id === undefined) {
+            navigate(`/truyen/${slug}/chuong-1`);
+        };
+    }, [id])
 
     const changeFunctionModel = (mode) => {
         setFunctionMode(mode === functionMode ? 'none' : mode);

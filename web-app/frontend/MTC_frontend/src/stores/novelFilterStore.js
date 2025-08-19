@@ -22,6 +22,7 @@ const initState = {
     mainCharacterTrait: [],
     authorName: '',
     sects: [],
+    isPublished: true,
     page: 0,
     size: 10
 };

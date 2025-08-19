@@ -58,14 +58,12 @@ export const useInitData = () => {
     const setListNovel = useSetListNovel();
 
     useEffect(() => {
-        console.log("onot");
         const initData = async () => {
             try {
                 const [novel, allCategories] = await Promise.all([
                     getNovels(),
                     fetchAllCategories()
                 ]);
-                console.log("ALL: ", allCategories)
                 setListNovel(novel.data.result);
                 setNovelProgressStatus(allCategories.novelProgressStatus);
                 setNovelAttributes(allCategories.novelAttributes);

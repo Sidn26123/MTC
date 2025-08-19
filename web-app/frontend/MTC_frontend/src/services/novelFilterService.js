@@ -81,6 +81,7 @@ export const extractFiltersFromStore = () => {
         ratingTo,
         sortBy,
         sortDirection,
+
         page,
         size,
     } = useFilterStore.getState();
