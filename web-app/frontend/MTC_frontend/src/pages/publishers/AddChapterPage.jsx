@@ -27,6 +27,7 @@ import { showError, showSuccess } from '../../utils/ToastUtils.js';
 import { uploadNovelCover } from '../../services/publisherService.js';
 import {faEye, faTimes } from "@fortawesome/free-solid-svg-icons";
 import Content from '../../components/common/Content.jsx';
+import { getNovelById } from '../../services/novelService.js';
 
 
 const AddChapterPage = () => {
@@ -37,11 +38,10 @@ const AddChapterPage = () => {
     const [chapterContent, setChapterContent] = useState(initialContent);
     const [chapterList, setChapterList] = useState([]);
     const [chapterContentError, setChapterContentError] = useState("");
-    const [chapterFiles, setChapterFiles] = useState([]);
 
 
     const currentPublishedNovel = useCurrentPublishedNovel();
-    // const setCurrentPublishedNovel = useSetCurrentChosenPublishedNovel();
+    const setCurrentPublishedNovel = useSetCurrentChosenPublishedNovel();
     const [showDateTimePicker, setShowDateTimePicker] = React.useState(false);
     const [value, setValue] = useState(undefined);
     const [formattedDate, setFormattedDate] = useState("");
@@ -192,19 +192,34 @@ const AddChapterPage = () => {
             };
         });
 
-        Promise.all(
-            updatedList.map(ch =>
-                uploadChapter(ch).then(r => ({ ch, r }))
-            )
-        ).then(results => {
-            console.log("Upload results: ", results);
-            const successChapters = results.filter(res => res.r.status === 200).map(res => res.ch.index);
+        // Promise.all(
+        //     updatedList.map(ch =>
+        //         uploadChapter(ch).then(r => ({ ch, r }))
+        //     )
+        // ).then(results => {
+        //     console.log("Upload results: ", results);
+        //     const successChapters = results.filter(res => res.r.status === 200).map(res => res.ch.index);
+        //
+        //     setChapterList(prev => prev.filter(item => !successChapters.includes(item.index)));
+        //
+        //     showSuccess("Đăng chương thành công");
+        //     navigate("/bookhub/novels/" + currentPublishedNovel.slug +"/chapters");
+        // });
 
-            setChapterList(prev => prev.filter(item => !successChapters.includes(item.index)));
+        uploadChapters(updatedList).then(response => {
+            if (response.status === 200) {
+                showSuccess("Đăng chương thành công");
+                setChapterList([]); // Xóa danh sách chương sau khi đăng
+                // console.log(getNovelById(currentPublishedNovel.id))
+                // setCurrentPublishedNovel(
+                //     getNovelById(currentPublishedNovel.id).data.result
+                // )
+                navigate("/bookhub/novels/" + currentPublishedNovel.slug + "/chapters");
+            } else {
+                showError("Đăng chương thất bại: " + response.data.message);
+            }
+        })
 
-            showSuccess("Đăng chương thành công");
-            navigate("/bookhub/novels/" + currentPublishedNovel.slug +"/chapters");
-        });
     }
 
     useEffect(() => {

@@ -67,3 +67,10 @@ export const isLoggedIn = () => {
     const payload = parseJwt(token);
     return payload && payload.exp > Date.now() / 1000; // Check if token is not expired
 }
+
+export const isTokenValid = (token) => {
+    if (!token) return false;
+
+    const payload = parseJwt(token);
+    return payload && payload.exp > Date.now() / 1000; // Check if token is not expired
+}
