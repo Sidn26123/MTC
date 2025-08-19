@@ -20,7 +20,9 @@ const MyReportPage = () => {
     const isAdmin = hasScope(userRoles, "ROLE_ADMIN");
     // d8b250b5-649b-4b0f-9063-491f02488ac7
     const [filterData, setFilterData] = useState({
-        reporterId: userId
+        assignedTo: userId,
+        sortBy: 'createdAt',
+        assignedRole: "ADMIN"
 
     })
     useEffect(() => {

@@ -225,7 +225,7 @@ const NovelOverviewPage= () => {
 export default NovelOverviewPage;
 
 export const NovelStat = ({novel, gotoRating, gotoComment}) => {
-    console.log("B");
+    const user = useUser();
     const navigate = useNavigate();
     const currentBookshelf = useCurrentBookshelf();
     const [idx,setIdx] = useState(0);
@@ -270,14 +270,16 @@ export const NovelStat = ({novel, gotoRating, gotoComment}) => {
                 console.log("setCurrentNovelPublisher", r.data.result);
                 setCurrentNovelPublisher(r.data.result);
             });
+            if (user){
+                getItemOfBookshelfByNovelId(currentBookshelf.id, novel.id).then(r => {
+                    console.log("setCurrentChapterIdx", r.data.result);
+                    if (r.data.result) {
+                        setIdx(r.data.result.currentChapterIdx);
+                        setCurrent(r.data.result);
+                    }
+                });
+            }
 
-            getItemOfBookshelfByNovelId(currentBookshelf.id, novel.id).then(r => {
-                console.log("setCurrentChapterIdx", r.data.result);
-                if (r.data.result) {
-                    setIdx(r.data.result.currentChapterIdx);
-                    setCurrent(r.data.result);
-                }
-            });
         }
     }, []);
 
@@ -684,14 +686,18 @@ export const NovelStat = ({novel, gotoRating, gotoComment}) => {
 
 const NovelRating = (novel) => {
     novel = novel.novel;
+    const user = useUser();
     const currentBookshelf = useCurrentBookshelf();
     const [currentChapterRead, setCurrentChapterRead] = useState(null);
     useEffect(() => {
-        getItemOfBookshelfByNovelId(currentBookshelf.id, novel.id).then((res) => {
-            if (res && res.data) {
-                setCurrentChapterRead(res.data.result.currentChapterIdx);
-            }
-        })
+        if (user){
+            getItemOfBookshelfByNovelId(currentBookshelf.id, novel.id).then((res) => {
+                if (res && res.data) {
+                    setCurrentChapterRead(res.data.result.currentChapterIdx);
+                }
+            })
+        }
+
     }, []);
 
 

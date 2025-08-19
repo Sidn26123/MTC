@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search, ArrowLeft, ArrowRight } from "lucide-react";
-import { getFilteredNovels, getAllNovelState, updateNovelState } from '../../services/novelService.js';
+import { getFilteredNovels, getAllNovelState, updateNovelState, fullyFilter } from '../../services/novelService.js';
 import { useUser } from '../../stores/userStores.js';
 import { getCategories } from '../../services/categoryService.js';
 
@@ -265,7 +265,7 @@ export default function NovelManagePage() {
     const fetchNovels = async () => {
       try {
         console.log("Lấy danh sách truyện với bộ lọc:", filters);
-        const response = await getFilteredNovels({ ...filters, page: filters.page });
+        const response = await fullyFilter({ ...filters, page: filters.page });
         console.log("Fetched novels:", response);
         setNovels(response.data?.result?.data || []);
         setTotalPages(response.data?.result?.totalPages || 1);

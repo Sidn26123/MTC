@@ -152,7 +152,10 @@ export const updateNovelState = async (novelId, newStatusId) => {
     });
     return response.data;
 }
-
+export const fullyFilter = async (filter) => {
+    const response = await api.post(API.NOVEL + "/novels/admin/filter", filter);
+    return response;
+}
 
 const apiFunctions = {
     // novels
@@ -187,7 +190,8 @@ const apiFunctions = {
 
     // novel state
     getAllNovelState,
-    updateNovelState
+    updateNovelState,
+    fullyFilter
 };
 
 export default wrapApiFunctions(apiFunctions);
