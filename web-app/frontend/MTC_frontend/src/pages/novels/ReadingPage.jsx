@@ -274,7 +274,6 @@ const ReadingPage = () => {
             duration: calDurationInReading(),
             logId: logId,
         }
-        console.log("Navigate to new chapter with data:", data);
         await navigateToChapter(novelId, chapterId, data)
     }
 
@@ -378,6 +377,21 @@ const ReadingPage = () => {
         handleNavigateNewChapter(true);
         navigate(`/truyen/${slug}/chuong-${chapterIdx + 1}`);
     };
+
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if (e.key === "ArrowLeft") {
+                handleGoPreviousChapter(); // chương trước
+            } else if (e.key === "ArrowRight") {
+                handleGoNextChapter(); // chương sau
+            }
+        };
+
+        window.addEventListener("keydown", handleKeyDown);
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+        };
+    }, [chapterIdx, slug]);
 
     // Loading UI
     if (canRead === null) {
@@ -535,7 +549,7 @@ const ReadingPage = () => {
                                 <AdvertiseItem />
                             </div>
                             <div>
-                                <FunctionBar changeMode={changeFunctionModel} />
+                                <FunctionBar changeMode={changeFunctionModel} goNext = {handleGoNextChapter} goBack = {handleGoPreviousChapter} />
                             </div>
                             <div className={'mt-5'}>
                                 {/*Review Panel*/}
@@ -637,7 +651,7 @@ const NovelAdvertise = () => {
     );
 };
 
-const FunctionBar = ({ changeMode }) => {
+const FunctionBar = ({ changeMode, goBack, goNext }) => {
     // const ItemArray = new Array()
     const navigate = useNavigate();
 
@@ -645,8 +659,6 @@ const FunctionBar = ({ changeMode }) => {
     const setWallets = useSetMyWallet();
     const updateWallet = useUpdateWalletBalance();
     function handleGoNextChapter() {
-        let nextChapterIdx = parseInt(useCurrentChapterIdx()) + 1;
-        // navigate('truyen')
     }
 
     function handleGoPreviousChapter() {
@@ -704,7 +716,7 @@ const FunctionBar = ({ changeMode }) => {
                         'grid grid-flow-col justify-stretch w-full border border-auto py-4 px-2 divide-x divide-auto space-x-4 border-gray-500 yellow-text-color'
                     }
                 >
-                    <div className={'space-y-2'} onClick={handleGoPreviousChapter}>
+                    <div className={'space-y-2'} onClick={goBack}>
                         <div className={'hover:text-yellow-500'}>
                             <span
                                 className={'flex justify-center items-center'}
@@ -739,7 +751,7 @@ const FunctionBar = ({ changeMode }) => {
                         </span>
                         <span>Đề cử</span>
                     </button>
-                    <div className={'space-y-2 hover:text-yellow-500'} onClick={handleGoNextChapter}>
+                    <div className={'space-y-2 hover:text-yellow-500'} onClick={goNext}>
                         <span className={'flex justify-center items-center'}>
                             <FontAwesomeIcon icon={faForward} />
                         </span>
