@@ -6,7 +6,7 @@ import { getToken } from "./localStorageService.js";
 const API_BASE_URL = 'http://127.0.0.1:8000/api/chat';
 const API_RAG_URL = 'http://127.0.0.1:8000/api/rag';
 
-const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU1NjEzMjM1LCJpYXQiOjE3NTU1MjY4MzUsImp0aSI6Ijg4MzdiYzA0NGQ2ZDRlNWFhOTVlNWU3MTUwZjBkYTlkIiwidXNlcl9pZCI6MX0.aSqIq6sT9CySBPUOy5JP0ymJO5fNBJ0uJ_10HuZdiUc"
+const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzU1Njc1MDc4LCJpYXQiOjE3NTU1ODg2NzgsImp0aSI6IjA0NmI0YTRiOWRhNzQzM2M5Nzg3YzA2ODkzZTFhN2UxIiwidXNlcl9pZCI6MX0.qh7pcU_jJhizONAwZsNN4j70FEDdtPrYceQG2vQAzjw"
 
 export const chatService = {
     // Document management
